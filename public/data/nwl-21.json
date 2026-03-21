@@ -1,0 +1,27 @@
+{
+  "slug": "nwl-21",
+  "nwlNumber": 21,
+  "mapName": "Ebonscale Reach",
+  "date": "12.03.2026",
+  "duration": "30:00",
+  "winner": "team1",
+  "groups": [],
+  "totals": {
+    "team1": {
+      "kills": 0,
+      "deaths": 0,
+      "assists": 0,
+      "healing": 0,
+      "damage": 0
+    },
+    "team2": {
+      "kills": 0,
+      "deaths": 0,
+      "assists": 0,
+      "healing": 0,
+      "damage": 0
+    }
+  },
+  "team1Name": "Beaverknights",
+  "team2Name": "Capyknights"
+}
