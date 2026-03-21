@@ -606,6 +606,8 @@ function parseDate(dateStr) {
 // ── Utilities ──────────────────────────────
 
 let compactNumbers = false;
+let currentView = 'excel'; // 'excel', 'list', 'comparison'
+let fontSizeScale = 100; // percentage
 
 function fmt(n) {
   if (compactNumbers) return fmtCompact(n);
@@ -695,6 +697,18 @@ function attachHamburger() {
 function ensureHamburger() {
   if (!document.getElementById('nav-menu')) {
     attachHamburger();
+  }
+}
+
+function toggleFilterPanel() {
+  const body = document.getElementById('filter-body');
+  const arrow = document.getElementById('filter-arrow');
+  if (body.style.display === 'none') {
+    body.style.display = '';
+    arrow.textContent = '▼';
+  } else {
+    body.style.display = 'none';
+    arrow.textContent = '▶';
   }
 }
 
@@ -879,10 +893,6 @@ function renderMatchPage(data) {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         Back to Matches
       </a>
-      <a class="sheets-link" href="${sheetsUrl}" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        Open stats in Google Sheets
-      </a>
     </div>
 
     <div class="match-header">
@@ -927,12 +937,46 @@ function renderMatchPage(data) {
       </div>
     </div>
 
-    <div class="fmt-toggle-wrap">
-      <label class="fmt-toggle">
-        <input type="checkbox" id="compact-toggle" ${compactNumbers ? 'checked' : ''}>
-        <span class="fmt-toggle-slider"></span>
-      </label>
-      <span class="fmt-toggle-label">Compact Numbers</span>
+    <div class="filter-toolbar">
+      <div class="filter-panel" id="filter-panel">
+        <div class="filter-header" onclick="toggleFilterPanel()">
+          <span class="filter-header-text">Filters</span>
+          <span class="filter-toggle-arrow" id="filter-arrow">▼</span>
+        </div>
+        <div class="filter-body" id="filter-body">
+          <div class="filter-group">
+            <div class="filter-group-title">View</div>
+            <label class="filter-option">
+              <input type="radio" name="view-mode" value="excel" ${currentView === 'excel' ? 'checked' : ''}>
+              <span class="filter-option-label">Standard</span>
+            </label>
+            <label class="filter-option">
+              <input type="radio" name="view-mode" value="list" ${currentView === 'list' ? 'checked' : ''}>
+              <span class="filter-option-label">List</span>
+            </label>
+            <label class="filter-option">
+              <input type="radio" name="view-mode" value="comparison" ${currentView === 'comparison' ? 'checked' : ''}>
+              <span class="filter-option-label">Comparison</span>
+            </label>
+          </div>
+          <div class="filter-group">
+            <div class="filter-group-title">Display</div>
+            <label class="filter-option">
+              <input type="checkbox" id="compact-toggle" ${compactNumbers ? 'checked' : ''}>
+              <span class="filter-option-label">Compact Numbers</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="font-size-control">
+        <span class="font-size-label">Text Size</span>
+        <input type="range" id="font-size-slider" min="60" max="140" value="${fontSizeScale}" step="5">
+        <span class="font-size-value" id="font-size-value">${fontSizeScale}%</span>
+      </div>
+      <a class="sheets-link" href="${sheetsUrl}" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Open in Google Sheets
+      </a>
     </div>
 
     <div class="groups-container" id="groups-container"></div>
@@ -951,7 +995,21 @@ function renderMatchPage(data) {
 
   document.getElementById('compact-toggle').addEventListener('change', (e) => {
     compactNumbers = e.target.checked;
-    renderMatchPage(data);
+    renderGroups(data);
+  });
+
+  document.querySelectorAll('input[name="view-mode"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      currentView = e.target.value;
+      renderGroups(data);
+    });
+  });
+
+  document.getElementById('font-size-slider').addEventListener('input', (e) => {
+    fontSizeScale = parseInt(e.target.value);
+    document.getElementById('font-size-value').textContent = fontSizeScale + '%';
+    const container = document.getElementById('groups-container');
+    container.style.zoom = (fontSizeScale / 100);
   });
 }
 
@@ -973,85 +1031,264 @@ function makePlayerRow(p, team) {
   </tr>`;
 }
 
+function makeExcelPlayerRow(p, team) {
+  if (!p) return '';
+  const cls = team === 't1' ? 'ptr-t1' : 'ptr-t2';
+  const canonical = getCanonicalName(p.name);
+  const playerLink = `<a onclick="navigate('#/player/${encodeURIComponent(canonical)}')">${p.name}</a>`;
+  return `<tr class="${cls}" style="border-left:none;">
+    <td class="pt-role"><span class="role-badge r-${p.role}">${p.role}</span></td>
+    <td class="pt-name">${playerLink}</td>
+    <td class="pt-num pt-kills">${p.kills}</td>
+    <td class="pt-num pt-deaths">${p.deaths}</td>
+    <td class="pt-num">${p.assists}</td>
+    <td class="pt-num pt-heal">${fmt(p.healing)}</td>
+    <td class="pt-num pt-dmg">${fmt(p.damage)}</td>
+  </tr>`;
+}
+
+function renderGroupExcel(g) {
+  const t1Players = g.team1;
+  const t2Players = g.team2;
+
+  const gt1 = { kills: 0, deaths: 0, assists: 0, healing: 0, damage: 0 };
+  const gt2 = { kills: 0, deaths: 0, assists: 0, healing: 0, damage: 0 };
+  t1Players.forEach(p => { for (const k in gt1) gt1[k] += p[k]; });
+  t2Players.forEach(p => { for (const k in gt2) gt2[k] += p[k]; });
+
+  const thRow = `<thead><tr>
+    <th class="ex-num" style="text-align:left;">Role</th>
+    <th>Player</th>
+    <th class="ex-num">Kills</th>
+    <th class="ex-num">Deaths</th>
+    <th class="ex-num">Assists</th>
+    <th class="ex-num">Heal</th>
+    <th class="ex-num">Dmg</th>
+  </tr></thead>`;
+
+  function compStat(label, v1, v2, higherIsBetter) {
+    const lead1 = higherIsBetter ? v1 > v2 : v1 < v2;
+    const lead2 = higherIsBetter ? v2 > v1 : v2 < v1;
+    return { label, v1, v2, lead1, lead2 };
+  }
+
+  const stats = [
+    compStat('Kills', gt1.kills, gt2.kills, true),
+    compStat('Deaths', gt1.deaths, gt2.deaths, false),
+    compStat('Assists', gt1.assists, gt2.assists, true),
+    compStat('Heal', gt1.healing, gt2.healing, true),
+    compStat('Dmg', gt1.damage, gt2.damage, true),
+  ];
+
+  return `<div class="group-section">
+    <div class="group-label">
+      <span class="group-label-text">${g.label}</span>
+      <span class="group-label-line"></span>
+    </div>
+    <div class="excel-group-block">
+      <div class="excel-team-side t1-side">
+        <div class="excel-team-header t1-header">🟢 Beaverknights</div>
+        <table class="excel-table">${thRow}<tbody>
+          ${t1Players.map(p => makeExcelPlayerRow(p, 't1')).join('')}
+        </tbody></table>
+      </div>
+      <div class="excel-team-side t2-side">
+        <div class="excel-team-header t2-header">🟣 Capyknights</div>
+        <table class="excel-table">${thRow}<tbody>
+          ${t2Players.map(p => makeExcelPlayerRow(p, 't2')).join('')}
+        </tbody></table>
+      </div>
+      <div class="excel-comparison-row">
+        <div class="excel-comparison-side t1-comp">
+          ${stats.map(s => `<div class="excel-comp-stat">
+            <span class="excel-comp-val ${s.lead1 ? 'lead' : ''}">${fmt(s.v1)}</span>
+            <span class="excel-comp-lbl">${s.label}</span>
+          </div>`).join('')}
+        </div>
+        <div class="excel-comparison-side t2-comp">
+          ${stats.map(s => `<div class="excel-comp-stat">
+            <span class="excel-comp-val ${s.lead2 ? 'lead' : ''}">${fmt(s.v2)}</span>
+            <span class="excel-comp-lbl">${s.label}</span>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderGroupList(g) {
+  const t1Players = g.team1;
+  const t2Players = g.team2;
+
+  const gt1 = { kills: 0, deaths: 0, assists: 0, healing: 0, damage: 0 };
+  const gt2 = { kills: 0, deaths: 0, assists: 0, healing: 0, damage: 0 };
+  t1Players.forEach(p => { for (const k in gt1) gt1[k] += p[k]; });
+  t2Players.forEach(p => { for (const k in gt2) gt2[k] += p[k]; });
+
+  return `<div class="group-section">
+    <div class="group-label">
+      <span class="group-label-text">${g.label}</span>
+      <span class="group-label-line"></span>
+    </div>
+    <div class="group-content">
+      <div class="group-table-wrap">
+        <table class="group-table">
+          <thead>
+            <tr>
+              <th class="gt-th gt-role">Role</th>
+              <th class="gt-th gt-name">Player</th>
+              <th class="gt-th gt-num">Kills</th>
+              <th class="gt-th gt-num">Deaths</th>
+              <th class="gt-th gt-num">Assists</th>
+              <th class="gt-th gt-num">Heal</th>
+              <th class="gt-th gt-num">Dmg</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="team-divider-row"><td colspan="7"><span class="team-divider-label t1-divider">🟢 BEAVERKNIGHTS</span></td></tr>
+            ${t1Players.map(p => makePlayerRow(p, 't1')).join('')}
+            <tr class="team-divider-row"><td colspan="7"><span class="team-divider-label t2-divider">🟣 CAPYKNIGHTS</span></td></tr>
+            ${t2Players.map(p => makePlayerRow(p, 't2')).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div class="group-comparison">
+        <div class="gc-title">Group Comparison</div>
+        <div class="gc-row gc-header">
+          <span class="gc-label"></span>
+          <span class="gc-val gc-t1">🟢</span>
+          <span class="gc-val gc-t2">🟣</span>
+        </div>
+        <div class="gc-row">
+          <span class="gc-label">Kills</span>
+          <span class="gc-val gc-t1 ${gt1.kills > gt2.kills ? 'gc-lead' : ''}">${fmt(gt1.kills)}</span>
+          <span class="gc-val gc-t2 ${gt2.kills > gt1.kills ? 'gc-lead' : ''}">${fmt(gt2.kills)}</span>
+        </div>
+        <div class="gc-row">
+          <span class="gc-label">Deaths</span>
+          <span class="gc-val gc-t1 ${gt1.deaths < gt2.deaths ? 'gc-lead' : ''}">${fmt(gt1.deaths)}</span>
+          <span class="gc-val gc-t2 ${gt2.deaths < gt1.deaths ? 'gc-lead' : ''}">${fmt(gt2.deaths)}</span>
+        </div>
+        <div class="gc-row">
+          <span class="gc-label">Assists</span>
+          <span class="gc-val gc-t1 ${gt1.assists > gt2.assists ? 'gc-lead' : ''}">${fmt(gt1.assists)}</span>
+          <span class="gc-val gc-t2 ${gt2.assists > gt1.assists ? 'gc-lead' : ''}">${fmt(gt2.assists)}</span>
+        </div>
+        <div class="gc-row">
+          <span class="gc-label">Healing</span>
+          <span class="gc-val gc-t1 ${gt1.healing > gt2.healing ? 'gc-lead' : ''}">${fmt(gt1.healing)}</span>
+          <span class="gc-val gc-t2 ${gt2.healing > gt1.healing ? 'gc-lead' : ''}">${fmt(gt2.healing)}</span>
+        </div>
+        <div class="gc-row">
+          <span class="gc-label">Damage</span>
+          <span class="gc-val gc-t1 ${gt1.damage > gt2.damage ? 'gc-lead' : ''}">${fmt(gt1.damage)}</span>
+          <span class="gc-val gc-t2 ${gt2.damage > gt1.damage ? 'gc-lead' : ''}">${fmt(gt2.damage)}</span>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderExcelViewGroup(g, team, placeholderLabel) {
+  const players = team === 't1' ? 'team1' : 'team2';
+  const rowClass = team === 't1' ? 'ptr-t1' : 'ptr-t2';
+  const teamPlayers = g ? g[players] : [];
+  const label = g ? g.label : placeholderLabel;
+
+  if (!g || teamPlayers.length === 0) {
+    return `<div class="ev-group ev-group-empty">
+      <div class="ev-group-label ev-empty-label">${label || '—'}</div>
+      <div class="ev-empty-text">No players</div>
+    </div>`;
+  }
+
+  return `<div class="ev-group">
+    <div class="ev-group-label">${label}</div>
+    <table class="ev-table">
+      <thead><tr>
+        <th class="ev-th" style="text-align:left;"></th>
+        <th class="ev-th">Player</th>
+        <th class="ev-th ev-num">Kills</th>
+        <th class="ev-th ev-num">Deaths</th>
+        <th class="ev-th ev-num">Assists</th>
+        <th class="ev-th ev-num">Heal</th>
+        <th class="ev-th ev-num">Dmg</th>
+      </tr></thead>
+      <tbody>
+        ${teamPlayers.map(p => {
+            const canonical = getCanonicalName(p.name);
+            const playerLink = `<a onclick="navigate('#/player/${encodeURIComponent(canonical)}')">${p.name}</a>`;
+            return `<tr class="${rowClass}" style="border-left:none;">
+              <td class="pt-role"><span class="role-badge r-${p.role}">${p.role}</span></td>
+              <td class="pt-name">${playerLink}</td>
+              <td class="pt-num pt-kills">${p.kills}</td>
+              <td class="pt-num pt-deaths">${p.deaths}</td>
+              <td class="pt-num">${p.assists}</td>
+              <td class="pt-num pt-heal">${fmt(p.healing)}</td>
+              <td class="pt-num pt-dmg">${fmt(p.damage)}</td>
+            </tr>`;
+          }).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
 function renderGroups(data) {
   const container = document.getElementById('groups-container');
   let html = '';
 
-  data.groups.forEach(g => {
-    const t1Players = g.team1;
-    const t2Players = g.team2;
+  if (currentView === 'excel') {
+    // Excel View: Paired layout - G1↔G6, G2↔G7, G3↔G8, G4↔G9, G5↔G10
+    // Build a map by group number to handle gaps (e.g. G7 missing)
+    const groupByNum = {};
+    for (const g of data.groups) {
+      const num = parseInt((g.label.match(/\d+/) || ['0'])[0]);
+      if (num > 0) groupByNum[num] = g;
+    }
+    const maxPairs = 5;
 
-    if (t1Players.length === 0 && t2Players.length === 0) return;
+    function renderPairedRows(team) {
+      let rows = '';
+      for (let i = 1; i <= maxPairs; i++) {
+        const gLeft = groupByNum[i] || null;         // G1-G5
+        const gRight = groupByNum[i + 5] || null;    // G6-G10
+        const leftLabel = gLeft ? gLeft.label : `G${i}`;
+        const rightLabel = gRight ? gRight.label : `G${i + 5}`;
+        rows += `<div class="ev-pair-row">
+          <div class="ev-pair-cell">${renderExcelViewGroup(gLeft, team, leftLabel)}</div>
+          <div class="ev-pair-cell">${renderExcelViewGroup(gRight, team, rightLabel)}</div>
+        </div>`;
+      }
+      return rows;
+    }
 
-    // Compute group totals for comparison panel
-    const gt1 = { kills: 0, deaths: 0, assists: 0, healing: 0, damage: 0 };
-    const gt2 = { kills: 0, deaths: 0, assists: 0, healing: 0, damage: 0 };
-    t1Players.forEach(p => { for (const k in gt1) gt1[k] += p[k]; });
-    t2Players.forEach(p => { for (const k in gt2) gt2[k] += p[k]; });
-
-    html += `<div class="group-section">
-      <div class="group-label">
-        <span class="group-label-text">${g.label}</span>
-        <span class="group-label-line"></span>
+    html = `<div class="excel-view-layout">
+      <div class="ev-section-header ev-header-atk">
+        <span class="ev-section-title t1-divider">🟢 BEAVERKNIGHTS (ATTACKER)</span>
       </div>
-      <div class="group-content">
-        <div class="group-table-wrap">
-          <table class="group-table">
-            <thead>
-              <tr>
-                <th class="gt-th gt-role">Role</th>
-                <th class="gt-th gt-name">Player</th>
-                <th class="gt-th gt-num">K</th>
-                <th class="gt-th gt-num">D</th>
-                <th class="gt-th gt-num">A</th>
-                <th class="gt-th gt-num">Heal</th>
-                <th class="gt-th gt-num">Dmg</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="team-divider-row"><td colspan="7"><span class="team-divider-label t1-divider">🟢 BEAVERKNIGHTS</span></td></tr>
-              ${t1Players.map(p => makePlayerRow(p, 't1')).join('')}
-              <tr class="team-divider-row"><td colspan="7"><span class="team-divider-label t2-divider">🟣 CAPYKNIGHTS</span></td></tr>
-              ${t2Players.map(p => makePlayerRow(p, 't2')).join('')}
-            </tbody>
-          </table>
-        </div>
-        <div class="group-comparison">
-          <div class="gc-title">Group Comparison</div>
-          <div class="gc-row gc-header">
-            <span class="gc-label"></span>
-            <span class="gc-val gc-t1">🟢</span>
-            <span class="gc-val gc-t2">🟣</span>
-          </div>
-          <div class="gc-row">
-            <span class="gc-label">Kills</span>
-            <span class="gc-val gc-t1 ${gt1.kills > gt2.kills ? 'gc-lead' : ''}">${fmt(gt1.kills)}</span>
-            <span class="gc-val gc-t2 ${gt2.kills > gt1.kills ? 'gc-lead' : ''}">${fmt(gt2.kills)}</span>
-          </div>
-          <div class="gc-row">
-            <span class="gc-label">Deaths</span>
-            <span class="gc-val gc-t1 ${gt1.deaths < gt2.deaths ? 'gc-lead' : ''}">${fmt(gt1.deaths)}</span>
-            <span class="gc-val gc-t2 ${gt2.deaths < gt1.deaths ? 'gc-lead' : ''}">${fmt(gt2.deaths)}</span>
-          </div>
-          <div class="gc-row">
-            <span class="gc-label">Assists</span>
-            <span class="gc-val gc-t1 ${gt1.assists > gt2.assists ? 'gc-lead' : ''}">${fmt(gt1.assists)}</span>
-            <span class="gc-val gc-t2 ${gt2.assists > gt1.assists ? 'gc-lead' : ''}">${fmt(gt2.assists)}</span>
-          </div>
-          <div class="gc-row">
-            <span class="gc-label">Healing</span>
-            <span class="gc-val gc-t1 ${gt1.healing > gt2.healing ? 'gc-lead' : ''}">${fmt(gt1.healing)}</span>
-            <span class="gc-val gc-t2 ${gt2.healing > gt1.healing ? 'gc-lead' : ''}">${fmt(gt2.healing)}</span>
-          </div>
-          <div class="gc-row">
-            <span class="gc-label">Damage</span>
-            <span class="gc-val gc-t1 ${gt1.damage > gt2.damage ? 'gc-lead' : ''}">${fmt(gt1.damage)}</span>
-            <span class="gc-val gc-t2 ${gt2.damage > gt1.damage ? 'gc-lead' : ''}">${fmt(gt2.damage)}</span>
-          </div>
-        </div>
+      <div class="ev-section ev-section-t1">
+        ${renderPairedRows('t1')}
+      </div>
+      <div class="ev-section-header ev-header-def">
+        <span class="ev-section-title t2-divider">🟣 CAPYKNIGHTS (DEFENDER)</span>
+      </div>
+      <div class="ev-section ev-section-t2">
+        ${renderPairedRows('t2')}
       </div>
     </div>`;
-  });
+  } else {
+    data.groups.forEach(g => {
+      const t1Players = g.team1;
+      const t2Players = g.team2;
+      if (t1Players.length === 0 && t2Players.length === 0) return;
+
+      if (currentView === 'comparison') {
+        html += renderGroupExcel(g);
+      } else {
+        html += renderGroupList(g);
+      }
+    });
+  }
 
   container.innerHTML = html;
 }
@@ -1246,8 +1483,20 @@ function renderPlayerPage(playerName) {
         <div class="stat-lbl">Total Kills</div>
       </div>
       <div class="player-stat-card">
+        <div class="stat-val">${totalDeaths}</div>
+        <div class="stat-lbl">Total Deaths</div>
+      </div>
+      <div class="player-stat-card">
+        <div class="stat-val">${totalAssists}</div>
+        <div class="stat-lbl">Total Assists</div>
+      </div>
+      <div class="player-stat-card">
         <div class="stat-val">${avgKD}</div>
         <div class="stat-lbl">Avg KD</div>
+      </div>
+      <div class="player-stat-card">
+        <div class="stat-val rating-inactive">Inactive</div>
+        <div class="stat-lbl">Rating</div>
       </div>
       <div class="player-stat-card">
         <div class="stat-val">${fmt(totalHealing)}</div>
@@ -1323,6 +1572,7 @@ function renderPlayerPage(playerName) {
 // Make functions globally accessible
 window.navigate = navigate;
 window.toggleNav = toggleNav;
+window.toggleFilterPanel = toggleFilterPanel;
 
 // ── Initial render ──
 if (document.readyState === 'loading') {
