@@ -5,6 +5,7 @@
   "date": "12.03.2026",
   "duration": "30:00",
   "winner": "team1",
+  "attacker": "team2",
   "groups": [],
   "totals": {
     "team1": {

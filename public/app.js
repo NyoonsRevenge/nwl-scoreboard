@@ -491,11 +491,15 @@ async function buildMatchesFromSheets() {
   if (!sheets.length) throw new Error('No match sheets found');
 
   let staticWinners = {};
+  let staticAttackers = {};
   try {
     const res = await fetch('data/matches.json');
     if (res.ok) {
       const ms = await res.json();
-      ms.forEach(m => { staticWinners[m.slug] = m.winner; });
+      ms.forEach(m => {
+        staticWinners[m.slug] = m.winner;
+        if (m.attacker) staticAttackers[m.slug] = m.attacker;
+      });
     }
   } catch (e) { /* ignore */ }
 
@@ -563,18 +567,20 @@ async function buildMatchesFromSheets() {
           team2Kills = parsed.totals.team2.kills;
         }
 
+        const attacker = staticAttackers[slug] || null;
+
         return {
           entry, slug, winner,
           detail: {
             slug, nwlNumber: entry.nwlNumber, mapName: entry.mapName,
-            date: entry.date, duration: parsed.duration, winner,
+            date: entry.date, duration: parsed.duration, winner, attacker,
             groups: parsed.groups, totals: parsed.totals,
             team1Name: 'Beaverknights', team2Name: 'Capyknights',
             gid: entry.gid,
           },
           summary: {
             slug, nwlNumber: entry.nwlNumber, mapName: entry.mapName,
-            date: entry.date, duration: parsed.duration, winner,
+            date: entry.date, duration: parsed.duration, winner, attacker,
             team1Kills, team2Kills,
             team1Name: 'Beaverknights', team2Name: 'Capyknights',
           },
@@ -607,7 +613,7 @@ function parseDate(dateStr) {
 
 let compactNumbers = false;
 let currentView = 'excel'; // 'excel', 'list', 'comparison'
-let fontSizeScale = 100; // percentage
+let fontSizeScale = parseInt(localStorage.getItem('nwl-font-size') || '100'); // percentage
 
 function fmt(n) {
   if (compactNumbers) return fmtCompact(n);
@@ -833,6 +839,19 @@ function renderHomePage(matches) {
     const t1Score = m.team1Kills || 0;
     const t2Score = m.team2Kills || 0;
 
+    // Attacker always on left, defender on right
+    const atkIsT1 = m.attacker !== 'team2'; // default to team1 if unknown
+    const leftName = atkIsT1 ? 'Beaverknights' : 'Capyknights';
+    const leftFaction = atkIsT1 ? 'Marauder (Green)' : 'Syndicate (Purple)';
+    const leftColorClass = atkIsT1 ? 'mb-t1' : 'mb-t2';
+    const leftScore = atkIsT1 ? t1Score : t2Score;
+    const rightName = atkIsT1 ? 'Capyknights' : 'Beaverknights';
+    const rightFaction = atkIsT1 ? 'Syndicate (Purple)' : 'Marauder (Green)';
+    const rightColorClass = atkIsT1 ? 'mb-t2' : 'mb-t1';
+    const rightScore = atkIsT1 ? t2Score : t1Score;
+    const winnerTag = isT1 ? '🟢 MARAUDER WINS' : '🟣 SYNDICATE WINS';
+    const winnerTagClass = isT1 ? 'w1' : 'w2';
+
     html += `
       <a class="match-banner ${winClass}" onclick="navigate('#/match/${m.slug}')" id="row-${m.slug}" style="animation-delay:${Math.min(i * 0.04, 0.6)}s">
         <div class="mb-meta">
@@ -841,21 +860,21 @@ function renderHomePage(matches) {
           <span class="mb-date">${m.date}${m.duration ? ' · ' + m.duration : ''}</span>
         </div>
         <div class="mb-scoreboard">
-          <div class="mb-team mb-t1">
-            <span class="mb-team-name">Beaverknights</span>
-            <span class="mb-faction">Marauder (Green)</span>
+          <div class="mb-team ${leftColorClass}" style="text-align:right">
+            <span class="mb-team-name">${leftName}</span>
+            <span class="mb-faction">${leftFaction} · Attacker</span>
           </div>
           <div class="mb-score-center">
             <div class="mb-score">
-              <span class="mb-s1">${t1Score}</span>
+              <span class="mb-s1">${leftScore}</span>
               <span class="mb-sep">:</span>
-              <span class="mb-s2">${t2Score}</span>
+              <span class="mb-s2">${rightScore}</span>
             </div>
-            <div class="mb-winner-tag ${isT1 ? 'w1' : 'w2'}">${isT1 ? '🟢 MARAUDER WINS' : '🟣 SYNDICATE WINS'}</div>
+            <div class="mb-winner-tag ${winnerTagClass}">${winnerTag}</div>
           </div>
-          <div class="mb-team mb-t2">
-            <span class="mb-team-name">Capyknights</span>
-            <span class="mb-faction">Syndicate (Purple)</span>
+          <div class="mb-team ${rightColorClass}" style="text-align:left">
+            <span class="mb-team-name">${rightName}</span>
+            <span class="mb-faction">${rightFaction} · Defender</span>
           </div>
         </div>
       </a>`;
@@ -884,6 +903,13 @@ function renderMatchPage(data) {
   const t2k = t2.kills || 0;
   const isT1Win = data.winner === 'team1';
 
+  // Attacker always on top/left, defender on bottom/right
+  const atkIsT1 = data.attacker !== 'team2'; // default to team1 if unknown
+  const atk = atkIsT1 ? { name: 'Beaverknights', faction: 'Marauder (Green)', cls: 't1', stats: t1, kills: t1k } :
+                         { name: 'Capyknights', faction: 'Syndicate (Purple)', cls: 't2', stats: t2, kills: t2k };
+  const def = atkIsT1 ? { name: 'Capyknights', faction: 'Syndicate (Purple)', cls: 't2', stats: t2, kills: t2k } :
+                         { name: 'Beaverknights', faction: 'Marauder (Green)', cls: 't1', stats: t1, kills: t1k };
+
   // Build Google Sheets URL for this specific match
   const sheetsUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}${data.gid ? '#gid=' + data.gid : ''}`;
 
@@ -902,37 +928,37 @@ function renderMatchPage(data) {
     </div>
 
     <div class="scoreboard">
-      <div class="sb-team t1">
-        <div class="sb-team-name">Beaverknights</div>
-        <div class="sb-faction">Marauder (Green)</div>
+      <div class="sb-team ${atk.cls}">
+        <div class="sb-team-name">${atk.name}</div>
+        <div class="sb-faction">${atk.faction} · Attacker</div>
         <div class="sb-stats">
-          <div class="sb-stat"><span class="sb-stat-val">${t1k}</span><span class="sb-stat-lbl">Kills</span></div>
-          <div class="sb-stat"><span class="sb-stat-val">${t1.deaths || 0}</span><span class="sb-stat-lbl">Deaths</span></div>
-          <div class="sb-stat"><span class="sb-stat-val">${t1.assists || 0}</span><span class="sb-stat-lbl">Assists</span></div>
-          <div class="sb-stat"><span class="sb-stat-val">${fmt(t1.healing)}</span><span class="sb-stat-lbl">Healing</span></div>
-          <div class="sb-stat"><span class="sb-stat-val">${fmt(t1.damage)}</span><span class="sb-stat-lbl">Damage</span></div>
+          <div class="sb-stat"><span class="sb-stat-val">${atk.kills}</span><span class="sb-stat-lbl">Kills</span></div>
+          <div class="sb-stat"><span class="sb-stat-val">${atk.stats.deaths || 0}</span><span class="sb-stat-lbl">Deaths</span></div>
+          <div class="sb-stat"><span class="sb-stat-val">${atk.stats.assists || 0}</span><span class="sb-stat-lbl">Assists</span></div>
+          <div class="sb-stat"><span class="sb-stat-val">${fmt(atk.stats.healing)}</span><span class="sb-stat-lbl">Healing</span></div>
+          <div class="sb-stat"><span class="sb-stat-val">${fmt(atk.stats.damage)}</span><span class="sb-stat-lbl">Damage</span></div>
         </div>
       </div>
 
       <div class="sb-center">
         <div class="sb-score">
-          <span class="s1">${t1k}</span>
+          <span class="s1">${atk.kills}</span>
           <span class="sep">:</span>
-          <span class="s2">${t2k}</span>
+          <span class="s2">${def.kills}</span>
         </div>
         <div class="sb-winner-tag ${isT1Win ? 'w1' : 'w2'}">${isT1Win ? '🟢 MARAUDER WINS' : '🟣 SYNDICATE WINS'}</div>
         <div class="sb-meta">${data.mapName} · ${data.date}</div>
       </div>
 
-      <div class="sb-team t2">
-        <div class="sb-team-name">Capyknights</div>
-        <div class="sb-faction">Syndicate (Purple)</div>
+      <div class="sb-team ${def.cls}">
+        <div class="sb-team-name">${def.name}</div>
+        <div class="sb-faction">${def.faction} · Defender</div>
         <div class="sb-stats">
-          <div class="sb-stat"><span class="sb-stat-val">${t2k}</span><span class="sb-stat-lbl">Kills</span></div>
-          <div class="sb-stat"><span class="sb-stat-val">${t2.deaths || 0}</span><span class="sb-stat-lbl">Deaths</span></div>
-          <div class="sb-stat"><span class="sb-stat-val">${t2.assists || 0}</span><span class="sb-stat-lbl">Assists</span></div>
-          <div class="sb-stat"><span class="sb-stat-val">${fmt(t2.healing)}</span><span class="sb-stat-lbl">Healing</span></div>
-          <div class="sb-stat"><span class="sb-stat-val">${fmt(t2.damage)}</span><span class="sb-stat-lbl">Damage</span></div>
+          <div class="sb-stat"><span class="sb-stat-val">${def.kills}</span><span class="sb-stat-lbl">Kills</span></div>
+          <div class="sb-stat"><span class="sb-stat-val">${def.stats.deaths || 0}</span><span class="sb-stat-lbl">Deaths</span></div>
+          <div class="sb-stat"><span class="sb-stat-val">${def.stats.assists || 0}</span><span class="sb-stat-lbl">Assists</span></div>
+          <div class="sb-stat"><span class="sb-stat-val">${fmt(def.stats.healing)}</span><span class="sb-stat-lbl">Healing</span></div>
+          <div class="sb-stat"><span class="sb-stat-val">${fmt(def.stats.damage)}</span><span class="sb-stat-lbl">Damage</span></div>
         </div>
       </div>
     </div>
@@ -941,9 +967,9 @@ function renderMatchPage(data) {
       <div class="filter-panel" id="filter-panel">
         <div class="filter-header" onclick="toggleFilterPanel()">
           <span class="filter-header-text">Filters</span>
-          <span class="filter-toggle-arrow" id="filter-arrow">▼</span>
+          <span class="filter-toggle-arrow" id="filter-arrow">▶</span>
         </div>
-        <div class="filter-body" id="filter-body">
+        <div class="filter-body" id="filter-body" style="display:none">
           <div class="filter-group">
             <div class="filter-group-title">View</div>
             <label class="filter-option">
@@ -993,6 +1019,12 @@ function renderMatchPage(data) {
 
   renderGroups(data);
 
+  // Apply saved font size zoom
+  if (fontSizeScale !== 100) {
+    const container = document.getElementById('groups-container');
+    container.style.zoom = (fontSizeScale / 100);
+  }
+
   document.getElementById('compact-toggle').addEventListener('change', (e) => {
     compactNumbers = e.target.checked;
     renderGroups(data);
@@ -1008,6 +1040,7 @@ function renderMatchPage(data) {
   document.getElementById('font-size-slider').addEventListener('input', (e) => {
     fontSizeScale = parseInt(e.target.value);
     document.getElementById('font-size-value').textContent = fontSizeScale + '%';
+    localStorage.setItem('nwl-font-size', fontSizeScale);
     const container = document.getElementById('groups-container');
     container.style.zoom = (fontSizeScale / 100);
   });
@@ -1262,18 +1295,28 @@ function renderGroups(data) {
       return rows;
     }
 
+    // Attacker always on top, defender on bottom
+    const evAtkIsT1 = data.attacker !== 'team2';
+    const atkTeamKey = evAtkIsT1 ? 't1' : 't2';
+    const defTeamKey = evAtkIsT1 ? 't2' : 't1';
+    const atkEmoji = evAtkIsT1 ? '🟢' : '🟣';
+    const defEmoji = evAtkIsT1 ? '🟣' : '🟢';
+    const atkName = evAtkIsT1 ? 'BEAVERKNIGHTS' : 'CAPYKNIGHTS';
+    const defName = evAtkIsT1 ? 'CAPYKNIGHTS' : 'BEAVERKNIGHTS';
+    const atkDividerClass = evAtkIsT1 ? 't1-divider' : 't2-divider';
+    const defDividerClass = evAtkIsT1 ? 't2-divider' : 't1-divider';
     html = `<div class="excel-view-layout">
       <div class="ev-section-header ev-header-atk">
-        <span class="ev-section-title t1-divider">🟢 BEAVERKNIGHTS (ATTACKER)</span>
+        <span class="ev-section-title ${atkDividerClass}">${atkEmoji} ${atkName} (ATTACKER)</span>
       </div>
-      <div class="ev-section ev-section-t1">
-        ${renderPairedRows('t1')}
+      <div class="ev-section ev-section-${atkTeamKey}">
+        ${renderPairedRows(atkTeamKey)}
       </div>
       <div class="ev-section-header ev-header-def">
-        <span class="ev-section-title t2-divider">🟣 CAPYKNIGHTS (DEFENDER)</span>
+        <span class="ev-section-title ${defDividerClass}">${defEmoji} ${defName} (DEFENDER)</span>
       </div>
-      <div class="ev-section ev-section-t2">
-        ${renderPairedRows('t2')}
+      <div class="ev-section ev-section-${defTeamKey}">
+        ${renderPairedRows(defTeamKey)}
       </div>
     </div>`;
   } else {
@@ -1452,6 +1495,8 @@ function renderPlayerPage(playerName) {
   const matchCount = appearances.length;
   const avgKD = totalDeaths > 0 ? (totalKills / totalDeaths).toFixed(2) : totalKills.toFixed(2);
   const winRate = matchCount > 0 ? Math.round((wins / matchCount) * 100) : 0;
+  const avgHealing = matchCount > 0 ? Math.round(totalHealing / matchCount) : 0;
+  const avgDamage = matchCount > 0 ? Math.round(totalDamage / matchCount) : 0;
 
   let html = `<div class="wrap">
     <a class="back-link" onclick="navigate('')">
@@ -1465,46 +1510,60 @@ function renderPlayerPage(playerName) {
       ${aliasDisplay ? `<div class="player-aliases">Also known as: ${aliasDisplay}</div>` : ''}
     </div>
 
-    <div class="player-stats-summary">
-      <div class="player-stat-card">
-        <div class="stat-val">${matchCount}</div>
-        <div class="stat-lbl">Matches</div>
+    <div class="player-stats-grid">
+      <div class="player-stats-row">
+        <div class="player-stat-card">
+          <div class="stat-val">${totalKills}</div>
+          <div class="stat-lbl">Total Kills</div>
+        </div>
+        <div class="player-stat-card">
+          <div class="stat-val">${totalDeaths}</div>
+          <div class="stat-lbl">Total Deaths</div>
+        </div>
+        <div class="player-stat-card">
+          <div class="stat-val">${totalAssists}</div>
+          <div class="stat-lbl">Total Assists</div>
+        </div>
+        <div class="player-stat-card">
+          <div class="stat-val">${avgKD}</div>
+          <div class="stat-lbl">Avg KD</div>
+        </div>
       </div>
-      <div class="player-stat-card">
-        <div class="stat-val">${wins}/${matchCount - wins}</div>
-        <div class="stat-lbl">W / L</div>
+      <div class="player-stats-row">
+        <div class="player-stat-card">
+          <div class="stat-val">${matchCount}</div>
+          <div class="stat-lbl">Matches</div>
+        </div>
+        <div class="player-stat-card">
+          <div class="stat-val">${wins}/${matchCount - wins}</div>
+          <div class="stat-lbl">W / L</div>
+        </div>
+        <div class="player-stat-card">
+          <div class="stat-val">${winRate}%</div>
+          <div class="stat-lbl">Win Rate</div>
+        </div>
+        <div class="player-stat-card">
+          <div class="stat-val">Inactive</div>
+          <div class="stat-lbl">Rating</div>
+        </div>
       </div>
-      <div class="player-stat-card">
-        <div class="stat-val">${winRate}%</div>
-        <div class="stat-lbl">Win Rate</div>
-      </div>
-      <div class="player-stat-card">
-        <div class="stat-val">${totalKills}</div>
-        <div class="stat-lbl">Total Kills</div>
-      </div>
-      <div class="player-stat-card">
-        <div class="stat-val">${totalDeaths}</div>
-        <div class="stat-lbl">Total Deaths</div>
-      </div>
-      <div class="player-stat-card">
-        <div class="stat-val">${totalAssists}</div>
-        <div class="stat-lbl">Total Assists</div>
-      </div>
-      <div class="player-stat-card">
-        <div class="stat-val">${avgKD}</div>
-        <div class="stat-lbl">Avg KD</div>
-      </div>
-      <div class="player-stat-card">
-        <div class="stat-val rating-inactive">Inactive</div>
-        <div class="stat-lbl">Rating</div>
-      </div>
-      <div class="player-stat-card">
-        <div class="stat-val">${fmt(totalHealing)}</div>
-        <div class="stat-lbl">Total Healing</div>
-      </div>
-      <div class="player-stat-card">
-        <div class="stat-val">${fmt(totalDamage)}</div>
-        <div class="stat-lbl">Total Damage</div>
+      <div class="player-stats-row">
+        <div class="player-stat-card">
+          <div class="stat-val">${fmt(avgDamage)}</div>
+          <div class="stat-lbl">Avg Damage</div>
+        </div>
+        <div class="player-stat-card">
+          <div class="stat-val">${fmt(totalDamage)}</div>
+          <div class="stat-lbl">Total Damage</div>
+        </div>
+        <div class="player-stat-card">
+          <div class="stat-val">${fmt(avgHealing)}</div>
+          <div class="stat-lbl">Avg Healing</div>
+        </div>
+        <div class="player-stat-card">
+          <div class="stat-val">${fmt(totalHealing)}</div>
+          <div class="stat-lbl">Total Healing</div>
+        </div>
       </div>
     </div>`;
 

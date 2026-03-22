@@ -5,6 +5,7 @@
   "date": "30.01.2026",
   "duration": null,
   "winner": "team2",
+  "attacker": "team1",
   "groups": [
     {
       "label": "G1: Point",

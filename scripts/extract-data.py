@@ -6,6 +6,7 @@ import os
 import re
 import sys
 import csv
+import hashlib
 from datetime import datetime
 import urllib.request
 import zipfile
@@ -83,41 +84,156 @@ def parse_map_and_date(sheet_name):
     map_name = map_match.group(1).strip() if map_match else sheet_name
     return map_name, date
 
-def get_tab_colors():
-    """Download XLSX and extract sheet tab colors"""
-    print("Fetching XLSX for tab colors...")
+def extract_date_from_sheet_name(name):
+    """Extract date (DD.MM.YYYY) from sheet name for matching."""
+    m = re.search(r'(\d{2}\.\d{2}\.\d{4})', name)
+    return m.group(1) if m else None
+
+def get_tab_colors_from_data(xlsx_data):
+    """Extract sheet tab colors from XLSX data.
+    Returns dict keyed by date string -> 'team1' or 'team2'.
+    """
     colors = {}
-    url = f'https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/export?format=xlsx'
     try:
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req) as resp:
-            xlsx_data = resp.read()
-            
         with zipfile.ZipFile(io.BytesIO(xlsx_data)) as z:
             workbook_xml = z.read('xl/workbook.xml').decode('utf-8', errors='ignore')
             rels_xml = z.read('xl/_rels/workbook.xml.rels').decode('utf-8', errors='ignore')
-            
+
             rels = {}
             for m in re.finditer(r'<Relationship [^>]*Id="([^"]+)"[^>]*Target="([^"]+)"', rels_xml):
                 rels[m.group(1)] = m.group(2)
-                
+
             for m in re.finditer(r'<sheet [^>]*name="([^"]+)"[^>]*r:id="([^"]+)"', workbook_xml):
                 name = m.group(1).replace('&amp;', '&')
+                date_key = extract_date_from_sheet_name(name)
+                if not date_key:
+                    continue
                 r_id = m.group(2)
                 target = rels.get(r_id)
                 if not target: continue
-                
+
                 sheet_xml = z.read('xl/' + target).decode('utf-8', errors='ignore')
                 c_m = re.search(r'<tabColor rgb="([a-fA-F0-9]{8})"', sheet_xml)
                 if c_m:
                     color = c_m.group(1)
                     r, g, b = int(color[2:4], 16), int(color[4:6], 16), int(color[6:8], 16)
                     # Green = Beaver (team1), Purple = Capy (team2)
-                    if g > r and g > b: colors[name] = 'team1'  # Green
-                    elif (r > g or b > g) and b > 50: colors[name] = 'team2'  # Purple
+                    if g > r and g > b: colors[date_key] = 'team1'  # Green
+                    elif (r > g or b > g) and b > 50: colors[date_key] = 'team2'  # Purple
     except Exception as e:
-        print(f"Failed to fetch/parse XLSX tab colors: {e}")
+        print(f"Failed to parse XLSX tab colors: {e}")
     return colors
+
+# Known image MD5 hashes for team identification
+# Beaverknights (team1) images
+BEAVER_HASHES = {
+    '9f4d16b642a2328d266b8793b7c1da76',  # image1.png - Attacker variant
+    '9b765d9baf34b5633e3f0faed0042c43',  # image4.png - Defender variant
+    '516a29a3de8834520d8a547eacc38ad8',  # image6.png - Attacker variant
+}
+# Capyknights (team2) images
+CAPY_HASHES = {
+    '1d13eabd4b1c3bd5ae1162b87548496c',  # image2.png - Defender variant
+    '2cdd494d49b5e99b1545dedcd863f494',  # image3.png - Attacker variant
+    '0383c9b5c7ac62ea7b801e42cb004d5b',  # image5.png - Defender variant
+}
+
+def get_attackers(xlsx_data):
+    """Extract attacker team per sheet from embedded images.
+
+    The top image (lower row number) is always the attacker.
+    Returns dict of date string -> 'team1' or 'team2' (attacker team).
+    """
+    attackers = {}
+    try:
+        with zipfile.ZipFile(io.BytesIO(xlsx_data)) as z:
+            names = z.namelist()
+
+            # Build image hash lookup: media filename -> team
+            img_team = {}
+            for n in names:
+                if n.startswith('xl/media/'):
+                    data = z.read(n)
+                    h = hashlib.md5(data).hexdigest()
+                    fname = n.split('/')[-1]
+                    if h in BEAVER_HASHES:
+                        img_team[fname] = 'team1'
+                    elif h in CAPY_HASHES:
+                        img_team[fname] = 'team2'
+
+            # Map workbook rels
+            workbook_xml = z.read('xl/workbook.xml').decode('utf-8', errors='ignore')
+            rels_xml = z.read('xl/_rels/workbook.xml.rels').decode('utf-8', errors='ignore')
+
+            wb_rels = {}
+            for m in re.finditer(r'<Relationship [^>]*Id="([^"]+)"[^>]*Target="([^"]+)"', rels_xml):
+                wb_rels[m.group(1)] = m.group(2)
+
+            # For each NWL sheet, find drawing -> images -> top image team
+            for m in re.finditer(r'<sheet [^>]*name="([^"]+)"[^>]*r:id="([^"]+)"', workbook_xml):
+                sheet_name = m.group(1).replace('&amp;', '&')
+                date_key = extract_date_from_sheet_name(sheet_name)
+                if not date_key:
+                    continue
+
+                target = wb_rels.get(m.group(2), '')
+                sheet_path = 'xl/' + target
+                try:
+                    sheet_xml = z.read(sheet_path).decode('utf-8', errors='ignore')
+                except:
+                    continue
+
+                # Find drawing reference
+                dm = re.search(r'<drawing r:id="([^"]+)"', sheet_xml)
+                if not dm:
+                    continue
+
+                # Get sheet rels to find drawing path
+                sheet_rels_path = sheet_path.replace('worksheets/', 'worksheets/_rels/') + '.rels'
+                try:
+                    sheet_rels = z.read(sheet_rels_path).decode('utf-8', errors='ignore')
+                except:
+                    continue
+
+                dm2 = re.search(rf'Id="{dm.group(1)}"[^>]*Target="([^"]+)"', sheet_rels)
+                if not dm2:
+                    continue
+                drawing_path = 'xl/' + dm2.group(1).replace('../', '')
+
+                # Read drawing XML and its rels
+                try:
+                    drawing_xml = z.read(drawing_path).decode('utf-8', errors='ignore')
+                except:
+                    continue
+
+                drawing_rels_path = drawing_path.replace('drawings/', 'drawings/_rels/') + '.rels'
+                rid_to_img = {}
+                try:
+                    drels = z.read(drawing_rels_path).decode('utf-8', errors='ignore')
+                    for rm in re.finditer(r'Id="([^"]+)"[^>]*Target="([^"]+)"', drels):
+                        rid_to_img[rm.group(1)] = rm.group(2).split('/')[-1]
+                except:
+                    continue
+
+                # Find image anchors with row positions
+                images = []
+                for a in re.finditer(
+                    r'<xdr:oneCellAnchor>.*?<xdr:row>(\d+)</xdr:row>.*?r:embed="([^"]+)".*?</xdr:oneCellAnchor>',
+                    drawing_xml, re.DOTALL
+                ):
+                    row = int(a.group(1))
+                    img_file = rid_to_img.get(a.group(2), '')
+                    team = img_team.get(img_file)
+                    if team:
+                        images.append((row, team))
+
+                if images:
+                    images.sort(key=lambda x: x[0])
+                    # Top image = attacker
+                    attackers[date_key] = images[0][1]
+    except Exception as e:
+        print(f"Failed to extract attacker info from images: {e}")
+    return attackers
 
 def safe_int(val):
     if not val:
@@ -252,14 +368,24 @@ def parse_match(rows):
 
     return groups, result, duration, totals
 
+def fetch_xlsx():
+    """Download XLSX data once for reuse."""
+    url = f'https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/export?format=xlsx'
+    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    with urllib.request.urlopen(req) as resp:
+        return resp.read()
+
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     sheets = fetch_sheet_list()
     if not sheets:
         print("No sheets found from publish URL.")
         sys.exit(1)
-        
-    tab_colors = get_tab_colors()
+
+    print("Fetching XLSX for tab colors and attacker detection...")
+    xlsx_data = fetch_xlsx()
+    tab_colors = get_tab_colors_from_data(xlsx_data)
+    attacker_map = get_attackers(xlsx_data)
         
     for s in sheets:
         s['num'] = parse_nwl_number(s['name'])
@@ -275,17 +401,22 @@ def main():
         rows = fetch_sheet_csv(s['gid'])
         groups, result, duration, totals = parse_match(rows)
         
-        raw_name = s['name']
-        winner = tab_colors.get(raw_name)
+        date_key = s['date']
+        winner = tab_colors.get(date_key)
         if winner:
             print(f"  -> Tab color winner: {winner}")
         else:
             winner = result
-        
+
         if not winner:
             t1k = totals['team1']['kills']
             t2k = totals['team2']['kills']
             winner = 'team1' if t1k > t2k else ('team2' if t2k > t1k else None)
+
+        # Attacker team from embedded images (top image = attacker)
+        attacker = attacker_map.get(date_key)
+        if attacker:
+            print(f"  -> Attacker: {attacker}")
 
         slug = f'nwl-{nwl_num}'
         match_data = {
@@ -295,6 +426,7 @@ def main():
             'date': s['date'],
             'duration': duration,
             'winner': winner,
+            'attacker': attacker,
             'groups': groups,
             'totals': totals,
             'team1Name': 'Beaverknights',
@@ -302,7 +434,7 @@ def main():
         }
         with open(os.path.join(OUT_DIR, f'{slug}.json'), 'w', encoding='utf-8') as f:
             json.dump(match_data, f, ensure_ascii=False, indent=2)
-            
+
         matches.append({
             'slug': slug,
             'nwlNumber': nwl_num,
@@ -310,6 +442,7 @@ def main():
             'date': s['date'],
             'duration': duration,
             'winner': winner,
+            'attacker': attacker,
             'team1Kills': totals['team1']['kills'],
             'team2Kills': totals['team2']['kills'],
             'team1Name': 'Beaverknights',

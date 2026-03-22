@@ -5,6 +5,7 @@
   "date": "12.02.2026",
   "duration": "27:02",
   "winner": "team2",
+  "attacker": "team2",
   "groups": [
     {
       "label": "G1: Point",

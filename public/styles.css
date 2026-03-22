@@ -499,8 +499,8 @@ body::after {
 .mb-team {
   padding: 14px 20px;
 }
-.mb-t1 { text-align: right; }
-.mb-t2 { text-align: left; }
+.mb-scoreboard > .mb-team:first-child { text-align: right; }
+.mb-scoreboard > .mb-team:last-child { text-align: left; }
 
 .mb-team-name {
   font-family: 'IM Fell DW Pica', serif;
@@ -919,44 +919,44 @@ body::after {
   margin-top: 4px;
 }
 
-/* ── Player Stats Summary ── */
-.player-stats-summary {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 12px;
-  margin: 24px 0 32px;
+/* ── Player Stats Grid ── */
+.player-stats-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 20px 0 28px;
   animation: fadeDown .6s .1s ease both;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
+}
+.player-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
 }
 .player-stat-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  padding: 16px 12px;
+  border-radius: var(--radius);
+  padding: 10px 8px;
   text-align: center;
+  transition: border-color .2s ease;
+}
+.player-stat-card:hover {
+  border-color: var(--gold-dim);
 }
 .player-stat-card .stat-val {
   font-family: 'IM Fell DW Pica', serif;
   font-weight: 800;
-  font-size: 24px;
+  font-size: 18px;
   color: var(--gold);
   line-height: 1;
 }
 .player-stat-card .stat-lbl {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
+  font-size: 8px;
   color: var(--muted);
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  margin-top: 6px;
-}
-.player-stat-card .rating-inactive {
-  font-size: 14px;
-  color: var(--muted);
-  font-style: italic;
-  font-weight: 400;
+  margin-top: 4px;
 }
 
 /* ── Player Match History Table ── */
@@ -1088,9 +1088,72 @@ body::after {
   from { opacity: 0; }
   to { opacity: 1; }
 }
+@keyframes fadeScale {
+  from { opacity: 0; transform: scale(.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(212, 175, 55, .06); }
+  50% { box-shadow: 0 0 18px rgba(212, 175, 55, .15); }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Stagger: stat cards ── */
+.player-stats-row { animation: fadeUp .5s ease both; }
+.player-stats-row:nth-child(1) { animation-delay: .1s; }
+.player-stats-row:nth-child(2) { animation-delay: .2s; }
+.player-stats-row:nth-child(3) { animation-delay: .3s; }
+.player-stats-row .player-stat-card { animation: fadeScale .4s ease both; }
+.player-stats-row:nth-child(1) .player-stat-card:nth-child(1) { animation-delay: .15s; }
+.player-stats-row:nth-child(1) .player-stat-card:nth-child(2) { animation-delay: .2s; }
+.player-stats-row:nth-child(1) .player-stat-card:nth-child(3) { animation-delay: .25s; }
+.player-stats-row:nth-child(1) .player-stat-card:nth-child(4) { animation-delay: .3s; }
+.player-stats-row:nth-child(2) .player-stat-card:nth-child(1) { animation-delay: .25s; }
+.player-stats-row:nth-child(2) .player-stat-card:nth-child(2) { animation-delay: .3s; }
+.player-stats-row:nth-child(2) .player-stat-card:nth-child(3) { animation-delay: .35s; }
+.player-stats-row:nth-child(2) .player-stat-card:nth-child(4) { animation-delay: .4s; }
+.player-stats-row:nth-child(3) .player-stat-card:nth-child(1) { animation-delay: .35s; }
+.player-stats-row:nth-child(3) .player-stat-card:nth-child(2) { animation-delay: .4s; }
+.player-stats-row:nth-child(3) .player-stat-card:nth-child(3) { animation-delay: .45s; }
+.player-stats-row:nth-child(3) .player-stat-card:nth-child(4) { animation-delay: .5s; }
+
+/* stat cards: no glow animation on hover */
+
+/* ── Scoreboard team slide-in ── */
+.sb-team.t1 { animation: slideInLeft .6s .15s ease both; }
+.sb-team.t2 { animation: slideInRight .6s .15s ease both; }
+.sb-center { animation: fadeScale .5s .25s ease both; }
+
+/* ── Match banner stagger ── */
+.match-banner { transition: transform .2s ease, box-shadow .2s ease; }
+.match-banner:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0, 0, 0, .35); }
+
+/* ── Player match table row hover ── */
+.player-match-table tbody tr { transition: background .15s ease, transform .15s ease; }
+.player-match-table tbody tr:hover { transform: translateX(4px); }
+
+/* ── Back link hover effect ── */
+.back-link { transition: color .2s ease, transform .2s ease; }
+.back-link:hover { transform: translateX(-4px); }
+
+/* ── Winner tag shimmer ── */
+.sb-winner-tag, .mb-winner-tag {
+  background-size: 200% 100%;
+  transition: background-position .4s ease;
+}
 
 /* stagger animation for match rows */
-
 .group-section { animation: fadeUp .45s ease both; }
 .group-section:nth-child(1) { animation-delay: .3s; }
 .group-section:nth-child(2) { animation-delay: .35s; }
@@ -1740,7 +1803,7 @@ body::after {
   .record-block { max-width: 100%; }
   .record-vs { width: 100%; order: -1; }
   .mb-scoreboard { grid-template-columns: 1fr; }
-  .mb-t1 { text-align: left; border-bottom: 1px solid var(--border); }
+  .mb-scoreboard > .mb-team:first-child { text-align: left; border-bottom: 1px solid var(--border); }
   .mb-score-center {
     border-left: none; border-right: none;
     border-bottom: 1px solid var(--border);
@@ -1748,7 +1811,7 @@ body::after {
   }
   .mb-score { font-size: 28px; }
   .match-nav { flex-direction: column; gap: 8px; align-items: flex-start; }
-  .player-stats-summary { grid-template-columns: repeat(3, 1fr); }
+  .player-stats-row { grid-template-columns: repeat(4, 1fr); }
 }
 
 @media (max-width: 600px) {
@@ -1762,5 +1825,5 @@ body::after {
   .group-table { font-size: 12px; }
   .pt-name { font-size: 12px; }
   .pt-num { font-size: 11px; }
-  .player-stats-summary { grid-template-columns: repeat(2, 1fr); }
+  .player-stats-row { grid-template-columns: repeat(2, 1fr); }
 }
