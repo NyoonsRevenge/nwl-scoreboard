@@ -541,9 +541,9 @@ body::after {
   line-height: 1;
   white-space: nowrap;
 }
-.mb-s1 { color: var(--t1-text); }
+.mb-s1.mb-t1, .mb-s2.mb-t1 { color: var(--t1-text); }
+.mb-s1.mb-t2, .mb-s2.mb-t2 { color: var(--t2-text); }
 .mb-sep { color: var(--muted); margin: 0 6px; }
-.mb-s2 { color: var(--t2-text); }
 
 .mb-winner-tag {
   font-family: 'Share Tech Mono', monospace;
@@ -690,9 +690,9 @@ body::after {
   line-height: 1;
   white-space: nowrap;
 }
-.sb-score .s1 { color: var(--t1-text); }
+.sb-score .s1.t1, .sb-score .s2.t1 { color: var(--t1-text); }
 .sb-score .sep { color: var(--muted); margin: 0 8px; }
-.sb-score .s2 { color: var(--t2-text); }
+.sb-score .s1.t2, .sb-score .s2.t2 { color: var(--t2-text); }
 
 .sb-winner-tag {
   font-family: 'Share Tech Mono', monospace;

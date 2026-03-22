@@ -882,9 +882,9 @@ function renderHomePage(matches) {
           </div>
           <div class="mb-score-center">
             <div class="mb-score">
-              <span class="mb-s1">${leftScore}</span>
+              <span class="mb-s1 ${leftColorClass}">${leftScore}</span>
               <span class="mb-sep">:</span>
-              <span class="mb-s2">${rightScore}</span>
+              <span class="mb-s2 ${rightColorClass}">${rightScore}</span>
             </div>
             <div class="mb-winner-tag ${winnerTagClass}">${winnerTag}</div>
           </div>
@@ -958,9 +958,9 @@ function renderMatchPage(data) {
 
       <div class="sb-center">
         <div class="sb-score">
-          <span class="s1">${atk.kills}</span>
+          <span class="s1 ${atk.cls}">${atk.kills}</span>
           <span class="sep">:</span>
-          <span class="s2">${def.kills}</span>
+          <span class="s2 ${def.cls}">${def.kills}</span>
         </div>
         <div class="sb-winner-tag ${isT1Win ? 'w1' : 'w2'}">${isT1Win ? '🟢 MARAUDER WINS' : '🟣 SYNDICATE WINS'}</div>
         <div class="sb-meta">${data.mapName} · ${data.date}</div>
