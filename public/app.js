@@ -99,7 +99,7 @@ const NAME_MAPPING_JSON = {
   "Popping Cleanse": "Samson",
   "Gina Van Gina": "zigs", "Frasian GOAT": "kogame",
   "bullerby": "lolubroke", "II Nalany II": "Nalany",
-  "Nameless II...": "JerryPat", "eldduC": "Cuddle",
+  "Nameless II...": "JerryPat", "Nameless II": "JerryPat", "eldduC": "Cuddle",
   // Additional reverse / Character-Names-DB mappings
   "Barri Level": "Brown-Noise",
   "67crusader": "Benzema",
@@ -143,7 +143,23 @@ const NAME_MAPPING_JSON = {
   "jeszo": "jormamas slave2",
   "shokkii": "shokkii",
   "Zekke": "Zekke",
-  "Benzema": "Benzema"
+  "Benzema": "Benzema",
+  "Crimson Blader": "Apfel",
+  "YourWetestDream": "TheHottestSilk",
+  "Babulmoox": "babulm",
+  "iBreezyJR": "Breezy",
+  "StronkFis": "Stronk",
+  "Actutch": "Actu",
+  "HammerGD": "Hammer",
+  "xxSHORTYxx": "SHORTY",
+  "CatsandFurious": "CatAndFurious",
+  "Lynnxx": "Lynnx",
+  "NolasOwl": "Nolas",
+  "CannabOs": "Cannabis",
+  "GailibaxX": "GailibixX",
+  "Steinbergz": "Sten",
+  "Publiczek": "Publicezk",
+  "Björn Haudrauf": "BjörnHaudrauf"
 };
 
 // Build bidirectional canonical name lookup

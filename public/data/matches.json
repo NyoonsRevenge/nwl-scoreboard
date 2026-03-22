@@ -1,5 +1,18 @@
 [
   {
+    "slug": "nwl-25",
+    "nwlNumber": 25,
+    "mapName": "Ebonscale Reach",
+    "date": "22.03.2026",
+    "duration": null,
+    "winner": "team2",
+    "attacker": "team2",
+    "team1Kills": 178,
+    "team2Kills": 153,
+    "team1Name": "Beaverknights",
+    "team2Name": "Capyknights"
+  },
+  {
     "slug": "nwl-24",
     "nwlNumber": 24,
     "mapName": "Ebonscale Reach",
