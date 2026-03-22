@@ -49,6 +49,15 @@
   --radius: 2px;
 }
 
+/* ── Zero glyph fix: Share Tech Mono has slashed zeros that look like 8 ── */
+@font-face {
+  font-family: 'Zero Fix';
+  src: local('Consolas'), local('Menlo'), local('DejaVu Sans Mono'), local('Courier New');
+  unicode-range: U+0030;
+  font-weight: 100 900;
+  font-style: normal;
+}
+
 /* ── RESET ── */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -181,7 +190,7 @@ body::after {
 
 /* ── Typography ── */
 .font-display { font-family: 'IM Fell DW Pica', 'Cinzel Decorative', serif; }
-.font-mono { font-family: 'Share Tech Mono', monospace; }
+.font-mono { font-family: 'Zero Fix', 'Share Tech Mono', monospace; }
 .font-heading { font-family: 'IM Fell DW Pica', serif; }
 
 /* ── Shared button/link ── */
@@ -189,7 +198,7 @@ body::after {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 11px;
   letter-spacing: 2px;
   color: var(--muted);
@@ -219,7 +228,7 @@ body::after {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 13px;
   letter-spacing: 1.5px;
   color: var(--gold);
@@ -251,7 +260,7 @@ body::after {
   animation: fadeDown .7s ease both;
 }
 .landing-eyebrow {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 11px;
   letter-spacing: 6px;
   color: var(--gold);
@@ -309,7 +318,7 @@ body::after {
   font-weight: 700;
 }
 .loading-sub {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 11px;
   letter-spacing: 2px;
   color: var(--muted);
@@ -321,7 +330,7 @@ body::after {
   align-items: center;
   gap: 8px;
   margin-top: 14px;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 10px;
   letter-spacing: 2px;
   color: var(--t1-text);
@@ -362,7 +371,7 @@ body::after {
 .record-block.t1 { border-left: 3px solid var(--t1); border-right: none; }
 .record-block.t2 { border-right: 3px solid var(--t2); border-left: none; }
 .record-label {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 10px;
   letter-spacing: 2px;
   color: var(--muted);
@@ -376,7 +385,7 @@ body::after {
   line-height: 1;
 }
 .record-pct {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 11px;
   color: var(--muted);
   margin-top: 4px;
@@ -400,7 +409,7 @@ body::after {
   line-height: 1;
 }
 .record-vs-label {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 9px;
   letter-spacing: 2px;
   color: var(--muted);
@@ -481,7 +490,7 @@ body::after {
   white-space: nowrap;
 }
 .mb-date {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 10px;
   color: var(--muted);
   letter-spacing: 1px;
@@ -513,7 +522,7 @@ body::after {
 .mb-t2 .mb-team-name { color: var(--t2-text); }
 
 .mb-faction {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 10px;
   letter-spacing: 2px;
   color: var(--muted);
@@ -546,7 +555,7 @@ body::after {
 .mb-sep { color: var(--muted); margin: 0 6px; }
 
 .mb-winner-tag {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 10px;
   letter-spacing: 2px;
   padding: 3px 12px;
@@ -573,7 +582,7 @@ body::after {
   animation: fadeDown .6s ease both;
 }
 .match-eyebrow {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 11px;
   letter-spacing: 5px;
   color: var(--gold);
@@ -595,7 +604,7 @@ body::after {
   filter: drop-shadow(0 2px 6px rgba(201,168,76,.15));
 }
 .match-date {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 12px;
   letter-spacing: 2px;
   color: var(--muted);
@@ -638,7 +647,7 @@ body::after {
 .sb-team.t2 .sb-team-name { color: var(--t2-text); }
 
 .sb-faction {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 10px;
   letter-spacing: 2px;
   color: var(--muted);
@@ -662,7 +671,7 @@ body::after {
   line-height: 1;
 }
 .sb-stat-lbl {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 9px;
   color: var(--muted);
   letter-spacing: 1px;
@@ -695,7 +704,7 @@ body::after {
 .sb-score .s1.t2, .sb-score .s2.t2 { color: var(--t2-text); }
 
 .sb-winner-tag {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 10px;
   letter-spacing: 2px;
   padding: 4px 12px;
@@ -712,7 +721,7 @@ body::after {
   border: 1px solid var(--t2-border);
 }
 .sb-meta {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 10px;
   color: var(--muted);
   margin-top: 6px;
@@ -771,7 +780,7 @@ body::after {
   top: 0;
 }
 .gt-th {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 10px;
   font-weight: normal;
   letter-spacing: 2px;
@@ -801,7 +810,7 @@ body::after {
   background: var(--surface);
 }
 .team-divider-label {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -850,7 +859,7 @@ body::after {
   border-bottom-color: var(--gold);
 }
 .pt-num {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 14px;
   text-align: right;
   color: var(--text-dim);
@@ -863,7 +872,7 @@ body::after {
 
 /* ── Role Badge (shared) ── */
 .role-badge {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 10px;
   font-weight: bold;
   padding: 3px 6px;
@@ -890,7 +899,7 @@ body::after {
   animation: fadeDown .6s ease both;
 }
 .player-eyebrow {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 11px;
   letter-spacing: 5px;
   color: var(--gold);
@@ -912,7 +921,7 @@ body::after {
   filter: drop-shadow(0 2px 6px rgba(201,168,76,.15));
 }
 .player-aliases {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 11px;
   letter-spacing: 1px;
   color: var(--muted);
@@ -951,7 +960,7 @@ body::after {
   line-height: 1;
 }
 .player-stat-card .stat-lbl {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 8px;
   color: var(--muted);
   letter-spacing: 1.5px;
@@ -975,7 +984,7 @@ body::after {
   font-size: 14px;
 }
 .player-match-table thead th {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 10px;
   font-weight: normal;
   letter-spacing: 2px;
@@ -1029,12 +1038,12 @@ body::after {
   white-space: nowrap;
 }
 .player-match-table .pm-date {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 11px;
   color: var(--muted);
 }
 .player-match-table .pm-result {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 10px;
   letter-spacing: 1px;
   padding: 2px 8px;
@@ -1051,7 +1060,7 @@ body::after {
   border: 1px solid var(--t2-border);
 }
 .pm-num {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 13px;
   text-align: right;
   color: var(--text-dim);
@@ -1063,7 +1072,7 @@ body::after {
   padding: 14px 20px;
   border: 1px solid var(--border);
   background: var(--surface);
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 11px;
   color: var(--muted);
   line-height: 1.9;
@@ -1189,7 +1198,7 @@ body::after {
 }
 .filter-header:hover { background: var(--surface2); }
 .filter-header-text {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 13px;
   letter-spacing: 2px;
   color: var(--gold);
@@ -1209,7 +1218,7 @@ body::after {
 }
 .filter-group:last-child { margin-bottom: 0; }
 .filter-group-title {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 12px;
   letter-spacing: 2px;
   color: var(--text-dim);
@@ -1235,7 +1244,7 @@ body::after {
   cursor: pointer;
 }
 .filter-option-label {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 14px;
   color: var(--text);
   letter-spacing: 1px;
@@ -1259,7 +1268,7 @@ body::after {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 16px 20px;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 13px;
   display: flex;
   flex-direction: column;
@@ -1370,7 +1379,7 @@ body::after {
   padding: 14px 24px;
   color: var(--text);
   text-decoration: none;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 13px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -1415,7 +1424,7 @@ body::after {
   margin-bottom: 8px;
 }
 .search-sub {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 11px;
   letter-spacing: 3px;
   color: var(--muted);
@@ -1485,14 +1494,14 @@ body::after {
   color: var(--text);
 }
 .search-result-aliases {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 10px;
   color: var(--muted);
   letter-spacing: 1px;
   margin-top: 2px;
 }
 .search-result-meta {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 11px;
   color: var(--gold);
   letter-spacing: 1px;
@@ -1501,7 +1510,7 @@ body::after {
 .search-no-results {
   text-align: center;
   padding: 40px 20px;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 12px;
   letter-spacing: 2px;
   color: var(--muted);
@@ -1534,7 +1543,7 @@ body::after {
 }
 
 .excel-team-header {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -1558,7 +1567,7 @@ body::after {
   font-size: 14px;
 }
 .excel-table thead th {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 9px;
   font-weight: normal;
   letter-spacing: 1.5px;
@@ -1596,7 +1605,7 @@ body::after {
 }
 .excel-comparison-side {
   padding: 8px 12px;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 12px;
   display: flex;
   gap: 16px;
@@ -1655,7 +1664,7 @@ body::after {
   border-radius: var(--radius);
 }
 .font-size-label {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 13px;
   letter-spacing: 1.5px;
   color: var(--muted);
@@ -1663,7 +1672,7 @@ body::after {
   white-space: nowrap;
 }
 .font-size-value {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 13px;
   color: var(--gold);
   min-width: 40px;
@@ -1691,7 +1700,7 @@ body::after {
 }
 .ev-section-header.ev-header-def { margin-top: 16px; }
 .ev-section-title {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 12px;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -1736,7 +1745,7 @@ body::after {
   text-align: center;
 }
 .ev-empty-text {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 10px;
   color: var(--muted);
   letter-spacing: 1px;
@@ -1761,7 +1770,7 @@ body::after {
   font-size: 12px;
 }
 .ev-th {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Zero Fix', 'Share Tech Mono', monospace;
   font-size: 8px;
   font-weight: normal;
   letter-spacing: 1px;

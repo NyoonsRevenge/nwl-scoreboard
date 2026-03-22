@@ -792,7 +792,7 @@ async function render() {
   } catch (e) {
     app.innerHTML = `<div class="wrap" style="text-align:center;padding:100px 20px;">
       <div style="font-family:'IM Fell DW Pica',serif;font-size:48px;color:var(--gold);letter-spacing:4px;margin-bottom:16px;">404</div>
-      <div style="font-family:Share Tech Mono,monospace;font-size:12px;color:#4e5e78;letter-spacing:2px;">MATCH NOT FOUND</div>
+      <div style="font-family:Zero Fix,Share Tech Mono,monospace;font-size:12px;color:#4e5e78;letter-spacing:2px;">MATCH NOT FOUND</div>
       <a class="back-link" onclick="navigate('')" style="margin-top:24px;display:inline-flex;">← BACK TO MATCHES</a>
     </div>`;
   }
@@ -1584,7 +1584,7 @@ function renderPlayerPage(playerName) {
     </div>`;
 
   if (appearances.length === 0) {
-    html += `<div style="text-align:center;padding:40px;color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:2px;">
+    html += `<div style="text-align:center;padding:40px;color:var(--muted);font-family:'Zero Fix','Share Tech Mono',monospace;font-size:12px;letter-spacing:2px;">
       NO MATCHES FOUND FOR THIS PLAYER
     </div>`;
   } else {
