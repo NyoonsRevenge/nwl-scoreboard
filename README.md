@@ -9,7 +9,6 @@ A static web application that displays match history, group breakdowns, and play
 - Team totals and winner detection per match
 - Player name mapping (handles frequent in-game name changes)
 - Random New World wallpaper backgrounds
-- Role-based filtering
 - Responsive, medieval-themed UI with custom fonts
 
 ## Tech Stack
@@ -80,4 +79,4 @@ Sheet naming convention: `{MapName} {DD.MM.YYYY} (NWL#{number})`
 
 ## Name Mapping
 
-Players frequently change their in-game names. The file `name_mapping.json` maps scoreboard names to canonical display names. When adding new aliases, the embedded `NAME_MAPPING_JSON` object in `app.js` must be kept in sync.
+Players might have different names in the raidplan and on the ingame scoreboard. The file `name_mapping.json` maps scoreboard names to canonical display names. When adding new aliases, the embedded `NAME_MAPPING_JSON` object in `app.js` must be kept in sync.
