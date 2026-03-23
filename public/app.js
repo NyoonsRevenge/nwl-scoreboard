@@ -51,7 +51,7 @@ const NAME_MAPPING_JSON = {
   "Goalfryed": "goatfryed", "Hobakok": "Hobakok", "DRAGONPORN": "Dragonporn",
   "Spadetra7": "Spadetra", "Pangzor": "Pangz", "Darkarus": "Darkarus",
   "Motcoeur": "Motcoeur", "Blauu": "Blau", "Godias": "Godias",
-  "Liona": "Liona", "Kru": "Kru", "setanko": "setanko",
+  "Liona": "Liona/Skillissu", "Kru": "Kru", "setanko": "setanko",
   "FS Seiler": "Seiler", "Shiyraw": "Shiyraw", "Chammm": "Cham",
   "MIXXD": "MIXXD", "Nolas": "Nolas", "EfeAlaribel": "EfeAlanbel",
   "diSEMBOWELER": "diSEMBOWLER", "Gricius": "Gricius",
@@ -159,7 +159,230 @@ const NAME_MAPPING_JSON = {
   "GailibaxX": "GailibixX",
   "Steinbergz": "Sten",
   "Publiczek": "Publicezk",
-  "Björn Haudrauf": "BjörnHaudrauf"
+  "Björn Haudrauf": "BjörnHaudrauf",
+  // Liona/Skill* variants
+  "Liona/SkillIss": "Liona/Skillissu",
+  "Liona/SkillIssue": "Liona/Skillissu",
+  "Liona/SkillIssu": "Liona/Skillissu",
+  // Lumino/LyZy spacing variant
+  "Lumino / LyZy": "Lumino/LyZy",
+  // BLACK3AST typo
+  "BLACKA3AST": "BLACK3AST",
+  // Cloudninee variants
+  "Cloudninee / Bla": "Cloudnine/Bla",
+  "Cloudnines/Bla": "Cloudnine/Bla",
+  "Cloudninee/Blamy": "Cloudnine/Bla",
+  // Ambrozja variants
+  "Ambrozja/1.618": "Ambrozja/1.61",
+  "Ambrozja / 1.61": "Ambrozja/1.61",
+  "Ambrozja/1.e1": "Ambrozja/1.61",
+
+  // === Systematic duplicate merge ===
+
+  // ShadowTrick* variants (all same player)
+  "ShadowTrickle": "ShadowTrickier",
+  "ShadowTricki": "ShadowTrickier",
+  "ShadowTrickie": "ShadowTrickier",
+  "ShadowTrickl": "ShadowTrickier",
+
+  // Myopic variants (0 vs o)
+  "My0pic": "myopic",
+  "Myopic": "myopic",
+
+  // Dr00gieboy → RudiRagequit (confirmed same player, different account)
+  "Dr00gieboy": "RudiRagequit",
+
+  // diSEMBOWLER truncations/typos
+  "diSEMBOWLE": "diSEMBOWLER",
+  "disEMBOWLER": "diSEMBOWLER",
+
+  // TheHottestSilk truncations
+  "TheHottestSil": "TheHottestSilk",
+  "TheHottestSi": "TheHottestSilk",
+  "YourWettestDream": "TheHottestSilk",
+
+  // Jeaysu/Naosuk variants
+  "Jeaysu/Naosu": "Jeaysu/Naosuk",
+  "Jeaysu/Naosuke": "Jeaysu/Naosuk",
+  "Jeaysu / Naosuk": "Jeaysu/Naosuk",
+
+  // LastHitEnjoyer truncations
+  "LastHitEnjoye": "LastHitEnjoyer",
+  "LastHitEnjoy\u00e9": "LastHitEnjoyer",
+
+  // CatAndFurious truncations
+  "CatAndFuriou": "CatAndFurious",
+  "CatAndfurious": "CatAndFurious",
+
+  // KaldieDarkleaf truncation
+  "KaldieDarklea": "KaldieDarkleaf",
+
+  // MARKEL1to/US variants (truncations, I vs 1 confusion)
+  "MARKEL1to/U": "MARKEL1to/US",
+  "MARKELIto/LI": "MARKEL1to/US",
+  "MARKELIto/US": "MARKEL1to/US",
+  "MARKEL1to/U3": "MARKEL1to/US",
+
+  // Bourinosss/PssTV truncations
+  "Bourinosss/P": "Bourinosss/Pss",
+  "Bourinosss/Ps": "Bourinosss/Pss",
+  "Bourinosss": "Bourinosss/Pss",
+  "Bourinosss / Pss": "Bourinosss/Pss",
+
+  // GernhartReinda truncations
+  "GernhartReind": "GernhartRein",
+  "GernhartReinda": "GernhartRein",
+
+  // Brown-Noise variants
+  "Brown Noise": "Brown-Noise",
+
+  // Motcoeur typo
+  "Motcoer": "Motcoeur",
+
+  // Maalefis typo
+  "Malaefis": "Maalefis",
+
+  // BL4CKSHP typo
+  "BL4CHKSHP": "BL4CKSHP",
+
+  // Holee extra e
+  "Holeee": "Holee",
+
+  // UlricDorrn typos/spacing
+  "UlficDorrn": "UlricDorrn",
+  "Ulric Dorrn": "UlricDorrn",
+
+  // ElleiraDorn typo
+  "EllelraDorn": "ElleiraDorn",
+
+  // Howsmon typo (→ chains to diSEMBOWELER)
+  "Howsmon": "Howsmom",
+
+  // Birnzito typo
+  "Birnzkto": "Birnzito",
+
+  // McMad4It typos
+  "McMad4ft": "McMad4It",
+  "MacMad4It": "McMad4It",
+
+  // Lekaid typo
+  "Lekoid": "Lekaid",
+
+  // Seiler typo
+  "Seier": "Seiler",
+
+  // Krulaxx typo
+  "Krulaxs": "Krulaxx",
+
+  // xMartin96x typo
+  "xMartin96sx": "xMartin96x",
+
+  // Wurstautomat truncations
+  "Wurstautoma": "Wurstautomat",
+  "Wurstatutoma": "Wurstautomat",
+
+  // Stenbergz truncation
+  "Stenberg": "Stenbergz",
+
+  // Brit-ish variant
+  "Brit-ish1": "Brit-ish",
+
+  // Robdebobrob variant
+  "Robdebobrob18": "Robdebobrob",
+
+  // TiestoMatu → TestoMatu
+  "TiestoMatu": "TestoMatu",
+
+  // Darkarus with clan tags
+  "DarkarusIINEE": "Darkarus",
+  "DarkarusIINE": "Darkarus",
+  "Darkarus|INEE": "Darkarus",
+  "Darkarus[INE]": "Darkarus",
+
+  // ellikuritti variants (typos)
+  "ellikriitti": "ellikuritti",
+  "Ellikuritti": "ellikuritti",
+  "Ellikriitti": "ellikuritti",
+  "elfikuritti": "ellikuritti",
+
+  // Jormamasslav* → jormamas slave2 (truncations, no space)
+  "Jormamasslav": "jormamas slave2",
+  "Jormamaslave": "jormamas slave2",
+  "Jormamasla": "jormamas slave2",
+
+  // Lord Ethernity spacing variants
+  "LordEthernity": "Lord Ethernity",
+  "Lordethernity": "Lord Ethernity",
+
+  // Gandalf variant
+  "Gandalf03": "Gandalf",
+
+  // Stryju/Bakelolo variants (truncations)
+  "StryjuIBakel": "Stryju|Bakelolo",
+  "StryjuIBakelofi": "Stryju|Bakelolo",
+  "Stryju Bakelot": "Stryju|Bakelolo",
+
+  // END3RR variant
+  "END3R": "END3RR",
+
+  // MIXXD with tag variants
+  "MIXXD|Aly": "MIXXD",
+  "MIXXD/Alay": "MIXXD",
+
+  // Reborn capitalization
+  "Reborn": "ReBorn",
+
+  // NerfAimbot → NerfPooP (same player, already mapped via Nerf Aimbot)
+  "NerfAimbot": "NerfPooP",
+
+  // Moffman capitalization
+  "Moffman": "moffman",
+
+  // Alexarae typo
+  "Alexarae": "Alexiarae",
+
+  // Tequila variants
+  "TeQuiLa": "Tequila",
+  "xTeQuiLa": "Tequila",
+
+  // Sotuqo variant (→ chains to Boinosss/PssTV)
+  "Sotuqo Stress/P": "Boinosss/PssTV",
+
+  // M7K capitalization
+  "M7K": "M7k",
+
+  // OSISAN (l vs I)
+  "ll OSISAN ll": "II OSISAN II",
+
+  // Nameless II variants
+  "Nameless II.": "JerryPat",
+
+  // LionaSilkilee (Liona alt name)
+  "LionaSilkilee": "Liona/Skillissu",
+
+  // Testomatu capitalization
+  "Testomatu": "TestoMatu",
+
+  // time.sconfuu → Time'sConflux
+  "time.sconfuu": "Time'sConflux",
+
+  // Kogame capitalization
+  "kogame": "Kogame",
+
+  // Shirohigo - standalone, no merge needed
+  // Kathlen vs kathien - unsure, skipped
+  // publiclizek / puublicapp - unsure, skipped
+  // Assa vs Asza - unsure, skipped
+
+  // Mights capitalization (already merges via lowercase, but explicit for clarity)
+  "Mights": "MighTs",
+
+  // WOFL STENBERGZ → Sten (same player with prefix)
+  "WOFL STENBERGZ": "Stenbergz",
+  "WOFLTrig": "WOFLTrig",
+
+  // BjörnHaudrau truncation
+  "BjörnHaudrau": "BjörnHaudrauf"
 };
 
 // Build bidirectional canonical name lookup
