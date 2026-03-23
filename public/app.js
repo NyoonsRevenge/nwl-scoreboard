@@ -558,6 +558,22 @@ async function buildMatchesFromSheets() {
         const csv = await fetchSheetCSV(entry.gid);
         const parsed = parseCSVMatch(csv);
         const slug = `nwl-${entry.nwlNumber}`;
+        const attacker = staticAttackers[slug] || null;
+
+        // The top section in the spreadsheet is always the attacker.
+        // parseCSVMatch() assigns the top section to team1, but if the attacker
+        // is actually team2 (Capyknights), we need to swap the team assignments
+        // BEFORE determining winner and kills.
+        if (attacker === 'team2') {
+          for (const g of parsed.groups) {
+            [g.team1, g.team2] = [g.team2, g.team1];
+          }
+          [parsed.totals.team1, parsed.totals.team2] = [parsed.totals.team2, parsed.totals.team1];
+          // Also swap VICTORY/DEFEAT result (it's from the attacker's perspective)
+          if (parsed.winner === 'team1') parsed.winner = 'team2';
+          else if (parsed.winner === 'team2') parsed.winner = 'team1';
+        }
+
         let winner = staticWinners[slug];
         if (!winner) winner = parsed.winner;
         if (!winner) {
@@ -566,24 +582,26 @@ async function buildMatchesFromSheets() {
           winner = t1k > t2k ? 'team1' : (t2k > t1k ? 'team2' : null);
         }
 
-        // Map attacker/defender kills to team1/team2 using winner + rawResult
-        // VICTORY = attacker won, DEFEAT = defender won
-        // attackerIsTeam1 when: (team1 won AND attacker won) OR (team2 won AND defender won)
+        // Map attacker/defender kills to team1/team2
+        // attackerKills/defenderKills are from fixed positions (top/bottom section)
+        // After the swap above, we know which team is which
         let team1Kills, team2Kills;
         if (parsed.attackerKills || parsed.defenderKills) {
-          const attackerIsTeam1 = (winner === 'team1' && parsed.rawResult === 'VICTORY') ||
-                                  (winner === 'team2' && parsed.rawResult === 'DEFEAT');
-          team1Kills = attackerIsTeam1 ? parsed.attackerKills : parsed.defenderKills;
-          team2Kills = attackerIsTeam1 ? parsed.defenderKills : parsed.attackerKills;
-          // Also update totals kills for match detail page
+          if (attacker === 'team2') {
+            // Top section = Capyknights (team2), bottom = Beaverknights (team1)
+            team1Kills = parsed.defenderKills;
+            team2Kills = parsed.attackerKills;
+          } else {
+            // Top section = Beaverknights (team1), bottom = Capyknights (team2)
+            team1Kills = parsed.attackerKills;
+            team2Kills = parsed.defenderKills;
+          }
           parsed.totals.team1.kills = team1Kills;
           parsed.totals.team2.kills = team2Kills;
         } else {
           team1Kills = parsed.totals.team1.kills;
           team2Kills = parsed.totals.team2.kills;
         }
-
-        const attacker = staticAttackers[slug] || null;
 
         return {
           entry, slug, winner,

@@ -400,8 +400,29 @@ def main():
         print(f"Parsing: NWL#{nwl_num} — {s['mapName']} ({s['date']})")
         rows = fetch_sheet_csv(s['gid'])
         groups, result, duration, totals = parse_match(rows)
-        
+
         date_key = s['date']
+
+        # Attacker team from embedded images (top image = attacker)
+        attacker = attacker_map.get(date_key)
+        if attacker:
+            print(f"  -> Attacker: {attacker}")
+
+        # The top section in the spreadsheet is always the attacker.
+        # parse_match() assigns the top section to team1, but if the attacker
+        # is actually team2 (Capyknights), we need to swap the team assignments
+        # BEFORE determining the winner.
+        if attacker == 'team2':
+            for g in groups:
+                g['team1'], g['team2'] = g['team2'], g['team1']
+            totals['team1'], totals['team2'] = totals['team2'], totals['team1']
+            # Also swap VICTORY/DEFEAT result (it's from the attacker's perspective)
+            if result == 'team1':
+                result = 'team2'
+            elif result == 'team2':
+                result = 'team1'
+            print(f"  -> Swapped team1/team2 (attacker was on top)")
+
         winner = tab_colors.get(date_key)
         if winner:
             print(f"  -> Tab color winner: {winner}")
@@ -412,11 +433,6 @@ def main():
             t1k = totals['team1']['kills']
             t2k = totals['team2']['kills']
             winner = 'team1' if t1k > t2k else ('team2' if t2k > t1k else None)
-
-        # Attacker team from embedded images (top image = attacker)
-        attacker = attacker_map.get(date_key)
-        if attacker:
-            print(f"  -> Attacker: {attacker}")
 
         slug = f'nwl-{nwl_num}'
         match_data = {
