@@ -1628,7 +1628,7 @@ function renderPlayerPage(playerName) {
         <tbody>`;
 
     for (const a of appearances) {
-      const rowClass = a.won ? 'pm-win' : 'pm-loss';
+      const rowClass = a.team === 'team1' ? 'pm-t1' : 'pm-t2';
       const teamLabel = a.team === 'team1' ? 'Beaver' : 'Capy';
       const resultBadge = a.won ? '<span class="pm-result win">WIN</span>' : '<span class="pm-result loss">LOSS</span>';
 

@@ -1006,18 +1006,18 @@ body::after {
 .player-match-table tbody tr:hover {
   background: rgba(201,168,76,.08);
 }
-.player-match-table tbody tr.pm-win {
+.player-match-table tbody tr.pm-t1 {
   background: var(--t1-soft);
   border-left: 3px solid var(--t1);
 }
-.player-match-table tbody tr.pm-loss {
+.player-match-table tbody tr.pm-t2 {
   background: var(--t2-soft);
   border-left: 3px solid var(--t2);
 }
-.player-match-table tbody tr.pm-win:hover {
+.player-match-table tbody tr.pm-t1:hover {
   background: rgba(46,125,50,.18);
 }
-.player-match-table tbody tr.pm-loss:hover {
+.player-match-table tbody tr.pm-t2:hover {
   background: rgba(106,27,154,.18);
 }
 .player-match-table tbody td {
