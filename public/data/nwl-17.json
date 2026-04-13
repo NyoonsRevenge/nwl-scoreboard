@@ -109,7 +109,7 @@
       "team1": [
         {
           "name": "SK21",
-          "role": "AoE",
+          "role": "HL",
           "kills": 0,
           "deaths": 2,
           "assists": 52,
@@ -581,6 +581,21 @@
       ]
     },
     {
+      "label": "G7: Pali/Flex",
+      "team1": [],
+      "team2": [
+        {
+          "name": "Nevnev",
+          "role": "RD",
+          "kills": 7,
+          "deaths": 5,
+          "assists": 48,
+          "healing": 0,
+          "damage": 1091097
+        }
+      ]
+    },
+    {
       "label": "G8: Bonfire",
       "team1": [
         {
@@ -631,13 +646,49 @@
       ],
       "team2": [
         {
-          "name": "Nevnev",
+          "name": "Tarienna",
+          "role": "HL",
+          "kills": 0,
+          "deaths": 3,
+          "assists": 16,
+          "healing": 1714270,
+          "damage": 13674
+        },
+        {
+          "name": "Jarker",
           "role": "RD",
-          "kills": 7,
-          "deaths": 5,
+          "kills": 4,
+          "deaths": 8,
           "assists": 48,
+          "healing": 163,
+          "damage": 860358
+        },
+        {
+          "name": "Nolas",
+          "role": "MD",
+          "kills": 4,
+          "deaths": 4,
+          "assists": 74,
+          "healing": 34555,
+          "damage": 1062295
+        },
+        {
+          "name": "Lumino/LyZy",
+          "role": "MD",
+          "kills": 9,
+          "deaths": 7,
+          "assists": 87,
+          "healing": 3253,
+          "damage": 1931090
+        },
+        {
+          "name": "SAKIC",
+          "role": "MD",
+          "kills": 12,
+          "deaths": 5,
+          "assists": 59,
           "healing": 0,
-          "damage": 1091097
+          "damage": 1097708
         }
       ]
     },
@@ -692,49 +743,40 @@
       ],
       "team2": [
         {
-          "name": "Tarienna",
+          "name": "buffchamp",
           "role": "HL",
           "kills": 0,
-          "deaths": 3,
-          "assists": 16,
-          "healing": 1714270,
-          "damage": 13674
+          "deaths": 2,
+          "assists": 20,
+          "healing": 1977706,
+          "damage": 40992
         },
         {
-          "name": "Jarker",
+          "name": "setanko",
           "role": "RD",
-          "kills": 4,
-          "deaths": 8,
-          "assists": 48,
-          "healing": 163,
-          "damage": 860358
+          "kills": 9,
+          "deaths": 5,
+          "assists": 61,
+          "healing": 0,
+          "damage": 1675494
         },
         {
-          "name": "Nolas",
+          "name": "Fallenko",
           "role": "MD",
-          "kills": 4,
-          "deaths": 4,
-          "assists": 74,
-          "healing": 34555,
-          "damage": 1062295
+          "kills": 3,
+          "deaths": 5,
+          "assists": 70,
+          "healing": 1007,
+          "damage": 1214405
         },
         {
-          "name": "Lumino/LyZy",
+          "name": "Shiyrow",
           "role": "MD",
           "kills": 9,
-          "deaths": 7,
-          "assists": 87,
-          "healing": 3253,
-          "damage": 1931090
-        },
-        {
-          "name": "SAKIC",
-          "role": "MD",
-          "kills": 12,
-          "deaths": 5,
-          "assists": 59,
-          "healing": 0,
-          "damage": 1097708
+          "deaths": 3,
+          "assists": 57,
+          "healing": 21227,
+          "damage": 1545067
         }
       ]
     },
@@ -787,48 +829,6 @@
           "damage": 893098
         }
       ],
-      "team2": [
-        {
-          "name": "buffchamp",
-          "role": "HL",
-          "kills": 0,
-          "deaths": 2,
-          "assists": 20,
-          "healing": 1977706,
-          "damage": 40992
-        },
-        {
-          "name": "setanko",
-          "role": "RD",
-          "kills": 9,
-          "deaths": 5,
-          "assists": 61,
-          "healing": 0,
-          "damage": 1675494
-        },
-        {
-          "name": "Fallenko",
-          "role": "MD",
-          "kills": 3,
-          "deaths": 5,
-          "assists": 70,
-          "healing": 1007,
-          "damage": 1214405
-        },
-        {
-          "name": "Shiyrow",
-          "role": "MD",
-          "kills": 9,
-          "deaths": 3,
-          "assists": 57,
-          "healing": 21227,
-          "damage": 1545067
-        }
-      ]
-    },
-    {
-      "label": "G10: Outer narnia",
-      "team1": [],
       "team2": [
         {
           "name": "Brown-Noise",

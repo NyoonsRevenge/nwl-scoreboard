@@ -53,7 +53,7 @@ const NAME_MAPPING_JSON = {
   "Motcoeur": "Motcoeur", "Blauu": "Blau", "Godias": "Godias",
   "Liona": "Liona/Skillissu", "Kru": "Kru", "setanko": "setanko",
   "FS Seiler": "Seiler", "Shiyraw": "Shiyraw", "Chammm": "Cham",
-  "MIXXD": "MIXXD", "Nolas": "Nolas", "EfeAlaribel": "EfeAlanbel",
+  "MIXXD": "MIXXD/Aly", "MIXXD-Aly": "MIXXD/Aly", "Nolas": "Nolas", "EfeAlaribel": "EfeAlanbel",
   "diSEMBOWELER": "diSEMBOWLER", "Gricius": "Gricius",
   "Krulaxx": "Krulaxx", "BUKAKU": "Bukaku", "eskiii": "Eski",
   "Revaa": "Revaa", "Wilu666": "Wilu666", "c0rpi": "c0rpi",
@@ -63,7 +63,7 @@ const NAME_MAPPING_JSON = {
   "JerryPat": "JerryPat", "Elleira Dorn": "ElleiraDorn",
   "Die3neMika": "DieEneMika", "eke perkele": "eke",
   "pappychat38": "Pappychat", "Hucky": "Hucky", "n0madic btw": "n0madic",
-  "Lutsch": "Lutsch", "I Re Born I": "ReBorn", "Maseyee": "Maseye",
+  "Lutsch": "Lutsch", "Void Gengar": "Lutsch", "I Re Born I": "ReBorn", "Maseyee": "Maseye",
   "Gernhart Reinda": "BjörnHaudrauf", "Nerf Aimbot": "NerfPooP",
   "Lekaid": "Lekaid", "TeeZa": "TeeZa", "Holeeee": "Holee",
   "Pyre": "Pyre", "Zarkoi": "Zar_ki", "Birnzito": "Birnzito",
@@ -76,7 +76,7 @@ const NAME_MAPPING_JSON = {
   "Ulric Dorm": "UlricDorrn", "ChuckDorrris": "ChuckDorris",
   "Sonnihhh": "Sonnihh", "FroggyBalboa": "FroggyBalboa",
   "rdmMcffman": "moffman", "TheClover": "PinkClover",
-  "Where Arda": "Costa", "Billy Talent ll": "BillyTalent",
+  "Where Arda": "Costa", "DrCosta": "Costa", "Billy Talent ll": "BillyTalent",
   "xTaRl": "Tarienna", "Lord Ethernity": "Lord Ethernity",
   "TheHottestSilk": "TheHottestSilk", "Irvine": "Irvine",
   "H3SHKVZ3D": "H4SHK4Z3D", "USE DETO NOW": "MARKEL1to/US",
@@ -86,7 +86,7 @@ const NAME_MAPPING_JSON = {
   "FS Kreamy": "Kream", "xquiv4heals": "xquiv",
   "Askeladddd": "RudiRagequit", "Queen Darckcha": "Darckcha",
   "Natalie V2": "LilNatalie", "Ambrozja": "Ambrozja/1.61",
-  "Blamy": "Cloudnine/Bla", "BjörnHaudrauf": "Gernhart Reinda",
+  "Blamy": "Cloudninee/Blamy", "BjörnHaudrauf": "Gernhart Reinda",
   "Skill Issue": "Liona/Skillissu", "Psssst": "Boinosss/PssTV",
   "jormamas slave2": "jeszo", "Samson": "POPPING CLEANSE",
   "Cloudninee/B": "Blamy", "Maka": "M7k", "Tarienna": "Melglinn",
@@ -125,7 +125,7 @@ const NAME_MAPPING_JSON = {
   "Zarki": "Zar_ki",
   "Shiroyasha": "Shiroyasha34",
   "Markel1to": "MARKEL1to/US",
-  "Cloudninee": "Cloudnine/Bla",
+  "Cloudninee": "Cloudninee/Blamy",
   "Rivzone": "Rivzone",
   "M7k": "Maka",
   "Stenbergz": "Sten",
@@ -134,8 +134,8 @@ const NAME_MAPPING_JSON = {
   "Ambrozja/1.6": "Ambrozja/1.61",
   "kathien": "kathien",
   "Bourinosss/Pss": "Boinosss/PssTV",
-  "Cloudninee/Bl": "Cloudnine/Bla",
-  "Cloudninee/Bla": "Cloudnine/Bla",
+  "Cloudninee/Bl": "Cloudninee/Blamy",
+  "Cloudninee/Bla": "Cloudninee/Blamy",
   "Pappychat": "Pappychat",
   "Hajekken": "Hajekken",
   "TestoMatu": "TestoMatu",
@@ -169,9 +169,9 @@ const NAME_MAPPING_JSON = {
   // BLACK3AST typo
   "BLACKA3AST": "BLACK3AST",
   // Cloudninee variants
-  "Cloudninee / Bla": "Cloudnine/Bla",
-  "Cloudnines/Bla": "Cloudnine/Bla",
-  "Cloudninee/Blamy": "Cloudnine/Bla",
+  "Cloudninee / Bla": "Cloudninee/Blamy",
+  "Cloudnines/Bla": "Cloudninee/Blamy",
+  "Cloudnine/Bla": "Cloudninee/Blamy",
   // Ambrozja variants
   "Ambrozja/1.618": "Ambrozja/1.61",
   "Ambrozja / 1.61": "Ambrozja/1.61",
@@ -326,8 +326,8 @@ const NAME_MAPPING_JSON = {
   "END3R": "END3RR",
 
   // MIXXD with tag variants
-  "MIXXD|Aly": "MIXXD",
-  "MIXXD/Alay": "MIXXD",
+  "MIXXD|Aly": "MIXXD/Aly",
+  "MIXXD/Alay": "MIXXD/Aly",
 
   // Reborn capitalization
   "Reborn": "ReBorn",
@@ -365,6 +365,7 @@ const NAME_MAPPING_JSON = {
 
   // time.sconfuu → Time'sConflux
   "time.sconfuu": "Time'sConflux",
+  "Time'sConflu": "Time'sConflux",
 
   // Kogame capitalization
   "kogame": "Kogame",
@@ -382,7 +383,74 @@ const NAME_MAPPING_JSON = {
   "WOFLTrig": "WOFLTrig",
 
   // BjörnHaudrau truncation
-  "BjörnHaudrau": "BjörnHaudrauf"
+  "BjörnHaudrau": "BjörnHaudrauf",
+
+  // Auto-synced from name_mapping.json
+  "Abary": "MEATLOVER PIZZA",
+  "AllMadd": "PhckinMilke",
+  "Aly": "MIXXD",
+  "Angel": "Lyynx",
+  "Apfel": "Crimson Blader",
+  "Bullerby": "lolubroke",
+  "Caruso0": "Felidaee",
+  "Character Name #1": "Roster/Raid-planner name",
+  "Clapus Maximus": "capdebolet",
+  "Eleborn": "ReBorn",
+  "Gunzpewpew": "Atheria",
+  "Hammer": "Chris P. Beacon",
+  "Hoosierz": "Voyd",
+  "Hop on me": "Nyxie",
+  "Jormas Slave2": "jeszo",
+  "JukerVG": "REBE BEXHA",
+  "Jxsn": "Jxsn",
+  "Kevin": "Smiamxiah",
+  "Kogame": "Frasian GOAT",
+  "Koku": "Kohku",
+  "Kream": "Trond",
+  "Lyynx": "Angel",
+  "MARKEL1to": "Skill Issue",
+  "MARKEL1to/L": "MARKEL1to/US",
+  "Nyxie": "Hop on me",
+  "Ordeus": "Yamii",
+  "PhckinMilke": "AllMadd",
+  "ReBorn": "Eleborn",
+  "Roster/Raid-planner name": "Character Name #1",
+  "Shiroyasha34": "darksoul34",
+  "Smiamxiah": "Kevin",
+  "Tira": "Tiaela Eiriell",
+  "Voyd": "Hoosierz",
+  "Wimpin": "Hyperi0n",
+  "Yamii": "Ordeus",
+  "capdebolet": "Clapus Maximus",
+  "xMartin96x": "Paare",
+  "zigs": "Gina Van Gina",
+
+  // Auto-synced from name_mapping.json
+  "2nd Kru": "Kru",
+  "Babulmxxx": "Belle",
+  "Behind Lines": "Zeldris",
+  "Grumpy Karen": "kathien",
+  "IThinkHealers": "JukerVG",
+  "MighTs": "Mights",
+  "NevSquared": "Nevnev",
+  "Palimpalim": "2xPalim",
+  "Tank De Bolet": "capdebolet",
+  "WhyDidIDoThis": "Holee",
+  "ZKDD": "xBEAT",
+  "noktana": "setanko",
+  "sdfgasgf": "SDthe(Witch",
+  "sintrael": "Shiroyasha34",
+
+  // Auto-synced from name_mapping.json
+  "2xPalim": "Palimpalim",
+  "Belle": "Babulmxxx",
+  "Holee": "WhyDidIDoThis",
+  "Jegerys": "Jeg",
+  "Jt23": "Jt",
+  "SDthe(Witch": "sdfgasgf",
+  "Zeldris": "Behind Lines",
+  "hkN": "hkN.oO",
+  "xBEAT": "ZKDD",
 };
 
 // Build bidirectional canonical name lookup
@@ -442,6 +510,15 @@ function getDisplayName(name) {
   return name;
 }
 
+function findDisplayName(canonical, names) {
+  // Prefer a NAME_MAPPING_JSON value that matches the canonical name (proper casing)
+  for (const val of Object.values(NAME_MAPPING_JSON)) {
+    if (val.toLowerCase().trim() === canonical) return val;
+  }
+  // Fallback: longest name from match data
+  return [...names].sort((a, b) => b.length - a.length)[0];
+}
+
 function getAllAliases(canonicalName) {
   const aliases = new Set();
   const canon = canonicalName.toLowerCase().trim();
@@ -462,6 +539,18 @@ buildNameLookup();
 const SPREADSHEET_ID = '1vYy9Zsn7hVN3Z3sEW2S0GsXEMh1VVM_P7vn6C5LMFgY';
 const PUBLISHED_ID = '2PACX-1vReMFS4C8UfVHqgl0rI14LVdU4adkyw8_ClQpAJgkXluqncRdqBHXer156nDt_A3deeB7qO0vuDaHE8';
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+// Team logo SHA-256 hashes for auto-detecting attacker from XLSX
+const BEAVER_SHA256 = new Set([
+  '2f48a7108179ab258234c478514a2f7372d7f3da24aa6b77342f04e1536e2efa',
+  'fa6edfe0470cbe397980535a212a31959580bd248307384f8a00d44e24b2fd78',
+  '0e9bfade9d3bd83d52c95e37832f7ba8c81b49f502c8672f63d751e35368901e',
+]);
+const CAPY_SHA256 = new Set([
+  'a7d61003e93bd265102f3aa8dab77648859f0db35fe3959dab3f14ac29feb4bd',
+  'e8543391076bd7afb22c1275312c7bff05ca14b18a6a39715cdd9cc0d99382b8',
+  '5d91bd752aca7a3a5a636906547c54b9e2c4f146b7e90372c7608a3464c092bc',
+]);
 
 // ── CSV Parser ──────────────────────────────
 
@@ -515,8 +604,8 @@ function splitCSVLine(line) {
 // ── Sheet Discovery ─────────────────────────
 
 async function fetchSheetList() {
-  const url = `https://docs.google.com/spreadsheets/d/e/${PUBLISHED_ID}/pubhtml`;
-  const res = await fetch(url);
+  const url = `https://docs.google.com/spreadsheets/d/e/${PUBLISHED_ID}/pubhtml?_cb=${Date.now()}`;
+  const res = await fetch(url, { cache: 'no-store' });
   if (!res.ok) throw new Error('Cannot fetch sheet list');
   const html = await res.text();
 
@@ -536,15 +625,128 @@ async function fetchSheetList() {
 // ── Sheet Data Fetching ─────────────────────
 
 async function fetchSheetCSV(gid) {
-  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${gid}`;
-  const res = await fetch(url);
+  const cb = `_cb=${Date.now()}`;
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${gid}&${cb}`;
+  const res = await fetch(url, { cache: 'no-store' });
   if (!res.ok) {
-    const url2 = `https://docs.google.com/spreadsheets/d/e/${PUBLISHED_ID}/pub?output=csv&gid=${gid}`;
-    const res2 = await fetch(url2);
+    const url2 = `https://docs.google.com/spreadsheets/d/e/${PUBLISHED_ID}/pub?output=csv&gid=${gid}&${cb}`;
+    const res2 = await fetch(url2, { cache: 'no-store' });
     if (!res2.ok) throw new Error(`Failed to fetch sheet gid=${gid}`);
     return await res2.text();
   }
   return await res.text();
+}
+
+// ── XLSX Metadata: Auto-Detect Attackers & Winners ──
+
+async function sha256hex(buffer) {
+  const hash = await crypto.subtle.digest('SHA-256', buffer);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function parseXLSXMetadata() {
+  const attackers = {}; // dateKey -> 'team1' | 'team2'
+  const winners = {};   // dateKey -> 'team1' | 'team2'
+  if (typeof JSZip === 'undefined') return { attackers, winners };
+  try {
+    // Try Vercel API proxy first (avoids CORS), then direct URLs as fallback
+    const cb = `_cb=${Date.now()}`;
+    let resp = await fetch(`/api/xlsx?${cb}`, { cache: 'no-store' }).catch(() => null);
+    if (!resp || !resp.ok) {
+      resp = await fetch(`https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=xlsx&${cb}`, { cache: 'no-store' }).catch(() => null);
+    }
+    if (!resp || !resp.ok) {
+      resp = await fetch(`https://docs.google.com/spreadsheets/d/e/${PUBLISHED_ID}/pub?output=xlsx&${cb}`, { cache: 'no-store' }).catch(() => null);
+    }
+    if (!resp || !resp.ok) return { attackers, winners };
+    const data = await resp.arrayBuffer();
+    const zip = await JSZip.loadAsync(data);
+
+    // 1. Identify team logos by SHA-256
+    const imgTeam = {};
+    const mediaFiles = Object.keys(zip.files).filter(p => p.startsWith('xl/media/'));
+    await Promise.all(mediaFiles.map(async (path) => {
+      const buf = await zip.files[path].async('arraybuffer');
+      const hash = await sha256hex(buf);
+      const fname = path.split('/').pop();
+      if (BEAVER_SHA256.has(hash)) imgTeam[fname] = 'team1';
+      else if (CAPY_SHA256.has(hash)) imgTeam[fname] = 'team2';
+    }));
+
+    // 2. Parse workbook structure
+    const wbXml = await zip.file('xl/workbook.xml').async('string');
+    const relsXml = await zip.file('xl/_rels/workbook.xml.rels').async('string');
+    const wbRels = {};
+    for (const m of relsXml.matchAll(/Id="([^"]+)"[^>]*Target="([^"]+)"/g)) {
+      wbRels[m[1]] = m[2];
+    }
+
+    // 3. For each NWL sheet: detect tab color (winner) + top image (attacker)
+    for (const m of wbXml.matchAll(/<sheet [^>]*name="([^"]+)"[^>]*r:id="([^"]+)"/g)) {
+      const sheetName = m[1].replace(/&amp;/g, '&');
+      const dateMatch = sheetName.match(/(\d{2}\.\d{2}\.\d{4})/);
+      if (!dateMatch) continue;
+      const dateKey = dateMatch[1];
+
+      const target = wbRels[m[2]];
+      if (!target) continue;
+      const sheetPath = 'xl/' + target;
+      const sheetFile = zip.file(sheetPath);
+      if (!sheetFile) continue;
+      const sheetXml = await sheetFile.async('string');
+
+      // Tab color → winner
+      const tcm = sheetXml.match(/<tabColor rgb="([a-fA-F0-9]{8})"/i);
+      if (tcm) {
+        const c = tcm[1];
+        const r = parseInt(c.slice(2, 4), 16), g = parseInt(c.slice(4, 6), 16), b = parseInt(c.slice(6, 8), 16);
+        if (g > r && g > b) winners[dateKey] = 'team1';       // Green = Beaverknights
+        else if ((r > g || b > g) && b > 50) winners[dateKey] = 'team2'; // Purple = Capyknights
+      }
+
+      // Drawing → images → top image = attacker
+      const dm = sheetXml.match(/<drawing r:id="([^"]+)"/);
+      if (!dm) continue;
+      const sheetRelsPath = sheetPath.replace('worksheets/', 'worksheets/_rels/') + '.rels';
+      const sheetRelsFile = zip.file(sheetRelsPath);
+      if (!sheetRelsFile) continue;
+      const sheetRels = await sheetRelsFile.async('string');
+
+      const dm2 = sheetRels.match(new RegExp(`Id="${dm[1]}"[^>]*Target="([^"]+)"`));
+      if (!dm2) continue;
+      const drawingPath = 'xl/' + dm2[1].replace(/\.\.\//g, '');
+
+      const drawingFile = zip.file(drawingPath);
+      if (!drawingFile) continue;
+      const drawingXml = await drawingFile.async('string');
+
+      const drawingRelsPath = drawingPath.replace('drawings/', 'drawings/_rels/') + '.rels';
+      const ridToImg = {};
+      const drelsFile = zip.file(drawingRelsPath);
+      if (drelsFile) {
+        const drels = await drelsFile.async('string');
+        for (const rm of drels.matchAll(/Id="([^"]+)"[^>]*Target="([^"]+)"/g)) {
+          ridToImg[rm[1]] = rm[2].split('/').pop();
+        }
+      }
+
+      const images = [];
+      for (const a of drawingXml.matchAll(/<xdr:oneCellAnchor>[\s\S]*?<xdr:row>(\d+)<\/xdr:row>[\s\S]*?r:embed="([^"]+)"[\s\S]*?<\/xdr:oneCellAnchor>/g)) {
+        const row = parseInt(a[1]);
+        const imgFile = ridToImg[a[2]] || '';
+        const team = imgTeam[imgFile];
+        if (team) images.push([row, team]);
+      }
+
+      if (images.length) {
+        images.sort((a, b) => a[0] - b[0]);
+        attackers[dateKey] = images[0][1]; // Top image = attacker
+      }
+    }
+  } catch (e) {
+    console.warn('XLSX metadata detection failed (falling back to matches.json):', e);
+  }
+  return { attackers, winners };
 }
 
 // ── Match Metadata Parsing ──────────────────
@@ -664,8 +866,8 @@ function parseCSVMatch(csvText) {
         const p2 = parsePlayer(rows[r], 10);
         if (p2) rp.push(p2);
       }
-      if (lr.left && lp.length) left.push({ label: lr.left, players: lp });
-      if (lr.right && rp.length) right.push({ label: lr.right, players: rp });
+      if (lr.left) left.push({ label: lr.left, players: lp });
+      if (lr.right) right.push({ label: lr.right, players: rp });
     }
     return [left, right];
   }
@@ -673,14 +875,23 @@ function parseCSVMatch(csvText) {
   const [s1l, s1r] = extractGroups(s1);
   const [s2l, s2r] = extractGroups(s2);
 
-  // ── Merge into groups ──
+  // ── Merge into groups (by group number, not index) ──
+  function getGroupNum(g) {
+    const m = g.label.match(/\d+/);
+    return m ? parseInt(m[0]) : 0;
+  }
   function merge(t1List, t2List, offset) {
+    const t1ByNum = {};
+    for (const g of t1List) t1ByNum[getGroupNum(g)] = g;
+    const t2ByNum = {};
+    for (const g of t2List) t2ByNum[getGroupNum(g)] = g;
+    const allNums = [...new Set([...Object.keys(t1ByNum), ...Object.keys(t2ByNum)])]
+      .map(Number).sort((a, b) => a - b);
     const groups = [];
-    const n = Math.max(t1List.length, t2List.length);
-    for (let i = 0; i < n; i++) {
-      const t1 = t1List[i] || null;
-      const t2 = t2List[i] || null;
-      const label = (t1 || t2 || {}).label || `G${i + 1 + offset}`;
+    for (const num of allNums) {
+      const t1 = t1ByNum[num] || null;
+      const t2 = t2ByNum[num] || null;
+      const label = (t1 || t2 || {}).label || `G${num}`;
       groups.push({
         label,
         team1: t1 ? t1.players : [],
@@ -726,21 +937,20 @@ async function buildMatchesFromSheets() {
   const cached = getCached('all_matches');
   if (cached) return cached;
 
-  const sheets = await fetchSheetList();
+  // Fetch sheet list + XLSX metadata + static JSON fallback in parallel
+  const [sheets, xlsxMeta, staticData] = await Promise.all([
+    fetchSheetList(),
+    parseXLSXMetadata().catch(() => ({ attackers: {}, winners: {} })),
+    fetch(`data/matches.json?_cb=${Date.now()}`, { cache: 'no-store' }).then(r => r.ok ? r.json() : []).catch(() => []),
+  ]);
   if (!sheets.length) throw new Error('No match sheets found');
 
   let staticWinners = {};
   let staticAttackers = {};
-  try {
-    const res = await fetch('data/matches.json');
-    if (res.ok) {
-      const ms = await res.json();
-      ms.forEach(m => {
-        staticWinners[m.slug] = m.winner;
-        if (m.attacker) staticAttackers[m.slug] = m.attacker;
-      });
-    }
-  } catch (e) { /* ignore */ }
+  staticData.forEach(m => {
+    staticWinners[m.slug] = m.winner;
+    if (m.attacker) staticAttackers[m.slug] = m.attacker;
+  });
 
   const entries = sheets.map(s => {
     const meta = parseSheetName(s.name);
@@ -781,7 +991,8 @@ async function buildMatchesFromSheets() {
         const csv = await fetchSheetCSV(entry.gid);
         const parsed = parseCSVMatch(csv);
         const slug = `nwl-${entry.nwlNumber}`;
-        const attacker = staticAttackers[slug] || null;
+        // XLSX detection is primary, matches.json is fallback
+        const attacker = xlsxMeta.attackers[entry.date] || staticAttackers[slug] || null;
 
         // The top section in the spreadsheet is always the attacker.
         // parseCSVMatch() assigns the top section to team1, but if the attacker
@@ -797,7 +1008,8 @@ async function buildMatchesFromSheets() {
           else if (parsed.winner === 'team2') parsed.winner = 'team1';
         }
 
-        let winner = staticWinners[slug];
+        // XLSX tab color is primary for winner, matches.json is fallback
+        let winner = xlsxMeta.winners[entry.date] || staticWinners[slug];
         if (!winner) winner = parsed.winner;
         if (!winner) {
           const t1k = parsed.totals.team1.kills;
@@ -912,12 +1124,21 @@ function getRoute() {
   if (hash === '/search') {
     return { page: 'search' };
   }
+  if (hash === '/changelog') {
+    return { page: 'changelog' };
+  }
   return { page: 'home' };
 }
 
 function navigate(hash) {
   window.location.hash = hash;
 }
+
+// Encode a player name for safe use in onclick='navigate(...)' attributes
+function encodePlayerForLink(name) {
+  return encodeURIComponent(name).replace(/'/g, '%27');
+}
+
 
 window.addEventListener('hashchange', () => render());
 
@@ -940,6 +1161,14 @@ function getHamburgerHTML() {
       <a onclick="toggleNav(); navigate('#/search');">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
         Player Search
+      </a>
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSeWlF7ZuHroaLtfhb2DNaavbiPo8X1GRBonDQg09-Uan1G7SA/viewform" target="_blank" rel="noopener noreferrer" onclick="toggleNav();">
+        <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        Support-Ticket
+      </a>
+      <a onclick="toggleNav(); navigate('#/changelog');">
+        <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01m-.01 4h.01"/></svg>
+        Changelog
       </a>
     </nav>`;
 }
@@ -993,7 +1222,7 @@ async function render() {
       try {
         sheetsData = await Promise.race([
           buildMatchesFromSheets(),
-          new Promise((_, reject) => setTimeout(() => reject(new Error('Sheets fetch timeout')), 15000))
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Sheets fetch timeout')), 30000))
         ]);
       } catch (e) {
         console.warn('Google Sheets unavailable, falling back to static JSON:', e);
@@ -1008,7 +1237,7 @@ async function render() {
       if (sheetsData && sheetsData.matchDetails[route.slug]) {
         data = sheetsData.matchDetails[route.slug];
       } else {
-        const res = await fetch(`data/${route.slug}.json`);
+        const res = await fetch(`data/${route.slug}.json?_cb=${Date.now()}`, { cache: 'no-store' });
         if (!res.ok) throw new Error('Match not found');
         data = await res.json();
       }
@@ -1017,14 +1246,17 @@ async function render() {
       renderMatchPage(data);
     } else if (route.page === 'search') {
       renderSearchPage();
+    } else if (route.page === 'changelog') {
+      renderChangelogPage();
     } else if (route.page === 'player') {
+      _playerRoleFilter = null;
       renderPlayerPage(route.playerName);
     } else {
       let matches;
       if (sheetsData) {
         matches = sheetsData.matchList;
       } else {
-        const res = await fetch('data/matches.json');
+        const res = await fetch(`data/matches.json?_cb=${Date.now()}`, { cache: 'no-store' });
         if (!res.ok) throw new Error('Failed to load matches');
         matches = await res.json();
       }
@@ -1117,7 +1349,7 @@ function renderHomePage(matches) {
           <span class="mb-date">${m.date}${m.duration ? ' · ' + m.duration : ''}</span>
         </div>
         <div class="mb-scoreboard">
-          <div class="mb-team ${leftColorClass}" style="text-align:right">
+          <div class="mb-team mb-team-atk ${leftColorClass}">
             <span class="mb-team-name">${leftName}</span>
             <span class="mb-faction">${leftFaction} · Attacker</span>
           </div>
@@ -1129,7 +1361,7 @@ function renderHomePage(matches) {
             </div>
             <div class="mb-winner-tag ${winnerTagClass}">${winnerTag}</div>
           </div>
-          <div class="mb-team ${rightColorClass}" style="text-align:left">
+          <div class="mb-team mb-team-def ${rightColorClass}">
             <span class="mb-team-name">${rightName}</span>
             <span class="mb-faction">${rightFaction} · Defender</span>
           </div>
@@ -1309,7 +1541,7 @@ function makePlayerRow(p, team) {
   if (!p) return '';
   const cls = team === 't1' ? 'ptr-t1' : 'ptr-t2';
   const canonical = getCanonicalName(p.name);
-  const playerLink = `<a onclick="navigate('#/player/${encodeURIComponent(canonical)}')">${p.name}</a>`;
+  const playerLink = `<a onclick="navigate('#/player/${encodePlayerForLink(canonical)}')">${p.name}</a>`;
   return `<tr class="${cls}">
     <td class="pt-role"><span class="role-badge r-${p.role}">${p.role}</span></td>
     <td class="pt-name">${playerLink}</td>
@@ -1325,7 +1557,7 @@ function makeExcelPlayerRow(p, team) {
   if (!p) return '';
   const cls = team === 't1' ? 'ptr-t1' : 'ptr-t2';
   const canonical = getCanonicalName(p.name);
-  const playerLink = `<a onclick="navigate('#/player/${encodeURIComponent(canonical)}')">${p.name}</a>`;
+  const playerLink = `<a onclick="navigate('#/player/${encodePlayerForLink(canonical)}')">${p.name}</a>`;
   return `<tr class="${cls}" style="border-left:none;">
     <td class="pt-role"><span class="role-badge r-${p.role}">${p.role}</span></td>
     <td class="pt-name">${playerLink}</td>
@@ -1507,7 +1739,7 @@ function renderExcelViewGroup(g, team, placeholderLabel) {
       <tbody>
         ${teamPlayers.map(p => {
             const canonical = getCanonicalName(p.name);
-            const playerLink = `<a onclick="navigate('#/player/${encodeURIComponent(canonical)}')">${p.name}</a>`;
+            const playerLink = `<a onclick="navigate('#/player/${encodePlayerForLink(canonical)}')">${p.name}</a>`;
             return `<tr class="${rowClass}" style="border-left:none;">
               <td class="pt-role"><span class="role-badge r-${p.role}">${p.role}</span></td>
               <td class="pt-name">${playerLink}</td>
@@ -1537,11 +1769,24 @@ function renderGroups(data) {
     }
     const maxPairs = 5;
 
+    const isMobile = window.innerWidth <= 900;
+
     function renderPairedRows(team) {
+      if (isMobile) {
+        // Mobile: sequential G1, G2, ..., G10
+        let rows = '';
+        for (let i = 1; i <= 10; i++) {
+          const g = groupByNum[i] || null;
+          const label = g ? g.label : `G${i}`;
+          rows += `<div class="ev-pair-cell">${renderExcelViewGroup(g, team, label)}</div>`;
+        }
+        return rows;
+      }
+      // Desktop: paired G1↔G6, G2↔G7, etc. (original layout)
       let rows = '';
       for (let i = 1; i <= maxPairs; i++) {
-        const gLeft = groupByNum[i] || null;         // G1-G5
-        const gRight = groupByNum[i + 5] || null;    // G6-G10
+        const gLeft = groupByNum[i] || null;
+        const gRight = groupByNum[i + 5] || null;
         const leftLabel = gLeft ? gLeft.label : `G${i}`;
         const rightLabel = gRight ? gRight.label : `G${i + 5}`;
         rows += `<div class="ev-pair-row">
@@ -1656,7 +1901,7 @@ function getAllPlayers() {
   return Object.values(playerMap)
     .map(p => ({
       canonical: p.canonical,
-      displayName: [...p.names].sort((a, b) => b.length - a.length)[0],
+      displayName: findDisplayName(p.canonical, p.names),
       aliases: [...p.names],
       appearances: p.appearances
     }))
@@ -1704,7 +1949,7 @@ function renderSearchPage() {
 
   function playerResultHTML(p) {
     const aliasText = p.aliases.filter(a => a !== p.displayName).join(', ');
-    return `<div class="search-result-item" onclick="navigate('#/player/${encodeURIComponent(p.canonical)}')">
+    return `<div class="search-result-item" onclick="navigate('#/player/${encodePlayerForLink(p.canonical)}')">
       <div>
         <div class="search-result-name">${p.displayName}</div>
         ${aliasText ? `<div class="search-result-aliases">${aliasText}</div>` : ''}
@@ -1720,12 +1965,83 @@ function renderSearchPage() {
 }
 
 // ═══════════════════════════════════════════
+//  CHANGELOG PAGE
+// ═══════════════════════════════════════════
+
+function renderChangelogPage() {
+  const entries = [
+    {
+      date: '13.04.2026',
+      changes: [
+        'Fixed aggressive browser caching that required multiple hard-refreshes (Ctrl+F5) to see new matches',
+        'Added cache-busting to all Google Sheets fetch requests',
+        'Configured Vercel cache headers to prevent stale data',
+        'Increased Sheets sync timeout from 15s to 30s for better reliability with growing match count',
+      ]
+    },
+    {
+      date: '10.04.2026',
+      changes: [
+        'Unified name_mapping.json across all sources (287 entries, previously fragmented across 3 files)',
+        'Added new name mappings for NWL#32 players',
+      ]
+    },
+    {
+      date: '08.04.2026',
+      changes: [
+        'Added Average Kills, Average Deaths, Average Assists and Average KDA stat tiles to player profile',
+        'Merged player profiles: Costa + DrCosta',
+        "Merged player profiles: Time'sConflux + Time'sConflu",
+        "Fixed navigation bug for player names containing apostrophes (e.g. Time'sConflux)",
+        'Added Changelog page to burger menu',
+        'Fixed role filter buttons for players with apostrophes in their name',
+      ]
+    }
+  ];
+
+  let html = `<div class="wrap">
+    <a class="back-link" onclick="navigate('')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to Matches
+    </a>
+    <div class="player-header">
+      <div class="player-eyebrow">NWL Scoreboard</div>
+      <h1 class="player-name">Changelog</h1>
+    </div>
+    <div class="changelog-entries">`;
+
+  for (const entry of entries) {
+    html += `<div class="changelog-entry">
+      <div class="changelog-date">${entry.date}</div>
+      <ul class="changelog-list">
+        ${entry.changes.map(c => `<li>${c}</li>`).join('')}
+      </ul>
+    </div>`;
+  }
+
+  html += `</div></div>`;
+  app.innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+// ═══════════════════════════════════════════
 //  PLAYER PROFILE PAGE
 // ═══════════════════════════════════════════
 
+let _playerRoleFilter = null; // null = all roles
+
 function renderPlayerPage(playerName) {
   const canon = playerName.toLowerCase().trim();
-  const appearances = findPlayerInMatches(canon);
+  const allAppearances = findPlayerInMatches(canon);
+
+  // Collect unique roles
+  const roles = [...new Set(allAppearances.map(a => a.player.role))];
+  const hasMultipleRoles = roles.length > 1;
+
+  // Apply role filter
+  const appearances = _playerRoleFilter
+    ? allAppearances.filter(a => a.player.role === _playerRoleFilter)
+    : allAppearances;
 
   // Get all known aliases for display
   const aliases = getAllAliases(canon);
@@ -1733,13 +2049,14 @@ function renderPlayerPage(playerName) {
 
   // Find a good display name (prefer the most common one)
   const nameCounts = {};
-  for (const app of appearances) {
+  for (const app of allAppearances) {
     const n = app.player.name;
     nameCounts[n] = (nameCounts[n] || 0) + 1;
   }
-  const displayName = Object.entries(nameCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || playerName;
+  const allNames = new Set(Object.keys(nameCounts));
+  const displayName = findDisplayName(canon, allNames);
 
-  // Compute aggregates
+  // Compute aggregates from filtered appearances
   let totalKills = 0, totalDeaths = 0, totalAssists = 0, totalHealing = 0, totalDamage = 0, wins = 0;
   for (const a of appearances) {
     totalKills += a.player.kills;
@@ -1754,6 +2071,10 @@ function renderPlayerPage(playerName) {
   const winRate = matchCount > 0 ? Math.round((wins / matchCount) * 100) : 0;
   const avgHealing = matchCount > 0 ? Math.round(totalHealing / matchCount) : 0;
   const avgDamage = matchCount > 0 ? Math.round(totalDamage / matchCount) : 0;
+  const avgKills = matchCount > 0 ? (totalKills / matchCount).toFixed(1) : '0';
+  const avgDeaths = matchCount > 0 ? (totalDeaths / matchCount).toFixed(1) : '0';
+  const avgAssists = matchCount > 0 ? (totalAssists / matchCount).toFixed(1) : '0';
+  const avgKDA = matchCount > 0 ? ((totalKills + totalAssists) / Math.max(totalDeaths, 1)).toFixed(2) : '0';
 
   let html = `<div class="wrap">
     <a class="back-link" onclick="navigate('')">
@@ -1784,6 +2105,24 @@ function renderPlayerPage(playerName) {
         <div class="player-stat-card">
           <div class="stat-val">${avgKD}</div>
           <div class="stat-lbl">Avg KD</div>
+        </div>
+      </div>
+      <div class="player-stats-row">
+        <div class="player-stat-card">
+          <div class="stat-val">${avgKills}</div>
+          <div class="stat-lbl">Avg Kills</div>
+        </div>
+        <div class="player-stat-card">
+          <div class="stat-val">${avgDeaths}</div>
+          <div class="stat-lbl">Avg Deaths</div>
+        </div>
+        <div class="player-stat-card">
+          <div class="stat-val">${avgAssists}</div>
+          <div class="stat-lbl">Avg Assists</div>
+        </div>
+        <div class="player-stat-card">
+          <div class="stat-val">${avgKDA}</div>
+          <div class="stat-lbl">Avg KDA</div>
         </div>
       </div>
       <div class="player-stats-row">
@@ -1823,6 +2162,24 @@ function renderPlayerPage(playerName) {
         </div>
       </div>
     </div>`;
+
+  // Role filter (only if player has multiple roles)
+  if (hasMultipleRoles) {
+    const roleOrder = ['AoE', 'HL', 'RD', 'IV', 'BR', 'PT', 'MD'];
+    const sorted = roles.sort((a, b) => (roleOrder.indexOf(a) === -1 ? 99 : roleOrder.indexOf(a)) - (roleOrder.indexOf(b) === -1 ? 99 : roleOrder.indexOf(b)));
+    const roleCounts = {};
+    for (const a of allAppearances) roleCounts[a.player.role] = (roleCounts[a.player.role] || 0) + 1;
+
+    html += `<div class="player-role-filter">
+      <span class="player-role-filter-label">Filter by Role</span>
+      <div class="player-role-filter-buttons">
+        <button class="role-filter-btn ${!_playerRoleFilter ? 'active' : ''}" onclick="setPlayerRoleFilter(null, '${canon.replace(/'/g, "\\x27")}')">All</button>
+        ${sorted.map(r => `<button class="role-filter-btn ${_playerRoleFilter === r ? 'active' : ''}" onclick="setPlayerRoleFilter('${r}', '${canon.replace(/'/g, "\\x27")}')">
+          <span class="role-badge r-${r}">${r}</span> <span class="role-filter-count">${roleCounts[r]}</span>
+        </button>`).join('')}
+      </div>
+    </div>`;
+  }
 
   if (appearances.length === 0) {
     html += `<div style="text-align:center;padding:40px;color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:2px;">
@@ -1885,10 +2242,26 @@ function renderPlayerPage(playerName) {
   app.innerHTML = html;
 }
 
+function setPlayerRoleFilter(role, canon) {
+  _playerRoleFilter = role;
+  renderPlayerPage(canon);
+}
+
 // Make functions globally accessible
 window.navigate = navigate;
 window.toggleNav = toggleNav;
 window.toggleFilterPanel = toggleFilterPanel;
+window.setPlayerRoleFilter = setPlayerRoleFilter;
+
+// ── Re-render groups on breakpoint change ──
+let _lastMobile = window.innerWidth <= 900;
+window.addEventListener('resize', () => {
+  const mob = window.innerWidth <= 900;
+  if (mob !== _lastMobile) {
+    _lastMobile = mob;
+    if (currentMatch) renderGroups(currentMatch);
+  }
+});
 
 // ── Initial render ──
 if (document.readyState === 'loading') {

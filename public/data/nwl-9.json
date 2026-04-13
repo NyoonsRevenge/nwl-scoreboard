@@ -713,44 +713,7 @@
     },
     {
       "label": "G9: Inner narnia",
-      "team1": [
-        {
-          "name": "Magiuli",
-          "role": "HL",
-          "kills": 0,
-          "deaths": 3,
-          "assists": 39,
-          "healing": 1317834,
-          "damage": 80107
-        },
-        {
-          "name": "Maseye",
-          "role": "RD",
-          "kills": 5,
-          "deaths": 4,
-          "assists": 82,
-          "healing": 0,
-          "damage": 1486268
-        },
-        {
-          "name": "Moffman",
-          "role": "MD",
-          "kills": 10,
-          "deaths": 3,
-          "assists": 94,
-          "healing": 0,
-          "damage": 1864951
-        },
-        {
-          "name": "Levin",
-          "role": "MD",
-          "kills": 4,
-          "deaths": 3,
-          "assists": 78,
-          "healing": 11210,
-          "damage": 1098544
-        }
-      ],
+      "team1": [],
       "team2": [
         {
           "name": "Rivzone",
@@ -792,7 +755,44 @@
     },
     {
       "label": "G10: Outer narnia",
-      "team1": [],
+      "team1": [
+        {
+          "name": "Magiuli",
+          "role": "HL",
+          "kills": 0,
+          "deaths": 3,
+          "assists": 39,
+          "healing": 1317834,
+          "damage": 80107
+        },
+        {
+          "name": "Maseye",
+          "role": "RD",
+          "kills": 5,
+          "deaths": 4,
+          "assists": 82,
+          "healing": 0,
+          "damage": 1486268
+        },
+        {
+          "name": "Moffman",
+          "role": "MD",
+          "kills": 10,
+          "deaths": 3,
+          "assists": 94,
+          "healing": 0,
+          "damage": 1864951
+        },
+        {
+          "name": "Levin",
+          "role": "MD",
+          "kills": 4,
+          "deaths": 3,
+          "assists": 78,
+          "healing": 11210,
+          "damage": 1098544
+        }
+      ],
       "team2": [
         {
           "name": "Liona/SkillIssue",

@@ -484,6 +484,16 @@
       ]
     },
     {
+      "label": "G6: bot strong",
+      "team1": [],
+      "team2": []
+    },
+    {
+      "label": "G7: Pali/Flex",
+      "team1": [],
+      "team2": []
+    },
+    {
       "label": "G8: Bonfire",
       "team1": [
         {
@@ -684,7 +694,7 @@
           "name": "PinkClover",
           "role": "HL",
           "kills": 0,
-          "deaths": 1,
+          "deaths": 0,
           "assists": 13,
           "healing": 2027626,
           "damage": 2074
@@ -778,7 +788,7 @@
   "totals": {
     "team1": {
       "kills": 178,
-      "deaths": 156,
+      "deaths": 155,
       "assists": 2397,
       "healing": 23491121,
       "damage": 41363365

@@ -749,53 +749,7 @@
     },
     {
       "label": "G9: Inner narnia",
-      "team1": [
-        {
-          "name": "Malaefis",
-          "role": "HL",
-          "kills": 0,
-          "deaths": 3,
-          "assists": 25,
-          "healing": 1162707,
-          "damage": 43354
-        },
-        {
-          "name": "publiclizek",
-          "role": "RD",
-          "kills": 8,
-          "deaths": 4,
-          "assists": 32,
-          "healing": 0,
-          "damage": 1120147
-        },
-        {
-          "name": "Mister You",
-          "role": "MD",
-          "kills": 3,
-          "deaths": 5,
-          "assists": 30,
-          "healing": 0,
-          "damage": 552629
-        },
-        {
-          "name": "SHORTY",
-          "role": "MD",
-          "kills": 3,
-          "deaths": 6,
-          "assists": 29,
-          "healing": 0,
-          "damage": 540832
-        },
-        {
-          "name": "Pyre",
-          "role": "MD",
-          "kills": 8,
-          "deaths": 7,
-          "assists": 34,
-          "healing": 0,
-          "damage": 1866532
-        }
-      ],
+      "team1": [],
       "team2": [
         {
           "name": "Wurstatutoma",
@@ -846,7 +800,53 @@
     },
     {
       "label": "G10: Outer narnia",
-      "team1": [],
+      "team1": [
+        {
+          "name": "Malaefis",
+          "role": "HL",
+          "kills": 0,
+          "deaths": 3,
+          "assists": 25,
+          "healing": 1162707,
+          "damage": 43354
+        },
+        {
+          "name": "publiclizek",
+          "role": "RD",
+          "kills": 8,
+          "deaths": 4,
+          "assists": 32,
+          "healing": 0,
+          "damage": 1120147
+        },
+        {
+          "name": "Mister You",
+          "role": "MD",
+          "kills": 3,
+          "deaths": 5,
+          "assists": 30,
+          "healing": 0,
+          "damage": 552629
+        },
+        {
+          "name": "SHORTY",
+          "role": "MD",
+          "kills": 3,
+          "deaths": 6,
+          "assists": 29,
+          "healing": 0,
+          "damage": 540832
+        },
+        {
+          "name": "Pyre",
+          "role": "MD",
+          "kills": 8,
+          "deaths": 7,
+          "assists": 34,
+          "healing": 0,
+          "damage": 1866532
+        }
+      ],
       "team2": [
         {
           "name": "Ambrozja/1.6",

@@ -332,22 +332,31 @@ def parse_match(rows):
                 if p1: lp.append(p1)
                 p2 = parse_player(rows[r], 10)
                 if p2: rp.append(p2)
-            if lr['left'] and lp:
+            if lr['left']:
                 left.append({'label': lr['left'], 'players': lp})
-            if lr['right'] and rp:
+            if lr['right']:
                 right.append({'label': lr['right'], 'players': rp})
         return left, right
 
     s1l, s1r = extract_groups(s1)
     s2l, s2r = extract_groups(s2)
 
+    def get_group_num(g):
+        m = re.search(r'G(\d+)', g.get('label', ''))
+        return int(m.group(1)) if m else 0
+
     def merge(t1_list, t2_list, offset=0):
+        # Build lookup by group number so groups match by label, not index
+        t1_by_num = {get_group_num(g): g for g in t1_list}
+        t2_by_num = {get_group_num(g): g for g in t2_list}
+        all_nums = sorted(set(t1_by_num.keys()) | set(t2_by_num.keys()))
+        if not all_nums:
+            return []
         groups = []
-        n = max(len(t1_list), len(t2_list))
-        for i in range(n):
-            t1 = t1_list[i] if i < len(t1_list) else None
-            t2 = t2_list[i] if i < len(t2_list) else None
-            label = (t1 or t2 or {}).get('label', f'G{i + 1 + offset}')
+        for num in all_nums:
+            t1 = t1_by_num.get(num)
+            t2 = t2_by_num.get(num)
+            label = (t1 or t2 or {}).get('label', f'G{num}')
             groups.append({
                 'label': label,
                 'team1': (t1 or {}).get('players', []),

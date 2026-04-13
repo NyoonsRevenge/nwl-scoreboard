@@ -391,7 +391,7 @@
       "team1": [
         {
           "name": "Liona/SkillIss",
-          "role": "Hl",
+          "role": "HL",
           "kills": 1,
           "deaths": 1,
           "assists": 58,
@@ -507,6 +507,11 @@
           "damage": 2285383
         }
       ]
+    },
+    {
+      "label": "G7: Pali/Flex",
+      "team1": [],
+      "team2": []
     },
     {
       "label": "G8: Bonfire",
