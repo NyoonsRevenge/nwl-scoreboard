@@ -795,13 +795,13 @@ body::after {
 }
 .gt-th.gt-num {
   text-align: right;
-  width: 70px;
+  width: 12%;
 }
 .gt-th.gt-role {
   width: 50px;
 }
 .gt-th.gt-name {
-  /* auto-fills remaining space via table-layout: fixed */
+  width: 22%;
 }
 
 /* team divider row */
@@ -1642,7 +1642,7 @@ body::after {
 }
 .excel-table thead th.ex-num {
   text-align: right;
-  width: 60px;
+  width: 12%;
 }
 .excel-table tbody td {
   padding: 6px 8px;
@@ -1844,7 +1844,7 @@ body::after {
   border-bottom: 1px solid var(--border);
   white-space: nowrap;
 }
-.ev-th.ev-num { text-align: right; width: 50px; }
+.ev-th.ev-num { text-align: right; width: 12%; }
 .ev-table tbody td {
   padding: 4px 4px;
   border-bottom: 1px solid var(--border);
