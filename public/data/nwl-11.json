@@ -333,11 +333,11 @@
         {
           "name": "Kru",
           "role": "IV",
-          "kills": 5,
-          "deaths": 3,
-          "assists": 61,
-          "healing": 0,
-          "damage": 845232
+          "kills": 9,
+          "deaths": 2,
+          "assists": 99,
+          "healing": 32683,
+          "damage": 1124672
         },
         {
           "name": "Asza",
@@ -951,11 +951,11 @@
       "damage": 37585001
     },
     "team2": {
-      "kills": 217,
-      "deaths": 175,
-      "assists": 2837,
-      "healing": 22624699,
-      "damage": 39855254
+      "kills": 221,
+      "deaths": 174,
+      "assists": 2875,
+      "healing": 22657382,
+      "damage": 40134694
     }
   },
   "team1Name": "Beaverknights",

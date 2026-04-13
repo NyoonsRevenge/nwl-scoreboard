@@ -485,15 +485,6 @@
           "assists": 77,
           "healing": 0,
           "damage": 1907523
-        },
-        {
-          "name": "Tequila",
-          "role": "BR",
-          "kills": 0,
-          "deaths": 0,
-          "assists": 0,
-          "healing": 0,
-          "damage": 0
         }
       ],
       "team2": [
@@ -511,7 +502,7 @@
           "role": "IV",
           "kills": 2,
           "deaths": 4,
-          "assists": 55,
+          "assists": 93,
           "healing": 45683,
           "damage": 1213416
         },
@@ -908,7 +899,7 @@
     "team2": {
       "kills": 168,
       "deaths": 136,
-      "assists": 2379,
+      "assists": 2417,
       "healing": 28880855,
       "damage": 43155897
     }

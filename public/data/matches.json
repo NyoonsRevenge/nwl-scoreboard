@@ -1,5 +1,44 @@
 [
   {
+    "slug": "nwl-33",
+    "nwlNumber": 33,
+    "mapName": "Ebonscale Reach",
+    "date": "12.04.2026",
+    "duration": "19:23",
+    "winner": "team2",
+    "attacker": "team1",
+    "team1Kills": 138,
+    "team2Kills": 141,
+    "team1Name": "Beaverknights",
+    "team2Name": "Capyknights"
+  },
+  {
+    "slug": "nwl-32",
+    "nwlNumber": 32,
+    "mapName": "Ebonscale Reach",
+    "date": "09.04.2026",
+    "duration": "14:39",
+    "winner": "team1",
+    "attacker": "team1",
+    "team1Kills": 165,
+    "team2Kills": 64,
+    "team1Name": "Beaverknights",
+    "team2Name": "Capyknights"
+  },
+  {
+    "slug": "nwl-31",
+    "nwlNumber": 31,
+    "mapName": "Cutless Keys",
+    "date": "07.04.2026",
+    "duration": "30:00",
+    "winner": "team2",
+    "attacker": "team1",
+    "team1Kills": 178,
+    "team2Kills": 244,
+    "team1Name": "Beaverknights",
+    "team2Name": "Capyknights"
+  },
+  {
     "slug": "nwl-30",
     "nwlNumber": 30,
     "mapName": "Ebonscale Reach",
@@ -255,7 +294,7 @@
     "winner": "team1",
     "attacker": "team1",
     "team1Kills": 178,
-    "team2Kills": 217,
+    "team2Kills": 221,
     "team1Name": "Beaverknights",
     "team2Name": "Capyknights"
   },
@@ -307,7 +346,7 @@
     "winner": "team1",
     "attacker": "team2",
     "team1Kills": 186,
-    "team2Kills": 151,
+    "team2Kills": 152,
     "team1Name": "Beaverknights",
     "team2Name": "Capyknights"
   },
