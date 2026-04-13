@@ -1,16 +1,16 @@
-/* ═══════════════════════════════════════════
-   NWL SCOREBOARD — Client-Side Application
+/* ===========================================
+   NWL SCOREBOARD - Client-Side Application
    Live Google Sheets Sync + op.gg-Style List
    New World Aeternum Theme
-   ═══════════════════════════════════════════ */
+   =========================================== */
 
 const app = document.getElementById('app');
 let currentRole = 'ALL';
 let currentMatch = null;
 
-// ══════════════════════════════════════════
+// ==========================================
 //  RANDOM WALLPAPER SYSTEM
-// ══════════════════════════════════════════
+// ==========================================
 const WALLPAPERS = [
   "new-world-wallpapers-from-loading-screens-in-various-sizes-v0-0kwn35n24x0e1.webp",
   "new-world-wallpapers-from-loading-screens-in-various-sizes-v0-8l9o02n24x0e1.webp",
@@ -42,9 +42,9 @@ function applyWallpaper() {
   document.body.style.backgroundAttachment = 'fixed';
 }
 
-// ══════════════════════════════════════════
+// ==========================================
 //  NAME MAPPING SYSTEM
-// ══════════════════════════════════════════
+// ==========================================
 
 // Static name mappings from name_mapping.json (scoreboard name → canonical)
 const NAME_MAPPING_JSON = {
@@ -532,9 +532,9 @@ function getAllAliases(canonicalName) {
 // Initialize name lookup
 buildNameLookup();
 
-// ══════════════════════════════════════════
+// ==========================================
 //  GOOGLE SHEETS INTEGRATION
-// ══════════════════════════════════════════
+// ==========================================
 
 const SPREADSHEET_ID = '1vYy9Zsn7hVN3Z3sEW2S0GsXEMh1VVM_P7vn6C5LMFgY';
 const PUBLISHED_ID = '2PACX-1vReMFS4C8UfVHqgl0rI14LVdU4adkyw8_ClQpAJgkXluqncRdqBHXer156nDt_A3deeB7qO0vuDaHE8';
@@ -552,7 +552,7 @@ const CAPY_SHA256 = new Set([
   '5d91bd752aca7a3a5a636906547c54b9e2c4f146b7e90372c7608a3464c092bc',
 ]);
 
-// ── CSV Parser ──────────────────────────────
+// -- CSV Parser ------------------------------
 
 function parseCSV(text) {
   const rows = [];
@@ -601,7 +601,7 @@ function splitCSVLine(line) {
   return result;
 }
 
-// ── Sheet Discovery ─────────────────────────
+// -- Sheet Discovery -------------------------
 
 async function fetchSheetList() {
   const url = `https://docs.google.com/spreadsheets/d/e/${PUBLISHED_ID}/pubhtml?_cb=${Date.now()}`;
@@ -622,7 +622,7 @@ async function fetchSheetList() {
   return sheets;
 }
 
-// ── Sheet Data Fetching ─────────────────────
+// -- Sheet Data Fetching ---------------------
 
 async function fetchSheetCSV(gid) {
   const cb = `_cb=${Date.now()}`;
@@ -637,7 +637,7 @@ async function fetchSheetCSV(gid) {
   return await res.text();
 }
 
-// ── XLSX Metadata: Auto-Detect Attackers & Winners ──
+// -- XLSX Metadata: Auto-Detect Attackers & Winners --
 
 async function sha256hex(buffer) {
   const hash = await crypto.subtle.digest('SHA-256', buffer);
@@ -749,7 +749,7 @@ async function parseXLSXMetadata() {
   return { attackers, winners };
 }
 
-// ── Match Metadata Parsing ──────────────────
+// -- Match Metadata Parsing ------------------
 
 function parseSheetName(name) {
   const nwlMatch = name.match(/NWL#(\d+)/i);
@@ -764,7 +764,7 @@ function parseSheetName(name) {
   return { nwlNumber, date, mapName };
 }
 
-// ── CSV → Match Data Parser ─────────────────
+// -- CSV → Match Data Parser -----------------
 
 function safeInt(val) {
   if (!val || val === '') return 0;
@@ -799,7 +799,7 @@ function parseCSVMatch(csvText) {
   let result = null;
   let duration = null;
 
-  // ── Collect metadata (result, duration) ──
+  // -- Collect metadata (result, duration) --
   let rawResult = null; // 'VICTORY' or 'DEFEAT' (attacker's perspective)
   for (const row of rows) {
     const h = (row[7] || '').trim();
@@ -812,13 +812,13 @@ function parseCSVMatch(csvText) {
     if (/^\d+:\d+$/.test(h)) duration = h;
   }
 
-  // ── Extract total kill counts from fixed cells ──
+  // -- Extract total kill counts from fixed cells --
   // H24:J30 (row 23 col 7) = attacker total kills
   // H39:J46 (row 38 col 7) = defender total kills
   const attackerKills = safeInt(rows[23]?.[7]);
   const defenderKills = safeInt(rows[38]?.[7]);
 
-  // ── Find all group-label rows ──
+  // -- Find all group-label rows --
   const labelRows = [];
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
@@ -838,7 +838,7 @@ function parseCSVMatch(csvText) {
     }
   }
 
-  // ── Split into 2 sections ──
+  // -- Split into 2 sections --
   let splitIdx = null;
   let seenFirst = false;
   for (let i = 0; i < labelRows.length; i++) {
@@ -875,7 +875,7 @@ function parseCSVMatch(csvText) {
   const [s1l, s1r] = extractGroups(s1);
   const [s2l, s2r] = extractGroups(s2);
 
-  // ── Merge into groups (by group number, not index) ──
+  // -- Merge into groups (by group number, not index) --
   function getGroupNum(g) {
     const m = g.label.match(/\d+/);
     return m ? parseInt(m[0]) : 0;
@@ -903,7 +903,7 @@ function parseCSVMatch(csvText) {
 
   const groups = [...merge(s1l, s2l, 0), ...merge(s1r, s2r, 5)];
 
-  // ── Totals ──
+  // -- Totals --
   const t1 = { kills: 0, deaths: 0, assists: 0, healing: 0, damage: 0 };
   const t2 = { kills: 0, deaths: 0, assists: 0, healing: 0, damage: 0 };
   for (const g of groups) {
@@ -914,7 +914,7 @@ function parseCSVMatch(csvText) {
   return { groups, winner: result, rawResult, duration, totals: { team1: t1, team2: t2 }, attackerKills, defenderKills };
 }
 
-// ── Cache Layer ─────────────────────────────
+// -- Cache Layer -----------------------------
 
 function getCached(key) {
   try {
@@ -931,7 +931,7 @@ function setCache(key, data) {
   catch { /* storage full, ignore */ }
 }
 
-// ── Build All Match Data ────────────────────
+// -- Build All Match Data --------------------
 
 async function buildMatchesFromSheets() {
   const cached = getCached('all_matches');
@@ -1078,7 +1078,7 @@ function parseDate(dateStr) {
   return new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
 }
 
-// ── Utilities ──────────────────────────────
+// -- Utilities ------------------------------
 
 let compactNumbers = false;
 let currentView = 'excel'; // 'excel', 'list', 'comparison'
@@ -1111,7 +1111,7 @@ function formatDate(dateStr) {
   return `${parseInt(d)} ${months[parseInt(m) - 1]} ${y}`;
 }
 
-// ── Router ─────────────────────────────────
+// -- Router ---------------------------------
 
 function getRoute() {
   const hash = window.location.hash.slice(1);
@@ -1142,9 +1142,9 @@ function encodePlayerForLink(name) {
 
 window.addEventListener('hashchange', () => render());
 
-// ══════════════════════════════════════════
+// ==========================================
 //  HAMBURGER NAVIGATION MENU
-// ══════════════════════════════════════════
+// ==========================================
 
 function getHamburgerHTML() {
   return `
@@ -1204,7 +1204,7 @@ function toggleFilterPanel() {
   }
 }
 
-// ── Render Router ──────────────────────────
+// -- Render Router --------------------------
 
 let sheetsData = null;
 
@@ -1271,9 +1271,9 @@ async function render() {
   }
 }
 
-// ═══════════════════════════════════════════
-//  HOME PAGE — Scoreboard-Style Match List
-// ═══════════════════════════════════════════
+// ===========================================
+//  HOME PAGE - Scoreboard-Style Match List
+// ===========================================
 
 function renderHomePage(matches) {
   let t1Wins = 0, t2Wins = 0;
@@ -1381,9 +1381,9 @@ function renderHomePage(matches) {
   app.innerHTML = html;
 }
 
-// ═══════════════════════════════════════════
+// ===========================================
 //  MATCH DETAIL PAGE
-// ═══════════════════════════════════════════
+// ===========================================
 
 function renderMatchPage(data) {
   const t1 = data.totals.team1;
@@ -1719,7 +1719,7 @@ function renderExcelViewGroup(g, team, placeholderLabel) {
 
   if (!g || teamPlayers.length === 0) {
     return `<div class="ev-group ev-group-empty">
-      <div class="ev-group-label ev-empty-label">${label || '—'}</div>
+      <div class="ev-group-label ev-empty-label">${label || '-'}</div>
       <div class="ev-empty-text">No players</div>
     </div>`;
   }
@@ -1838,9 +1838,9 @@ function renderGroups(data) {
   container.innerHTML = html;
 }
 
-// ═══════════════════════════════════════════
+// ===========================================
 //  PLAYER PROFILE PAGE
-// ═══════════════════════════════════════════
+// ===========================================
 
 function findPlayerInMatches(canonicalName) {
   if (!sheetsData) return [];
@@ -1877,9 +1877,9 @@ function findPlayerInMatches(canonicalName) {
   return results;
 }
 
-// ═══════════════════════════════════════════
+// ===========================================
 //  PLAYER SEARCH PAGE
-// ═══════════════════════════════════════════
+// ===========================================
 
 function getAllPlayers() {
   if (!sheetsData) return [];
@@ -1958,15 +1958,15 @@ function renderSearchPage() {
     </div>`;
   }
 
-  // Initial render — show all
+  // Initial render - show all
   renderResults('');
 
   input.addEventListener('input', () => renderResults(input.value));
 }
 
-// ═══════════════════════════════════════════
+// ===========================================
 //  CHANGELOG PAGE
-// ═══════════════════════════════════════════
+// ===========================================
 
 function renderChangelogPage() {
   const entries = [
@@ -2025,9 +2025,9 @@ function renderChangelogPage() {
   window.scrollTo(0, 0);
 }
 
-// ═══════════════════════════════════════════
+// ===========================================
 //  PLAYER PROFILE PAGE
-// ═══════════════════════════════════════════
+// ===========================================
 
 let _playerRoleFilter = null; // null = all roles
 
@@ -2254,7 +2254,7 @@ window.toggleNav = toggleNav;
 window.toggleFilterPanel = toggleFilterPanel;
 window.setPlayerRoleFilter = setPlayerRoleFilter;
 
-// ── Re-render groups on breakpoint change ──
+// -- Re-render groups on breakpoint change --
 let _lastMobile = window.innerWidth <= 900;
 window.addEventListener('resize', () => {
   const mob = window.innerWidth <= 900;
@@ -2264,7 +2264,7 @@ window.addEventListener('resize', () => {
   }
 });
 
-// ── Initial render ──
+// -- Initial render --
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => render());
 } else {

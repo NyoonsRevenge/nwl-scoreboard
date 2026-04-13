@@ -1844,15 +1844,16 @@ body::after {
   border-bottom: 1px solid var(--border);
   white-space: nowrap;
 }
+.ev-th:first-child { width: 30px; }
 .ev-th.ev-num { text-align: right; width: 12%; }
 .ev-table tbody td {
   padding: 4px 4px;
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
 }
-.ev-table .pt-name { font-size: 12px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+.ev-table .pt-name { font-size: 12px; overflow: hidden; text-overflow: ellipsis; }
 .ev-table .pt-num { font-size: 11px; }
-.ev-table .pt-role { width: 30px; padding: 3px 2px; }
+.ev-table .pt-role { padding: 3px 2px; }
 .ev-table .role-badge { font-size: 8px; padding: 2px 4px; }
 
 /* ═══════════════════════════════════════════
