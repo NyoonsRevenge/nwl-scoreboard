@@ -1207,60 +1207,103 @@ function toggleFilterPanel() {
 // -- Render Router --------------------------
 
 let sheetsData = null;
+let _sheetsSyncPromise = null;
+
+// Lazy Google Sheets sync: starts in background, resolves when done
+function ensureSheetsSync() {
+  if (sheetsData) return Promise.resolve(sheetsData);
+  if (_sheetsSyncPromise) return _sheetsSyncPromise;
+  _sheetsSyncPromise = Promise.race([
+    buildMatchesFromSheets(),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('Sheets fetch timeout')), 30000))
+  ]).then(data => {
+    sheetsData = data;
+    return data;
+  }).catch(e => {
+    console.warn('Google Sheets unavailable:', e);
+    _sheetsSyncPromise = null;
+    return null;
+  });
+  return _sheetsSyncPromise;
+}
 
 async function render() {
   applyWallpaper();
   const route = getRoute();
-  app.innerHTML = `<div class="loading-screen">
-    <div class="loading-spinner"></div>
-    <div class="loading-text">Fetching Live Data</div>
-    <div class="loading-sub">Syncing with Google Sheets...</div>
-  </div>`;
 
   try {
-    if (!sheetsData) {
-      try {
-        sheetsData = await Promise.race([
-          buildMatchesFromSheets(),
-          new Promise((_, reject) => setTimeout(() => reject(new Error('Sheets fetch timeout')), 30000))
-        ]);
-      } catch (e) {
-        console.warn('Google Sheets unavailable, falling back to static JSON:', e);
-        sheetsData = null;
-      }
-    }
-
     ensureHamburger();
 
     if (route.page === 'match') {
+      // Match detail: try static JSON first (instant), use Sheets data if already loaded
       let data;
       if (sheetsData && sheetsData.matchDetails[route.slug]) {
         data = sheetsData.matchDetails[route.slug];
       } else {
+        // Show loading while fetching
+        app.innerHTML = `<div class="loading-screen">
+          <div class="loading-spinner"></div>
+          <div class="loading-text">Loading Match</div>
+          <div class="loading-sub">Fetching match data...</div>
+        </div>`;
+        // Try static JSON first, fall back to Sheets sync
         const res = await fetch(`data/${route.slug}.json?_cb=${Date.now()}`, { cache: 'no-store' });
-        if (!res.ok) throw new Error('Match not found');
-        data = await res.json();
+        if (res.ok) {
+          data = await res.json();
+        } else {
+          // No static JSON, need to fetch from Sheets
+          const sd = await ensureSheetsSync();
+          data = sd && sd.matchDetails[route.slug];
+          if (!data) throw new Error('Match not found');
+        }
       }
       currentMatch = data;
       currentRole = 'ALL';
       renderMatchPage(data);
     } else if (route.page === 'search') {
+      // Search needs full Sheets data for player index
+      if (!sheetsData) {
+        app.innerHTML = `<div class="loading-screen">
+          <div class="loading-spinner"></div>
+          <div class="loading-text">Loading Players</div>
+          <div class="loading-sub">Syncing with Google Sheets...</div>
+        </div>`;
+        await ensureSheetsSync();
+      }
       renderSearchPage();
     } else if (route.page === 'changelog') {
       renderChangelogPage();
     } else if (route.page === 'player') {
+      // Player profile needs full Sheets data
+      if (!sheetsData) {
+        app.innerHTML = `<div class="loading-screen">
+          <div class="loading-spinner"></div>
+          <div class="loading-text">Loading Player</div>
+          <div class="loading-sub">Syncing with Google Sheets...</div>
+        </div>`;
+        await ensureSheetsSync();
+      }
       _playerRoleFilter = null;
       renderPlayerPage(route.playerName);
     } else {
-      let matches;
+      // Homepage: render instantly from static matches.json
+      const res = await fetch(`data/matches.json?_cb=${Date.now()}`, { cache: 'no-store' });
+      if (!res.ok) throw new Error('Failed to load matches');
+      const staticMatches = await res.json();
+
+      // If Sheets data already available, merge in any newer matches
       if (sheetsData) {
-        matches = sheetsData.matchList;
+        renderHomePage(sheetsData.matchList);
       } else {
-        const res = await fetch(`data/matches.json?_cb=${Date.now()}`, { cache: 'no-store' });
-        if (!res.ok) throw new Error('Failed to load matches');
-        matches = await res.json();
+        renderHomePage(staticMatches);
+        // Start background sync; update homepage when done
+        ensureSheetsSync().then(sd => {
+          if (sd && getRoute().page === 'home') {
+            renderHomePage(sd.matchList);
+            ensureHamburger();
+          }
+        });
       }
-      renderHomePage(matches);
     }
   } catch (e) {
     app.innerHTML = `<div class="wrap" style="text-align:center;padding:100px 20px;">
@@ -1978,6 +2021,7 @@ function renderChangelogPage() {
         'Configured Vercel cache headers to prevent stale data',
         'Increased Sheets sync timeout from 15s to 30s for better reliability with growing match count',
         'Fixed table column alignment: Kills/Deaths/Assists/Heal/Dmg columns now align consistently across all groups',
+        'Homepage now loads instantly from static data; Google Sheets sync runs in background',
       ]
     },
     {
