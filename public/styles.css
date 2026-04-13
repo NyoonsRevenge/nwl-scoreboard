@@ -774,6 +774,7 @@ body::after {
   border-collapse: collapse;
   font-family: 'EB Garamond', serif;
   font-size: 15px;
+  table-layout: fixed;
 }
 .group-table thead {
   position: sticky;
@@ -794,13 +795,13 @@ body::after {
 }
 .gt-th.gt-num {
   text-align: right;
-  min-width: 50px;
+  width: 70px;
 }
 .gt-th.gt-role {
   width: 50px;
 }
 .gt-th.gt-name {
-  min-width: 120px;
+  /* auto-fills remaining space via table-layout: fixed */
 }
 
 /* team divider row */
@@ -846,6 +847,8 @@ body::after {
   font-size: 15px;
   color: var(--text);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .pt-name a {
   color: inherit;
@@ -1622,6 +1625,7 @@ body::after {
   border-collapse: collapse;
   font-family: 'EB Garamond', serif;
   font-size: 14px;
+  table-layout: fixed;
 }
 .excel-table thead th {
   font-family: 'Share Tech Mono', monospace;
@@ -1638,7 +1642,7 @@ body::after {
 }
 .excel-table thead th.ex-num {
   text-align: right;
-  min-width: 40px;
+  width: 60px;
 }
 .excel-table tbody td {
   padding: 6px 8px;
@@ -1825,6 +1829,7 @@ body::after {
   border-collapse: collapse;
   font-family: 'EB Garamond', serif;
   font-size: 12px;
+  table-layout: fixed;
 }
 .ev-th {
   font-family: 'Share Tech Mono', monospace;
@@ -1839,7 +1844,7 @@ body::after {
   border-bottom: 1px solid var(--border);
   white-space: nowrap;
 }
-.ev-th.ev-num { text-align: right; min-width: 28px; }
+.ev-th.ev-num { text-align: right; width: 50px; }
 .ev-table tbody td {
   padding: 4px 4px;
   border-bottom: 1px solid var(--border);

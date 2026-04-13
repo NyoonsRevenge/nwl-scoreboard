@@ -1977,6 +1977,7 @@ function renderChangelogPage() {
         'Added cache-busting to all Google Sheets fetch requests',
         'Configured Vercel cache headers to prevent stale data',
         'Increased Sheets sync timeout from 15s to 30s for better reliability with growing match count',
+        'Fixed table column alignment: Kills/Deaths/Assists/Heal/Dmg columns now align consistently across all groups',
       ]
     },
     {
