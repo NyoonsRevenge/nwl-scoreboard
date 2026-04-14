@@ -1,0 +1,36 @@
+name: Sync Match Data
+
+on:
+  schedule:
+    # Abends 21:00-00:00 deutscher Zeit (UTC+2) alle 30 Min
+    - cron: '*/30 19-22 * * *'
+    # Tagsueber 2x: 10:00 und 16:00 deutscher Zeit
+    - cron: '0 8,14 * * *'
+  workflow_dispatch: # Manueller Trigger ueber GitHub UI
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Extract match data from Google Sheets
+        run: python scripts/extract-data.py
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git diff --quiet public/data/ && echo "changed=false" >> $GITHUB_OUTPUT || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/
+          git commit -m "Auto-sync match data from Google Sheets"
+          git push
