@@ -329,20 +329,22 @@ body::after {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  max-width: 420px;
+  gap: 12px;
+  max-width: 560px;
   width: 100%;
+  padding: 0 16px;
 }
 .loading-quote {
   font-family: 'IM Fell DW Pica', serif;
-  font-size: 12px;
+  font-size: 18px;
   font-style: italic;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
+  line-height: 1.5;
   color: var(--gold);
   opacity: 0;
   transition: opacity .3s ease;
   text-align: center;
-  min-height: 1.4em;
+  min-height: 1.5em;
 }
 .loading-quote-track {
   width: 120px;

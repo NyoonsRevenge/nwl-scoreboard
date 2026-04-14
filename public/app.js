@@ -2291,6 +2291,7 @@ function renderChangelogPage() {
         'Separated Liona/SkillIssue and MARKEL1to/US into distinct player profiles',
         'Added loading screen easter egg: rotating New World bug quotes with progress indicator',
         `Hybrid data loading: the last ${LIVE_SYNC_RECENT_COUNT} matches now sync live with Google Sheets (in-progress edits show up immediately), while older matches load instantly from static JSON files`,
+        'Made loading screen quote text larger and more readable (18px instead of 12px)',
       ]
     },
     {
