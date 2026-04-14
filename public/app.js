@@ -2081,6 +2081,14 @@ function renderSearchPage() {
 function renderChangelogPage() {
   const entries = [
     {
+      date: '14.04.2026',
+      changes: [
+        'Fixed player merge bug: two different "Skill Issue" players (I vs l) were incorrectly combined into one profile with 60 matches',
+        'Separated Liona/SkillIssue and MARKEL1to/US into distinct player profiles',
+        'Added loading screen easter egg: rotating New World bug quotes with progress indicator',
+      ]
+    },
+    {
       date: '13.04.2026',
       changes: [
         'Fixed aggressive browser caching that required multiple hard-refreshes (Ctrl+F5) to see new matches',
