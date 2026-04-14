@@ -323,6 +323,44 @@ body::after {
   letter-spacing: 2px;
   color: var(--muted);
 }
+.loading-quote-wrap {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: 420px;
+  width: 100%;
+}
+.loading-quote {
+  font-family: 'IM Fell DW Pica', serif;
+  font-size: 12px;
+  font-style: italic;
+  letter-spacing: 1px;
+  color: var(--gold);
+  opacity: 0;
+  transition: opacity .3s ease;
+  text-align: center;
+  min-height: 1.4em;
+}
+.loading-quote-track {
+  width: 120px;
+  height: 2px;
+  background: var(--border2);
+  border-radius: 1px;
+  overflow: hidden;
+}
+.loading-quote-bar {
+  height: 100%;
+  width: 0%;
+  background: var(--gold);
+  border-radius: 1px;
+  opacity: .6;
+}
+@keyframes quoteTimer {
+  from { width: 0%; }
+  to { width: 100%; }
+}
 
 /* ── Live Badge ── */
 .live-badge {

@@ -7,6 +7,81 @@
 const app = document.getElementById('app');
 let currentRole = 'ALL';
 let currentMatch = null;
+let _loadingQuoteInterval = null;
+
+// ==========================================
+//  LOADING EASTER EGG QUOTES
+// ==========================================
+const LOADING_QUOTES = [
+  "Disabling Trading Post due to unexpected wealth...",
+  "Wealth transfers disabled globally (please wait)...",
+  "Duping gold coins via server transfer...",
+  "Locking Company treasuries to prevent corruption...",
+  "Calculating compensation coin (pray for the correct amount)...",
+  "Hiding all furniture in storage sheds...",
+  "Activating Hatchet machine gun mode...",
+  "Polishing the Blunderbuss (while it remains disabled)...",
+  "Healing rapidly by spamming crouch...",
+  "Stacking damage buffs to infinity...",
+  "Disabling Musket accuracy (we call it 'balance')...",
+  "Loading Ice Gauntlet lag particles for the upcoming war...",
+  "Dragging the game window for 100% damage immunity...",
+  "Fast-forwarding server clock by 3 months...",
+  "Downgrading town crafting stations via time travel bug...",
+  "Injecting giant sausage graphics into global chat...",
+  "Preparing desktop crash via item hover link...",
+  "Waiting for server rollback (progress is relative)...",
+  "Sending automated bans to rival Company leaders...",
+  "Spawning infinite pig armies in Boarsholm...",
+  "Analyzing auto-run keyweight to bypass AFK timer...",
+  "Losing housing trophies during instance transition...",
+  "Simulating 500ms desync for that authentic combat experience...",
+  "Translating text fragments into '@UI_String_Not_Found'...",
+  "Fixing one bug (by secretly introducing three new ones)...",
+  "Downloading 40GB patch for a minor text localization...",
+  "Extending scheduled maintenance by another 4 hours...",
+  "Double-checking if the Trading Post actually works this time..."
+];
+
+function getRandomQuote(exclude) {
+  let q;
+  do { q = LOADING_QUOTES[Math.floor(Math.random() * LOADING_QUOTES.length)]; } while (q === exclude && LOADING_QUOTES.length > 1);
+  return q;
+}
+
+function startLoadingQuotes() {
+  stopLoadingQuotes();
+  const el = document.querySelector('.loading-quote');
+  const bar = document.querySelector('.loading-quote-bar');
+  if (!el) return;
+  el.textContent = getRandomQuote();
+  el.style.opacity = '1';
+  if (bar) { bar.style.animation = 'none'; void bar.offsetWidth; bar.style.animation = 'quoteTimer 5s linear forwards'; }
+  _loadingQuoteInterval = setInterval(() => {
+    el.style.opacity = '0';
+    setTimeout(() => {
+      el.textContent = getRandomQuote(el.textContent);
+      el.style.opacity = '1';
+      if (bar) { bar.style.animation = 'none'; void bar.offsetWidth; bar.style.animation = 'quoteTimer 5s linear forwards'; }
+    }, 300);
+  }, 5000);
+}
+
+function stopLoadingQuotes() {
+  if (_loadingQuoteInterval) { clearInterval(_loadingQuoteInterval); _loadingQuoteInterval = null; }
+}
+
+function loadingScreenHTML(title, sub) {
+  return `<div class="loading-screen">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">${title}</div>
+    <div class="loading-sub">${sub}</div>
+    <div class="loading-quote-wrap">
+      <div class="loading-quote"></div>
+      <div class="loading-quote-track"><div class="loading-quote-bar"></div></div>
+    </div>
+  </div>`;
+}
 
 // ==========================================
 //  RANDOM WALLPAPER SYSTEM
@@ -91,7 +166,7 @@ const NAME_MAPPING_JSON = {
   "jormamas slave2": "jeszo", "Samson": "POPPING CLEANSE",
   "Cloudninee/B": "Blamy", "Maka": "M7k", "Tarienna": "Melglinn",
   "lolubroke": "Bullerby", "RudiRagequit": "Rudi Dodgeke",
-  "ESKI": "eski xo", "MarkeIIto": "Skill Issue",
+  "ESKI": "eski xo", "MarkeIIto": "MARKEL1to/US",
   "Sten": "Stenbergz", "BjornHaudrauf": "Gernhart Reinda",
   "Stepmom": "StepmomMia",
   "Rudi Dodgeke": "RudiRagequit", "Paare": "xMartin96x",
@@ -408,7 +483,7 @@ const NAME_MAPPING_JSON = {
   "Koku": "Kohku",
   "Kream": "Trond",
   "Lyynx": "Angel",
-  "MARKEL1to": "Skill Issue",
+  "MARKEL1to": "MARKEL1to/US",
   "MARKEL1to/L": "MARKEL1to/US",
   "Nyxie": "Hop on me",
   "Ordeus": "Yamii",
@@ -1228,6 +1303,7 @@ function ensureSheetsSync() {
 }
 
 async function render() {
+  stopLoadingQuotes();
   applyWallpaper();
   const route = getRoute();
 
@@ -1241,11 +1317,8 @@ async function render() {
         data = sheetsData.matchDetails[route.slug];
       } else {
         // Show loading while fetching
-        app.innerHTML = `<div class="loading-screen">
-          <div class="loading-spinner"></div>
-          <div class="loading-text">Loading Match</div>
-          <div class="loading-sub">Fetching match data...</div>
-        </div>`;
+        app.innerHTML = loadingScreenHTML('Loading Match', 'Fetching match data...');
+        startLoadingQuotes();
         // Try static JSON first, fall back to Sheets sync
         const res = await fetch(`data/${route.slug}.json?_cb=${Date.now()}`, { cache: 'no-store' });
         if (res.ok) {
@@ -1263,11 +1336,8 @@ async function render() {
     } else if (route.page === 'search') {
       // Search needs full Sheets data for player index
       if (!sheetsData) {
-        app.innerHTML = `<div class="loading-screen">
-          <div class="loading-spinner"></div>
-          <div class="loading-text">Loading Players</div>
-          <div class="loading-sub">Syncing with Google Sheets...</div>
-        </div>`;
+        app.innerHTML = loadingScreenHTML('Loading Players', 'Syncing with Google Sheets...');
+        startLoadingQuotes();
         await ensureSheetsSync();
       }
       renderSearchPage();
@@ -1276,11 +1346,8 @@ async function render() {
     } else if (route.page === 'player') {
       // Player profile needs full Sheets data
       if (!sheetsData) {
-        app.innerHTML = `<div class="loading-screen">
-          <div class="loading-spinner"></div>
-          <div class="loading-text">Loading Player</div>
-          <div class="loading-sub">Syncing with Google Sheets...</div>
-        </div>`;
+        app.innerHTML = loadingScreenHTML('Loading Player', 'Syncing with Google Sheets...');
+        startLoadingQuotes();
         await ensureSheetsSync();
       }
       _playerRoleFilter = null;
