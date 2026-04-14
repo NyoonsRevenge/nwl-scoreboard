@@ -4,7 +4,7 @@
   "mapName": "Edengrove",
   "date": "14.04.2026",
   "duration": "30:00",
-  "winner": "team2",
+  "winner": "team1",
   "attacker": "team1",
   "groups": [
     {
@@ -261,6 +261,15 @@
           "damage": 56833
         },
         {
+          "name": "Carusoo",
+          "role": "RD",
+          "kills": 11,
+          "deaths": 2,
+          "assists": 37,
+          "healing": 0,
+          "damage": 1412193
+        },
+        {
           "name": "KaldieDarkle",
           "role": "BR",
           "kills": 1,
@@ -302,13 +311,13 @@
           "damage": 78643
         },
         {
-          "name": "UlricDorrn",
+          "name": "TheHottestSilk",
           "role": "MD",
-          "kills": 4,
-          "deaths": 9,
-          "assists": 124,
-          "healing": 15986,
-          "damage": 1171256
+          "kills": 0,
+          "deaths": 3,
+          "assists": 27,
+          "healing": 21706,
+          "damage": 56667
         },
         {
           "name": "manuleo",
@@ -390,13 +399,13 @@
           "damage": 53823
         },
         {
-          "name": "TheHottestSilk",
+          "name": "UlricDorrn",
           "role": "MD",
-          "kills": 0,
-          "deaths": 3,
-          "assists": 27,
-          "healing": 21706,
-          "damage": 56667
+          "kills": 4,
+          "deaths": 9,
+          "assists": 124,
+          "healing": 15986,
+          "damage": 1171256
         },
         {
           "name": "Zar_ki",
@@ -951,11 +960,11 @@
       "damage": 65905048
     },
     "team2": {
-      "kills": 172,
-      "deaths": 290,
-      "assists": 2769,
+      "kills": 183,
+      "deaths": 292,
+      "assists": 2806,
       "healing": 42544283,
-      "damage": 58689658
+      "damage": 60101851
     }
   },
   "team1Name": "Beaverknights",
