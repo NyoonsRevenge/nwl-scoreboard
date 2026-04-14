@@ -8,6 +8,8 @@ const app = document.getElementById('app');
 let currentRole = 'ALL';
 let currentMatch = null;
 let _loadingQuoteInterval = null;
+let vodData = null; // cached vods.json
+let currentMatchVods = {}; // canonical player name -> VOD url for current match
 
 // ==========================================
 //  LOADING EASTER EGG QUOTES
@@ -151,7 +153,7 @@ const NAME_MAPPING_JSON = {
   "Ulric Dorm": "UlricDorrn", "ChuckDorrris": "ChuckDorris",
   "Sonnihhh": "Sonnihh", "FroggyBalboa": "FroggyBalboa",
   "rdmMcffman": "moffman", "TheClover": "PinkClover",
-  "Where Arda": "Costa", "DrCosta": "Costa", "Billy Talent ll": "BillyTalent",
+  "Where Arda": "Costa", "DrCosta": "Costa", "Billy Talent ll": "BillyTalent", "Billy Talent": "BillyTalent",
   "xTaRl": "Tarienna", "Lord Ethernity": "Lord Ethernity",
   "TheHottestSilk": "TheHottestSilk", "Irvine": "Irvine",
   "H3SHKVZ3D": "H4SHK4Z3D", "USE DETO NOW": "MARKEL1to/US",
@@ -606,6 +608,55 @@ function getAllAliases(canonicalName) {
 
 // Initialize name lookup
 buildNameLookup();
+
+// ==========================================
+//  VOD SYSTEM
+// ==========================================
+
+async function loadVodData() {
+  if (vodData) return vodData;
+  try {
+    const res = await fetch(`data/vods.json?_cb=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) vodData = await res.json();
+  } catch (e) { /* vods.json not available, no problem */ }
+  return vodData || {};
+}
+
+function stripParens(s) { return s.replace(/\s*\(.*?\)\s*/g, '').trim(); }
+
+function buildMatchVodLookup(slug) {
+  currentMatchVods = {};
+  if (!vodData || !vodData[slug] || !currentMatch) return;
+  const allPlayers = currentMatch.groups.flatMap(g => [...g.team1, ...g.team2]);
+  for (const entry of vodData[slug]) {
+    const discordLower = entry.discord.toLowerCase().trim();
+    const discordStripped = stripParens(discordLower);
+    const discordCanonical = nameAliasMap[discordLower] || nameAliasMap[discordStripped];
+    let matched = null;
+    // Try matching against actual players in this match
+    for (const p of allPlayers) {
+      const pCanonical = getCanonicalName(p.name);
+      const pLower = p.name.toLowerCase();
+      const pStripped = stripParens(pLower);
+      // Exact canonical match (discord alias and player alias resolve to same person)
+      if (discordCanonical && discordCanonical === pCanonical) { matched = pCanonical; break; }
+      // Exact name match (case-insensitive, ignoring parenthesized suffixes)
+      if (pLower === discordLower || pStripped === discordStripped) { matched = pCanonical; break; }
+      // Partial/contains match (e.g. "Hoosierz" in "Hoosierz(Vor")
+      if (pStripped.includes(discordStripped) || discordStripped.includes(pStripped)) { matched = pCanonical; break; }
+    }
+    if (matched) {
+      currentMatchVods[matched] = entry.url;
+    }
+  }
+}
+
+function getVodCell(playerName) {
+  const canonical = getCanonicalName(playerName);
+  const url = currentMatchVods[canonical];
+  if (!url) return '<td class="pt-vod"></td>';
+  return `<td class="pt-vod"><a href="${url}" target="_blank" rel="noopener" class="vod-btn">&#9654; Watch VOD</a></td>`;
+}
 
 // ==========================================
 //  GOOGLE SHEETS INTEGRATION
@@ -1332,6 +1383,8 @@ async function render() {
       }
       currentMatch = data;
       currentRole = 'ALL';
+      await loadVodData();
+      buildMatchVodLookup(route.slug);
       renderMatchPage(data);
     } else if (route.page === 'search') {
       // Search needs full Sheets data for player index
@@ -1655,6 +1708,7 @@ function makePlayerRow(p, team) {
   return `<tr class="${cls}">
     <td class="pt-role"><span class="role-badge r-${p.role}">${p.role}</span></td>
     <td class="pt-name">${playerLink}</td>
+    ${getVodCell(p.name)}
     <td class="pt-num pt-kills">${p.kills}</td>
     <td class="pt-num pt-deaths">${p.deaths}</td>
     <td class="pt-num">${p.assists}</td>
@@ -1671,6 +1725,7 @@ function makeExcelPlayerRow(p, team) {
   return `<tr class="${cls}" style="border-left:none;">
     <td class="pt-role"><span class="role-badge r-${p.role}">${p.role}</span></td>
     <td class="pt-name">${playerLink}</td>
+    ${getVodCell(p.name)}
     <td class="pt-num pt-kills">${p.kills}</td>
     <td class="pt-num pt-deaths">${p.deaths}</td>
     <td class="pt-num">${p.assists}</td>
@@ -1691,6 +1746,7 @@ function renderGroupExcel(g) {
   const thRow = `<thead><tr>
     <th class="ex-num" style="text-align:left;">Role</th>
     <th>Player</th>
+    <th></th>
     <th class="ex-num">Kills</th>
     <th class="ex-num">Deaths</th>
     <th class="ex-num">Assists</th>
@@ -1769,6 +1825,7 @@ function renderGroupList(g) {
             <tr>
               <th class="gt-th gt-role">Role</th>
               <th class="gt-th gt-name">Player</th>
+              <th class="gt-th"></th>
               <th class="gt-th gt-num">Kills</th>
               <th class="gt-th gt-num">Deaths</th>
               <th class="gt-th gt-num">Assists</th>
@@ -1777,9 +1834,9 @@ function renderGroupList(g) {
             </tr>
           </thead>
           <tbody>
-            <tr class="team-divider-row"><td colspan="7"><span class="team-divider-label t1-divider">🟢 BEAVERKNIGHTS</span></td></tr>
+            <tr class="team-divider-row"><td colspan="8"><span class="team-divider-label t1-divider">🟢 BEAVERKNIGHTS</span></td></tr>
             ${t1Players.map(p => makePlayerRow(p, 't1')).join('')}
-            <tr class="team-divider-row"><td colspan="7"><span class="team-divider-label t2-divider">🟣 CAPYKNIGHTS</span></td></tr>
+            <tr class="team-divider-row"><td colspan="8"><span class="team-divider-label t2-divider">🟣 CAPYKNIGHTS</span></td></tr>
             ${t2Players.map(p => makePlayerRow(p, 't2')).join('')}
           </tbody>
         </table>
@@ -1840,6 +1897,7 @@ function renderExcelViewGroup(g, team, placeholderLabel) {
       <thead><tr>
         <th class="ev-th" style="text-align:left;"></th>
         <th class="ev-th">Player</th>
+        <th class="ev-th"></th>
         <th class="ev-th ev-num">Kills</th>
         <th class="ev-th ev-num">Deaths</th>
         <th class="ev-th ev-num">Assists</th>
@@ -1853,6 +1911,7 @@ function renderExcelViewGroup(g, team, placeholderLabel) {
             return `<tr class="${rowClass}" style="border-left:none;">
               <td class="pt-role"><span class="role-badge r-${p.role}">${p.role}</span></td>
               <td class="pt-name">${playerLink}</td>
+              ${getVodCell(p.name)}
               <td class="pt-num pt-kills">${p.kills}</td>
               <td class="pt-num pt-deaths">${p.deaths}</td>
               <td class="pt-num">${p.assists}</td>
@@ -2083,6 +2142,7 @@ function renderChangelogPage() {
     {
       date: '14.04.2026',
       changes: [
+        'Added VOD links: players with recorded matches now show a ▶ button next to their name linking to the YouTube/Twitch VOD',
         'Fixed player merge bug: two different "Skill Issue" players (I vs l) were incorrectly combined into one profile with 60 matches',
         'Separated Liona/SkillIssue and MARKEL1to/US into distinct player profiles',
         'Added loading screen easter egg: rotating New World bug quotes with progress indicator',

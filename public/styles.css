@@ -899,6 +899,36 @@ body::after {
   color: var(--gold);
   border-bottom-color: var(--gold);
 }
+.pt-vod {
+  text-align: center;
+  width: 90px;
+}
+.vod-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-family: 'Share Tech Mono', monospace;
+  color: #ff4444;
+  background: rgba(255, 68, 68, 0.10);
+  border: 1px solid rgba(255, 68, 68, 0.25);
+  border-radius: 4px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all .2s;
+}
+.vod-btn:hover {
+  background: rgba(255, 68, 68, 0.25);
+  color: #ff6666;
+  border-color: rgba(255, 68, 68, 0.5);
+}
+.ev-table .pt-vod { width: 70px; }
+.ev-table .vod-btn {
+  font-size: 9px;
+  padding: 1px 5px;
+  gap: 3px;
+}
 .pt-num {
   font-family: 'Share Tech Mono', monospace;
   font-size: 14px;
