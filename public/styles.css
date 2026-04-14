@@ -43,6 +43,7 @@
   --r-br:  #b89a00;  --r-br-bg:  rgba(184,154,0,.22);     --r-br-b:  rgba(184,154,0,.45);
   --r-pt:  #999999;  --r-pt-bg:  rgba(153,153,153,.14);   --r-pt-b:  rgba(153,153,153,.25);
   --r-md:  #5c6bc0;  --r-md-bg:  rgba(92,107,192,.14);    --r-md-b:  rgba(92,107,192,.25);
+  --r-hd:  #ab47bc;  --r-hd-bg:  rgba(171,71,188,.14);     --r-hd-b:  rgba(171,71,188,.25);
 
   /* ── Sizing ── */
   --max-w: 1400px;
@@ -959,6 +960,7 @@ body::after {
 .role-badge.r-BR  { background: var(--r-br-bg);  color: var(--r-br);  border: 1px solid var(--r-br-b); }
 .role-badge.r-PT  { background: var(--r-pt-bg);  color: var(--r-pt);  border: 1px solid var(--r-pt-b); }
 .role-badge.r-MD  { background: var(--r-md-bg);  color: var(--r-md);  border: 1px solid var(--r-md-b); }
+.role-badge.r-HD  { background: var(--r-hd-bg);  color: var(--r-hd);  border: 1px solid var(--r-hd-b); }
 
 /* ═══════════════════════════════════════════
    PLAYER PROFILE PAGE

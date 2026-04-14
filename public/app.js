@@ -528,6 +528,29 @@ const NAME_MAPPING_JSON = {
   "Zeldris": "Behind Lines",
   "hkN": "hkN.oO",
   "xBEAT": "ZKDD",
+
+  // Auto-synced from name_mapping.json
+  "Darth Jarker": "Jarker",
+  "Zenø": "Zenodiac",
+
+  // Auto-synced from name_mapping.json
+  "1.618": "Ambrozja/1.6",
+  "Bakelolo": "Stryju|Bakel",
+
+  // Carusoo (double-o) → Felidaee/Caruso0 group
+  "Carusoo": "Felidaee",
+  // Couch1 → GailibixX (same player, new in-game name)
+  "Couch1": "GailibixX",
+  // capy / kel / OhMyGourd new aliases
+  "dm for capy pics": "capy",
+  "capy": "dm for capy pics",
+  "CherieFanClub": "kel",
+  "kel": "CherieFanClub",
+  "4x4": "OhMyGourd",
+  "OhMyGourd": "4x4",
+  // Hoosierz/Vore variants
+  "Hoosierz(Vor": "Hoosierz",
+  "Vore": "Hoosierz",
 };
 
 // Build bidirectional canonical name lookup
@@ -665,6 +688,12 @@ function getVodCell(playerName) {
 const SPREADSHEET_ID = '1vYy9Zsn7hVN3Z3sEW2S0GsXEMh1VVM_P7vn6C5LMFgY';
 const PUBLISHED_ID = '2PACX-1vReMFS4C8UfVHqgl0rI14LVdU4adkyw8_ClQpAJgkXluqncRdqBHXer156nDt_A3deeB7qO0vuDaHE8';
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+// Hybrid data loading: the last N matches are live-synced from Google Sheets
+// (so in-progress edits show up immediately). Older matches load from static
+// JSON files in public/data/ for instant rendering. Set to 0 to disable live
+// sync entirely (pure static mode).
+const LIVE_SYNC_RECENT_COUNT = 5;
 
 // Team logo SHA-256 hashes for auto-detecting attacker from XLSX
 const BEAVER_SHA256 = new Set([
@@ -1059,25 +1088,117 @@ function setCache(key, data) {
 
 // -- Build All Match Data --------------------
 
+// Process a single sheet entry into a match detail + summary.
+// Shared by the live-sync path (buildMatchesFromSheets) and could be reused elsewhere.
+async function processSheetEntry(entry, xlsxMeta, staticAttackers, staticWinners) {
+  const csv = await fetchSheetCSV(entry.gid);
+  const parsed = parseCSVMatch(csv);
+  const slug = `nwl-${entry.nwlNumber}`;
+  // XLSX detection is primary, matches.json is fallback
+  const attacker = xlsxMeta.attackers[entry.date] || staticAttackers[slug] || null;
+
+  // The top section in the spreadsheet is always the attacker.
+  // parseCSVMatch() assigns the top section to team1, but if the attacker
+  // is actually team2 (Capyknights), we need to swap the team assignments
+  // BEFORE determining winner and kills.
+  if (attacker === 'team2') {
+    for (const g of parsed.groups) {
+      [g.team1, g.team2] = [g.team2, g.team1];
+    }
+    [parsed.totals.team1, parsed.totals.team2] = [parsed.totals.team2, parsed.totals.team1];
+    // Also swap VICTORY/DEFEAT result (it's from the attacker's perspective)
+    if (parsed.winner === 'team1') parsed.winner = 'team2';
+    else if (parsed.winner === 'team2') parsed.winner = 'team1';
+  }
+
+  // XLSX tab color is primary for winner, matches.json is fallback
+  let winner = xlsxMeta.winners[entry.date] || staticWinners[slug];
+  if (!winner) winner = parsed.winner;
+  if (!winner) {
+    const t1k = parsed.totals.team1.kills;
+    const t2k = parsed.totals.team2.kills;
+    winner = t1k > t2k ? 'team1' : (t2k > t1k ? 'team2' : null);
+  }
+
+  // Map attacker/defender kills to team1/team2
+  let team1Kills, team2Kills;
+  if (parsed.attackerKills || parsed.defenderKills) {
+    if (attacker === 'team2') {
+      team1Kills = parsed.defenderKills;
+      team2Kills = parsed.attackerKills;
+    } else {
+      team1Kills = parsed.attackerKills;
+      team2Kills = parsed.defenderKills;
+    }
+    parsed.totals.team1.kills = team1Kills;
+    parsed.totals.team2.kills = team2Kills;
+  } else {
+    team1Kills = parsed.totals.team1.kills;
+    team2Kills = parsed.totals.team2.kills;
+  }
+
+  return {
+    slug,
+    detail: {
+      slug, nwlNumber: entry.nwlNumber, mapName: entry.mapName,
+      date: entry.date, duration: parsed.duration, winner, attacker,
+      groups: parsed.groups, totals: parsed.totals,
+      team1Name: 'Beaverknights', team2Name: 'Capyknights',
+      gid: entry.gid,
+    },
+    summary: {
+      slug, nwlNumber: entry.nwlNumber, mapName: entry.mapName,
+      date: entry.date, duration: parsed.duration, winner, attacker,
+      team1Kills, team2Kills,
+      team1Name: 'Beaverknights', team2Name: 'Capyknights',
+    },
+  };
+}
+
+// Load a single match detail from its static JSON file in public/data/.
+async function loadStaticMatchDetail(slug) {
+  try {
+    const res = await fetch(`data/${slug}.json?_cb=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) return await res.json();
+  } catch (e) { /* ignore */ }
+  return null;
+}
+
+// Hybrid loader: older matches come from static JSONs (instant), the last
+// LIVE_SYNC_RECENT_COUNT matches are fetched live from Google Sheets so
+// in-progress edits show up without re-running extract-data.py.
 async function buildMatchesFromSheets() {
   const cached = getCached('all_matches');
   if (cached) return cached;
 
-  // Fetch sheet list + XLSX metadata + static JSON fallback in parallel
-  const [sheets, xlsxMeta, staticData] = await Promise.all([
-    fetchSheetList(),
-    parseXLSXMetadata().catch(() => ({ attackers: {}, winners: {} })),
-    fetch(`data/matches.json?_cb=${Date.now()}`, { cache: 'no-store' }).then(r => r.ok ? r.json() : []).catch(() => []),
-  ]);
-  if (!sheets.length) throw new Error('No match sheets found');
+  // Always load the static summary list first — it's our base layer.
+  const staticSummaries = await fetch(`data/matches.json?_cb=${Date.now()}`, { cache: 'no-store' })
+    .then(r => r.ok ? r.json() : [])
+    .catch(() => []);
 
-  let staticWinners = {};
-  let staticAttackers = {};
-  staticData.forEach(m => {
+  // Index static data for use as attacker/winner fallback.
+  const staticWinners = {};
+  const staticAttackers = {};
+  staticSummaries.forEach(m => {
     staticWinners[m.slug] = m.winner;
     if (m.attacker) staticAttackers[m.slug] = m.attacker;
   });
+  const staticSummaryBySlug = Object.fromEntries(staticSummaries.map(m => [m.slug, m]));
 
+  // Try to fetch the Sheets tab list + XLSX metadata. If either fails we
+  // degrade gracefully to pure-static mode.
+  let sheets = [];
+  let xlsxMeta = { attackers: {}, winners: {} };
+  try {
+    [sheets, xlsxMeta] = await Promise.all([
+      fetchSheetList(),
+      parseXLSXMetadata().catch(() => ({ attackers: {}, winners: {} })),
+    ]);
+  } catch (e) {
+    console.warn('Google Sheets list unavailable, using pure static data:', e);
+  }
+
+  // Build entries with NWL numbers (reuses existing date/name parsing logic).
   const entries = sheets.map(s => {
     const meta = parseSheetName(s.name);
     const dt = meta.date ? parseDate(meta.date) : new Date(0);
@@ -1085,7 +1206,6 @@ async function buildMatchesFromSheets() {
   });
   entries.sort((a, b) => a.dt - b.dt);
 
-  // Fill in missing NWL numbers
   for (let i = 0; i < entries.length; i++) {
     if (entries[i].nwlNumber !== null) continue;
     for (let j = i - 1; j >= 0; j--) {
@@ -1105,96 +1225,96 @@ async function buildMatchesFromSheets() {
     if (entries[i].nwlNumber === null) entries[i].nwlNumber = i + 1;
   }
 
-  // Fetch all sheets in parallel (batched)
+  // Determine threshold: the last N matches (by NWL number) get live-synced.
+  const allNumbers = entries.map(e => e.nwlNumber).concat(staticSummaries.map(m => m.nwlNumber));
+  const maxNum = allNumbers.length ? Math.max(...allNumbers) : 0;
+  const liveThreshold = LIVE_SYNC_RECENT_COUNT > 0 ? maxNum - LIVE_SYNC_RECENT_COUNT + 1 : Infinity;
+
+  const liveEntries = entries.filter(e => e.nwlNumber >= liveThreshold);
+  const oldEntries = entries.filter(e => e.nwlNumber < liveThreshold);
+
+  // === Parallel A: load static JSON details for all old matches ===
+  const oldStaticPromise = Promise.all(oldEntries.map(async (entry) => {
+    const slug = `nwl-${entry.nwlNumber}`;
+    const detail = await loadStaticMatchDetail(slug);
+    if (!detail) return null;
+    const summary = staticSummaryBySlug[slug] || {
+      slug, nwlNumber: entry.nwlNumber, mapName: entry.mapName,
+      date: entry.date, duration: detail.duration,
+      winner: detail.winner, attacker: detail.attacker,
+      team1Kills: detail.totals?.team1?.kills || 0,
+      team2Kills: detail.totals?.team2?.kills || 0,
+      team1Name: 'Beaverknights', team2Name: 'Capyknights',
+    };
+    return { slug, detail, summary };
+  }));
+
+  // === Parallel B: fetch live CSVs for recent matches (batched) ===
+  const liveFetchPromise = (async () => {
+    const out = [];
+    const BATCH = 5;
+    for (let b = 0; b < liveEntries.length; b += BATCH) {
+      const batch = liveEntries.slice(b, b + BATCH);
+      const results = await Promise.all(batch.map(async (entry) => {
+        try {
+          return await processSheetEntry(entry, xlsxMeta, staticAttackers, staticWinners);
+        } catch (e) {
+          console.warn(`Failed to parse sheet "${entry.name}" live, will fall back to static:`, e);
+          return null;
+        }
+      }));
+      for (const r of results) out.push(r);
+    }
+    return out;
+  })();
+
+  const [oldResults, liveResults] = await Promise.all([oldStaticPromise, liveFetchPromise]);
+
+  // Merge
   const matchDetails = {};
   const matchList = [];
-  const BATCH = 5;
 
-  for (let b = 0; b < entries.length; b += BATCH) {
-    const batch = entries.slice(b, b + BATCH);
-    const results = await Promise.all(batch.map(async (entry) => {
-      try {
-        const csv = await fetchSheetCSV(entry.gid);
-        const parsed = parseCSVMatch(csv);
-        const slug = `nwl-${entry.nwlNumber}`;
-        // XLSX detection is primary, matches.json is fallback
-        const attacker = xlsxMeta.attackers[entry.date] || staticAttackers[slug] || null;
+  for (const r of oldResults) {
+    if (!r) continue;
+    matchDetails[r.slug] = r.detail;
+    matchList.push(r.summary);
+  }
 
-        // The top section in the spreadsheet is always the attacker.
-        // parseCSVMatch() assigns the top section to team1, but if the attacker
-        // is actually team2 (Capyknights), we need to swap the team assignments
-        // BEFORE determining winner and kills.
-        if (attacker === 'team2') {
-          for (const g of parsed.groups) {
-            [g.team1, g.team2] = [g.team2, g.team1];
-          }
-          [parsed.totals.team1, parsed.totals.team2] = [parsed.totals.team2, parsed.totals.team1];
-          // Also swap VICTORY/DEFEAT result (it's from the attacker's perspective)
-          if (parsed.winner === 'team1') parsed.winner = 'team2';
-          else if (parsed.winner === 'team2') parsed.winner = 'team1';
-        }
-
-        // XLSX tab color is primary for winner, matches.json is fallback
-        let winner = xlsxMeta.winners[entry.date] || staticWinners[slug];
-        if (!winner) winner = parsed.winner;
-        if (!winner) {
-          const t1k = parsed.totals.team1.kills;
-          const t2k = parsed.totals.team2.kills;
-          winner = t1k > t2k ? 'team1' : (t2k > t1k ? 'team2' : null);
-        }
-
-        // Map attacker/defender kills to team1/team2
-        // attackerKills/defenderKills are from fixed positions (top/bottom section)
-        // After the swap above, we know which team is which
-        let team1Kills, team2Kills;
-        if (parsed.attackerKills || parsed.defenderKills) {
-          if (attacker === 'team2') {
-            // Top section = Capyknights (team2), bottom = Beaverknights (team1)
-            team1Kills = parsed.defenderKills;
-            team2Kills = parsed.attackerKills;
-          } else {
-            // Top section = Beaverknights (team1), bottom = Capyknights (team2)
-            team1Kills = parsed.attackerKills;
-            team2Kills = parsed.defenderKills;
-          }
-          parsed.totals.team1.kills = team1Kills;
-          parsed.totals.team2.kills = team2Kills;
-        } else {
-          team1Kills = parsed.totals.team1.kills;
-          team2Kills = parsed.totals.team2.kills;
-        }
-
-        return {
-          entry, slug, winner,
-          detail: {
-            slug, nwlNumber: entry.nwlNumber, mapName: entry.mapName,
-            date: entry.date, duration: parsed.duration, winner, attacker,
-            groups: parsed.groups, totals: parsed.totals,
-            team1Name: 'Beaverknights', team2Name: 'Capyknights',
-            gid: entry.gid,
-          },
-          summary: {
-            slug, nwlNumber: entry.nwlNumber, mapName: entry.mapName,
-            date: entry.date, duration: parsed.duration, winner, attacker,
-            team1Kills, team2Kills,
-            team1Name: 'Beaverknights', team2Name: 'Capyknights',
-          },
-        };
-      } catch (e) {
-        console.warn(`Failed to parse sheet "${entry.name}":`, e);
-        return null;
-      }
-    }));
-
-    for (const r of results) {
-      if (!r) continue;
+  // Live results: use sheets data where available; fall back to static for failures
+  for (let i = 0; i < liveEntries.length; i++) {
+    const entry = liveEntries[i];
+    const slug = `nwl-${entry.nwlNumber}`;
+    const r = liveResults[i];
+    if (r) {
       matchDetails[r.slug] = r.detail;
       matchList.push(r.summary);
+    } else {
+      // Live fetch failed — fall back to static JSON for this slug.
+      const detail = await loadStaticMatchDetail(slug);
+      if (detail) {
+        matchDetails[slug] = detail;
+        const summary = staticSummaryBySlug[slug];
+        if (summary) matchList.push(summary);
+      }
     }
   }
 
+  // If sheets were entirely unavailable, pick up any static-only matches we haven't added yet.
+  if (!entries.length) {
+    for (const m of staticSummaries) {
+      if (matchDetails[m.slug]) continue;
+      const detail = await loadStaticMatchDetail(m.slug);
+      if (detail) {
+        matchDetails[m.slug] = detail;
+        matchList.push(m);
+      }
+    }
+  }
+
+  if (!matchList.length) throw new Error('No match data available');
+
   matchList.sort((a, b) => b.nwlNumber - a.nwlNumber);
-  const result = { matchList, matchDetails };
+  const result = { matchList, matchDetails, liveThreshold };
   setCache('all_matches', result);
   return result;
 }
@@ -1362,24 +1482,48 @@ async function render() {
     ensureHamburger();
 
     if (route.page === 'match') {
-      // Match detail: try static JSON first (instant), use Sheets data if already loaded
+      // Match detail: recent matches are live-synced from Sheets, older ones
+      // use static JSON for instant rendering.
       let data;
       if (sheetsData && sheetsData.matchDetails[route.slug]) {
         data = sheetsData.matchDetails[route.slug];
       } else {
-        // Show loading while fetching
-        app.innerHTML = loadingScreenHTML('Loading Match', 'Fetching match data...');
-        startLoadingQuotes();
-        // Try static JSON first, fall back to Sheets sync
-        const res = await fetch(`data/${route.slug}.json?_cb=${Date.now()}`, { cache: 'no-store' });
-        if (res.ok) {
-          data = await res.json();
-        } else {
-          // No static JSON, need to fetch from Sheets
+        const slugNum = parseInt(String(route.slug).replace(/^nwl-/, ''), 10) || 0;
+        // Peek at matches.json to find the max NWL number so we can tell
+        // whether this match falls in the live-sync window.
+        let maxNum = 0;
+        try {
+          const mRes = await fetch(`data/matches.json?_cb=${Date.now()}`, { cache: 'no-store' });
+          if (mRes.ok) {
+            const mList = await mRes.json();
+            maxNum = mList.reduce((m, x) => Math.max(m, x.nwlNumber || 0), 0);
+          }
+        } catch { /* fall through with maxNum=0 */ }
+        const isRecent = LIVE_SYNC_RECENT_COUNT > 0 && slugNum > 0 && slugNum > maxNum - LIVE_SYNC_RECENT_COUNT;
+
+        if (isRecent) {
+          // Live match: prefer Sheets, static JSON only as last resort.
+          app.innerHTML = loadingScreenHTML('Loading Match', 'Syncing live with Google Sheets...');
+          startLoadingQuotes();
           const sd = await ensureSheetsSync();
           data = sd && sd.matchDetails[route.slug];
-          if (!data) throw new Error('Match not found');
+          if (!data) {
+            const res = await fetch(`data/${route.slug}.json?_cb=${Date.now()}`, { cache: 'no-store' });
+            if (res.ok) data = await res.json();
+          }
+        } else {
+          // Archived match: static JSON first (instant), Sheets only as fallback.
+          app.innerHTML = loadingScreenHTML('Loading Match', 'Fetching match data...');
+          startLoadingQuotes();
+          const res = await fetch(`data/${route.slug}.json?_cb=${Date.now()}`, { cache: 'no-store' });
+          if (res.ok) {
+            data = await res.json();
+          } else {
+            const sd = await ensureSheetsSync();
+            data = sd && sd.matchDetails[route.slug];
+          }
         }
+        if (!data) throw new Error('Match not found');
       }
       currentMatch = data;
       currentRole = 'ALL';
@@ -1462,7 +1606,7 @@ function renderHomePage(matches) {
       <div class="landing-eyebrow">New World League · Scoreboard</div>
       <h1 class="landing-title">NWL<br>SCOREBOARD</h1>
       <div class="landing-sub">Beaverknights vs Capyknights · ${matches.length} Matches</div>
-      ${sheetsData ? '<div class="live-badge"><span class="live-dot"></span> LIVE · Synced with Google Sheets</div>' : ''}
+      ${sheetsData ? `<div class="live-badge"><span class="live-dot"></span> LIVE · Last ${LIVE_SYNC_RECENT_COUNT} matches synced with Google Sheets</div>` : ''}
     </div>
 
     <div class="season-record">
@@ -2146,6 +2290,7 @@ function renderChangelogPage() {
         'Fixed player merge bug: two different "Skill Issue" players (I vs l) were incorrectly combined into one profile with 60 matches',
         'Separated Liona/SkillIssue and MARKEL1to/US into distinct player profiles',
         'Added loading screen easter egg: rotating New World bug quotes with progress indicator',
+        `Hybrid data loading: the last ${LIVE_SYNC_RECENT_COUNT} matches now sync live with Google Sheets (in-progress edits show up immediately), while older matches load instantly from static JSON files`,
       ]
     },
     {
@@ -2345,7 +2490,7 @@ function renderPlayerPage(playerName) {
 
   // Role filter (only if player has multiple roles)
   if (hasMultipleRoles) {
-    const roleOrder = ['AoE', 'HL', 'RD', 'IV', 'BR', 'PT', 'MD'];
+    const roleOrder = ['AoE', 'HL', 'RD', 'IV', 'BR', 'PT', 'MD', 'HD'];
     const sorted = roles.sort((a, b) => (roleOrder.indexOf(a) === -1 ? 99 : roleOrder.indexOf(a)) - (roleOrder.indexOf(b) === -1 ? 99 : roleOrder.indexOf(b)));
     const roleCounts = {};
     for (const a of allAppearances) roleCounts[a.player.role] = (roleCounts[a.player.role] || 0) + 1;
