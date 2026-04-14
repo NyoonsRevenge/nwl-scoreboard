@@ -695,6 +695,13 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 // sync entirely (pure static mode).
 const LIVE_SYNC_RECENT_COUNT = 5;
 
+// Google Form for submitting VODs. Set this once after running
+// scripts/create-vod-form.gs (the script prints the URL). When non-empty, a
+// "Submit VOD" link appears in the hamburger menu. Form submissions land in
+// the spreadsheet's "VODs" tab and are picked up by extract-data.py on the
+// next auto-sync (~30 min during evening hours).
+const VOD_SUBMIT_FORM_URL = '';
+
 // Team logo SHA-256 hashes for auto-detecting attacker from XLSX
 const BEAVER_SHA256 = new Set([
   '2f48a7108179ab258234c478514a2f7372d7f3da24aa6b77342f04e1536e2efa',
@@ -1412,6 +1419,10 @@ function getHamburgerHTML() {
         <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
         Support-Ticket
       </a>
+      ${VOD_SUBMIT_FORM_URL ? `<a href="${VOD_SUBMIT_FORM_URL}" target="_blank" rel="noopener noreferrer" onclick="toggleNav();">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Submit VOD
+      </a>` : ''}
       <a onclick="toggleNav(); navigate('#/changelog');">
         <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01m-.01 4h.01"/></svg>
         Changelog
@@ -2283,6 +2294,12 @@ function renderSearchPage() {
 
 function renderChangelogPage() {
   const entries = [
+    {
+      date: '15.04.2026',
+      changes: [
+        'VODs can now be submitted via Google Form — no more manual JSON editing. New VODs appear on the scoreboard within ~30 minutes (next auto-sync). The "Submit VOD" link in the burger menu opens the form.',
+      ]
+    },
     {
       date: '14.04.2026',
       changes: [

@@ -377,6 +377,124 @@ def parse_match(rows):
 
     return groups, result, duration, totals
 
+def fetch_vod_responses():
+    """Read VOD submissions from a 'VODs' tab in the spreadsheet.
+
+    The tab is typically auto-populated by a Google Form (see
+    scripts/create-vod-form.gs). Expected columns in this order:
+
+        Timestamp | NWL Number | Discord Name | VOD URL
+
+    The first row is treated as a header and skipped. Submissions for the
+    same (match, discord name) pair are deduped — last submission wins.
+
+    Returns:
+        dict keyed by slug ('nwl-N') → list of {discord, url} dicts.
+        None if the tab can't be found or fetched (caller should preserve
+        the existing vods.json in that case).
+    """
+    list_url = f'https://docs.google.com/spreadsheets/d/e/{PUBLISHED_ID}/pubhtml'
+    req = urllib.request.Request(list_url, headers={'User-Agent': 'Mozilla/5.0'})
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            html = resp.read().decode('utf-8')
+    except Exception as e:
+        print(f"VOD: failed to fetch sheet list: {e}")
+        return None
+
+    vod_gid = None
+    pattern = r'name:\s*"([^"]+)"[^}}]*gid:\s*"(\d+)"'
+    for match in re.finditer(pattern, html):
+        name = match.group(1).replace(r'\/', '/').strip().lower()
+        if name == 'vods':
+            vod_gid = match.group(2)
+            break
+
+    if not vod_gid:
+        print("VOD: no 'VODs' tab found in spreadsheet — keeping existing vods.json")
+        return None
+
+    csv_url = f'https://docs.google.com/spreadsheets/d/e/{PUBLISHED_ID}/pub?output=csv&gid={vod_gid}'
+    req = urllib.request.Request(csv_url, headers={'User-Agent': 'Mozilla/5.0'})
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            text = resp.read().decode('utf-8')
+        rows = list(csv.reader(text.splitlines()))
+    except Exception as e:
+        print(f"VOD: failed to fetch 'VODs' tab CSV: {e}")
+        return None
+
+    if len(rows) < 2:
+        return {}
+
+    by_key = {}
+    for row in rows[1:]:  # skip header
+        if len(row) < 4:
+            continue
+        nwl_raw = str(row[1]).strip()
+        discord = str(row[2]).strip()
+        url_val = str(row[3]).strip()
+        if not (nwl_raw and discord and url_val):
+            continue
+        m = re.search(r'\d+', nwl_raw)
+        if not m:
+            continue
+        nwl_num = int(m.group(0))
+        slug = f'nwl-{nwl_num}'
+        # last submission for the same (match, discord) wins
+        by_key[(slug, discord.lower())] = {'discord': discord, 'url': url_val}
+
+    grouped = {}
+    for (slug, _), entry in by_key.items():
+        grouped.setdefault(slug, []).append(entry)
+    return grouped
+
+
+def merge_vods(form_vods):
+    """Merge form-submitted VODs into vods.json without losing manual entries.
+
+    Within a slug present in form_vods, form data wins for matching discord
+    names, but pre-existing manual entries (no matching form submission) are
+    preserved. Slugs with no form data are left fully intact.
+
+    Pass form_vods=None to skip writing entirely (e.g. on fetch failure).
+    """
+    if form_vods is None:
+        return
+
+    vods_path = os.path.join(OUT_DIR, 'vods.json')
+
+    existing = {}
+    if os.path.exists(vods_path):
+        try:
+            with open(vods_path, 'r', encoding='utf-8') as f:
+                existing = json.load(f)
+        except Exception as e:
+            print(f"VOD: failed to read existing vods.json: {e}")
+
+    merged = dict(existing)
+    for slug, entries in form_vods.items():
+        by_discord = {}
+        for e in existing.get(slug, []):
+            if isinstance(e, dict) and 'discord' in e:
+                by_discord[e['discord'].lower()] = e
+        for entry in entries:
+            by_discord[entry['discord'].lower()] = entry
+        merged[slug] = list(by_discord.values())
+
+    def slug_num(s):
+        m = re.match(r'nwl-(\d+)', s)
+        return int(m.group(1)) if m else 0
+
+    sorted_vods = {s: merged[s] for s in sorted(merged.keys(), key=slug_num, reverse=True)}
+
+    with open(vods_path, 'w', encoding='utf-8') as f:
+        json.dump(sorted_vods, f, ensure_ascii=False, indent=2)
+
+    total = sum(len(v) for v in sorted_vods.values())
+    print(f"VOD: wrote {total} VODs across {len(sorted_vods)} matches to vods.json")
+
+
 def fetch_xlsx():
     """Download XLSX data once for reuse."""
     url = f'https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/export?format=xlsx'
@@ -481,6 +599,10 @@ def main():
     for m in matches:
         w = '🟢' if m['winner'] == 'team1' else '🟣'
         print(f"  {w} NWL#{m['nwlNumber']}: {m['mapName']} ({m['date']}) — {m['team1Kills']}:{m['team2Kills']}")
+
+    print("\nFetching VODs from form responses...")
+    form_vods = fetch_vod_responses()
+    merge_vods(form_vods)
 
 if __name__ == '__main__':
     main()
