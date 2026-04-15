@@ -700,7 +700,7 @@ const LIVE_SYNC_RECENT_COUNT = 5;
 // "Submit VOD" link appears in the hamburger menu. Form submissions land in
 // the spreadsheet's "VODs" tab and are picked up by extract-data.py on the
 // next auto-sync (~30 min during evening hours).
-const VOD_SUBMIT_FORM_URL = '';
+const VOD_SUBMIT_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd1tbySbH7WONuIZ1AA_2e3v16PAnesYK5sf0bvDmqJf3fG4A/viewform';
 
 // Team logo SHA-256 hashes for auto-detecting attacker from XLSX
 const BEAVER_SHA256 = new Set([
