@@ -1,22 +1,94 @@
 {
   "nwl-34": [
-    { "discord": "Inziar", "url": "https://www.twitch.tv/videos/2748068639" },
-    { "discord": "Smiamxiah", "url": "https://youtu.be/ViUELzCyMPo" },
-    { "discord": "Hoosierz (Vore)", "url": "https://www.youtube.com/watch?v=oZij3KUO6Ww" },
-    { "discord": "Zar_ki", "url": "https://youtu.be/9hTOAdM7108" },
-    { "discord": "Brown-Noise", "url": "https://youtu.be/ifgb-LtZoLA" }
+    {
+      "discord": "Inziar",
+      "url": "https://www.twitch.tv/videos/2748068639"
+    },
+    {
+      "discord": "Smiamxiah",
+      "url": "https://youtu.be/ViUELzCyMPo"
+    },
+    {
+      "discord": "Hoosierz (Vore)",
+      "url": "https://www.youtube.com/watch?v=oZij3KUO6Ww"
+    },
+    {
+      "discord": "Zar_ki",
+      "url": "https://youtu.be/9hTOAdM7108"
+    },
+    {
+      "discord": "Brown-Noise",
+      "url": "https://youtu.be/ifgb-LtZoLA"
+    },
+    {
+      "discord": "Jarker",
+      "url": "https://youtu.be/_wC7FUAC9DM"
+    },
+    {
+      "discord": "Godias",
+      "url": "https://youtu.be/umDymah2zNw"
+    },
+    {
+      "discord": "SHORTY",
+      "url": "https://youtu.be/-0idg6Vgar4"
+    },
+    {
+      "discord": "OhMyGourd",
+      "url": "https://youtu.be/14VDzZokVVI?si=sM1etxvlPYmHqjb7"
+    },
+    {
+      "discord": "kel (cherieFanClub)",
+      "url": "https://youtube.com/live/-mF6gSDGyhg?feature=share"
+    },
+    {
+      "discord": "Bella Aurora",
+      "url": "https://youtu.be/15xFERoV96g?is=fFx_y71N5e4YiAYx"
+    }
   ],
   "nwl-33": [
-    { "discord": "Zeldris", "url": "https://www.youtube.com/watch?v=hix9mx1aC6o" },
-    { "discord": "Jeszo", "url": "https://www.youtube.com/watch?v=a9IT74RhScY" },
-    { "discord": "pandatanga", "url": "https://youtu.be/x7IfGjih1Es?is=AEIgXfHbqpMmdsmX" },
-    { "discord": "Nyxie", "url": "https://youtube.com/live/Dl1VPHypgUM" },
-    { "discord": "Brown-Noise", "url": "https://youtu.be/jAOk2FwRc2s" },
-    { "discord": "Hoosierz (Vore)", "url": "https://www.youtube.com/watch?v=izECepgXjM4" },
-    { "discord": "Zeleen", "url": "https://www.youtube.com/live/_KdRmMbuB24" },
-    { "discord": "Jarker", "url": "https://youtu.be/40F-HSTmSnI" },
-    { "discord": "goatfryed", "url": "https://youtu.be/YeVBuatYZrs" },
-    { "discord": "Billy Talent", "url": "https://www.youtube.com/watch?v=0haeLcPewPM" },
-    { "discord": "Jarker", "url": "https://youtu.be/_wC7FUAC9DM" }
+    {
+      "discord": "Zeldris",
+      "url": "https://www.youtube.com/watch?v=hix9mx1aC6o"
+    },
+    {
+      "discord": "Jeszo",
+      "url": "https://www.youtube.com/watch?v=a9IT74RhScY"
+    },
+    {
+      "discord": "pandatanga",
+      "url": "https://youtu.be/x7IfGjih1Es?is=AEIgXfHbqpMmdsmX"
+    },
+    {
+      "discord": "Nyxie",
+      "url": "https://youtube.com/live/Dl1VPHypgUM"
+    },
+    {
+      "discord": "Brown-Noise",
+      "url": "https://youtu.be/jAOk2FwRc2s"
+    },
+    {
+      "discord": "Hoosierz (Vore)",
+      "url": "https://www.youtube.com/watch?v=izECepgXjM4"
+    },
+    {
+      "discord": "Zeleen",
+      "url": "https://www.youtube.com/live/_KdRmMbuB24"
+    },
+    {
+      "discord": "Jarker",
+      "url": "https://youtu.be/40F-HSTmSnI"
+    },
+    {
+      "discord": "goatfryed",
+      "url": "https://youtu.be/YeVBuatYZrs"
+    },
+    {
+      "discord": "Billy Talent",
+      "url": "https://www.youtube.com/watch?v=0haeLcPewPM"
+    },
+    {
+      "discord": "Jarker",
+      "url": "https://youtu.be/_wC7FUAC9DM"
+    }
   ]
 }
