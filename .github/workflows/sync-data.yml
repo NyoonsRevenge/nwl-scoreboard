@@ -2,10 +2,8 @@ name: Sync Match Data
 
 on:
   schedule:
-    # Abends 21:00-00:00 deutscher Zeit (UTC+2) alle 30 Min
-    - cron: '*/30 19-22 * * *'
-    # Tagsueber 2x: 10:00 und 16:00 deutscher Zeit
-    - cron: '0 8,14 * * *'
+    # Alle 30 Minuten, rund um die Uhr
+    - cron: '*/30 * * * *'
   workflow_dispatch: # Manueller Trigger ueber GitHub UI
 
 jobs:
