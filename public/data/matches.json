@@ -7,8 +7,8 @@
     "duration": "30:00",
     "winner": "team1",
     "attacker": "team2",
-    "team1Kills": 293,
-    "team2Kills": 183,
+    "team1Kills": 183,
+    "team2Kills": 293,
     "team1Name": "Beaverknights",
     "team2Name": "Capyknights"
   },
@@ -20,8 +20,8 @@
     "duration": "19:23",
     "winner": "team2",
     "attacker": "team2",
-    "team1Kills": 138,
-    "team2Kills": 141,
+    "team1Kills": 141,
+    "team2Kills": 138,
     "team1Name": "Beaverknights",
     "team2Name": "Capyknights"
   },
