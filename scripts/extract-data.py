@@ -284,7 +284,6 @@ def fetch_sheet_csv(gid):
 def parse_match(rows):
     result = None
     duration = None
-    attacker_from_csv = None  # Written by nwl_quick.py to H9: 'MARAUDERS' or 'SYNDICATE'
 
     for row in rows:
         if len(row) > 7:
@@ -297,11 +296,6 @@ def parse_match(rows):
                     result = 'team2'
             if re.match(r'^\d+:\d+$', h):
                 duration = h
-            if attacker_from_csv is None:
-                if 'MARAUDER' in h_up or 'BEAVERKNIGHT' in h_up:
-                    attacker_from_csv = 'team1'
-                elif 'SYNDICATE' in h_up or 'CAPYKNIGHT' in h_up:
-                    attacker_from_csv = 'team2'
 
     label_rows = []
     for i, row in enumerate(rows):
@@ -388,7 +382,7 @@ def parse_match(rows):
             for k in t2: t2[k] += p[k]
     totals = {'team1': t1, 'team2': t2}
 
-    return groups, result, duration, totals, attacker_from_csv
+    return groups, result, duration, totals
 
 def fetch_vod_responses():
     """Read VOD submissions from a 'VODs' tab in the spreadsheet.
@@ -539,13 +533,13 @@ def main():
         nwl_num = s['num']
         print(f"Parsing: NWL#{nwl_num} — {s['mapName']} ({s['date']})")
         rows = fetch_sheet_csv(s['gid'])
-        groups, result, duration, totals, attacker_from_csv = parse_match(rows)
+        groups, result, duration, totals = parse_match(rows)
 
         date_key = s['date']
 
-        # Attacker priority: manual override > CSV cell (H9, written by nwl_quick.py) > XLSX images
+        # Attacker priority: manual override > XLSX image detection
         slug = f'nwl-{nwl_num}'
-        attacker = ATTACKER_OVERRIDES.get(slug) or attacker_from_csv or attacker_map.get(date_key)
+        attacker = ATTACKER_OVERRIDES.get(slug) or attacker_map.get(date_key)
         if attacker:
             print(f"  -> Attacker: {attacker}")
 
