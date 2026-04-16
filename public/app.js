@@ -695,6 +695,13 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 // sync entirely (pure static mode).
 const LIVE_SYNC_RECENT_COUNT = 5;
 
+// Manual attacker overrides: when the XLSX has the wrong logo placement,
+// these take priority over the image-based auto-detection.
+const ATTACKER_OVERRIDES = {
+  'nwl-33': 'team2', // Syndicate (Capyknights) attacked, not Beaverknights
+  'nwl-34': 'team2', // Syndicate (Capyknights) attacked, not Beaverknights
+};
+
 // Google Form for submitting VODs. Set this once after running
 // scripts/create-vod-form.gs (the script prints the URL). When non-empty, a
 // "Submit VOD" link appears in the hamburger menu. Form submissions land in
@@ -1102,7 +1109,7 @@ async function processSheetEntry(entry, xlsxMeta, staticAttackers, staticWinners
   const parsed = parseCSVMatch(csv);
   const slug = `nwl-${entry.nwlNumber}`;
   // XLSX detection is primary, matches.json is fallback
-  const attacker = xlsxMeta.attackers[entry.date] || staticAttackers[slug] || null;
+  const attacker = ATTACKER_OVERRIDES[slug] || xlsxMeta.attackers[entry.date] || staticAttackers[slug] || null;
 
   // The top section in the spreadsheet is always the attacker.
   // parseCSVMatch() assigns the top section to team1, but if the attacker
@@ -2294,6 +2301,12 @@ function renderSearchPage() {
 
 function renderChangelogPage() {
   const entries = [
+    {
+      date: '16.04.2026',
+      changes: [
+        'Fixed attacker/defender assignment for NWL#33 and NWL#34: Syndicate (Capyknights) was the attacker in both matches, not Beaverknights',
+      ]
+    },
     {
       date: '15.04.2026',
       changes: [

@@ -18,6 +18,13 @@ PUBLISHED_ID = '2PACX-1vReMFS4C8UfVHqgl0rI14LVdU4adkyw8_ClQpAJgkXluqncRdqBHXer15
 SPREADSHEET_ID = '1vYy9Zsn7hVN3Z3sEW2S0GsXEMh1VVM_P7vn6C5LMFgY'
 OUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'public', 'data')
 
+# Manual attacker overrides: takes priority over XLSX image detection.
+# Use when the spreadsheet has the wrong logo placement for a match.
+ATTACKER_OVERRIDES = {
+    'nwl-33': 'team2',  # Syndicate (Capyknights) attacked, not Beaverknights
+    'nwl-34': 'team2',  # Syndicate (Capyknights) attacked, not Beaverknights
+}
+
 def get_tab_colors():
     """Download XLSX and extract sheet tab colors"""
     print("Fetching XLSX for tab colors...")
@@ -530,8 +537,9 @@ def main():
 
         date_key = s['date']
 
-        # Attacker team from embedded images (top image = attacker)
-        attacker = attacker_map.get(date_key)
+        # Attacker team: manual override takes priority over XLSX image detection
+        slug = f'nwl-{nwl_num}'
+        attacker = ATTACKER_OVERRIDES.get(slug) or attacker_map.get(date_key)
         if attacker:
             print(f"  -> Attacker: {attacker}")
 
