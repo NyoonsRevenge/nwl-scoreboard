@@ -968,8 +968,9 @@ function parseCSVMatch(csvText) {
   let result = null;
   let duration = null;
 
-  // -- Collect metadata (result, duration) --
+  // -- Collect metadata (result, duration, csvAttacker) --
   let rawResult = null; // 'VICTORY' or 'DEFEAT' (attacker's perspective)
+  let csvAttacker = null; // Written by nwl_quick.py to H9: 'MARAUDERS' or 'SYNDICATE'
   for (const row of rows) {
     const h = (row[7] || '').trim();
     const hUp = h.toUpperCase();
@@ -979,6 +980,10 @@ function parseCSVMatch(csvText) {
       else if (hUp === 'DEFEAT') { result = 'team2'; rawResult = 'DEFEAT'; }
     }
     if (/^\d+:\d+$/.test(h)) duration = h;
+    if (csvAttacker === null) {
+      if (hUp.includes('MARAUDER') || hUp.includes('BEAVERKNIGHT')) csvAttacker = 'team1';
+      else if (hUp.includes('SYNDICATE') || hUp.includes('CAPYKNIGHT')) csvAttacker = 'team2';
+    }
   }
 
   // -- Extract total kill counts from fixed cells --
@@ -1080,7 +1085,7 @@ function parseCSVMatch(csvText) {
     for (const p of g.team2) { for (const k in t2) t2[k] += p[k]; }
   }
 
-  return { groups, winner: result, rawResult, duration, totals: { team1: t1, team2: t2 }, attackerKills, defenderKills };
+  return { groups, winner: result, rawResult, duration, totals: { team1: t1, team2: t2 }, attackerKills, defenderKills, csvAttacker };
 }
 
 // -- Cache Layer -----------------------------
@@ -1109,7 +1114,8 @@ async function processSheetEntry(entry, xlsxMeta, staticAttackers, staticWinners
   const parsed = parseCSVMatch(csv);
   const slug = `nwl-${entry.nwlNumber}`;
   // XLSX detection is primary, matches.json is fallback
-  const attacker = ATTACKER_OVERRIDES[slug] || xlsxMeta.attackers[entry.date] || staticAttackers[slug] || null;
+  // Priority: manual override > CSV cell H9 (nwl_quick.py) > XLSX image detection > static fallback
+  const attacker = ATTACKER_OVERRIDES[slug] || parsed.csvAttacker || xlsxMeta.attackers[entry.date] || staticAttackers[slug] || null;
 
   // The top section in the spreadsheet is always the attacker.
   // parseCSVMatch() assigns the top section to team1, but if the attacker
