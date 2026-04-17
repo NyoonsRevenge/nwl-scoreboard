@@ -331,6 +331,15 @@
           "damage": 75910
         },
         {
+          "name": "TheHottestSilk",
+          "role": "PT",
+          "kills": 1,
+          "deaths": 3,
+          "assists": 83,
+          "healing": 71085,
+          "damage": 254598
+        },
+        {
           "name": "Lutsch",
           "role": "IV",
           "kills": 4,
@@ -850,11 +859,11 @@
       "damage": 54681026
     },
     "team2": {
-      "kills": 229,
-      "deaths": 145,
-      "assists": 3007,
-      "healing": 37144743,
-      "damage": 59082437
+      "kills": 230,
+      "deaths": 148,
+      "assists": 3090,
+      "healing": 37215828,
+      "damage": 59337035
     }
   },
   "team1Name": "Beaverknights",
