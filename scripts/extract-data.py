@@ -23,6 +23,7 @@ OUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'public
 ATTACKER_OVERRIDES = {
     'nwl-33': 'team2',  # Syndicate (Capyknights) attacked, not Beaverknights
     'nwl-34': 'team2',  # Syndicate (Capyknights) attacked, not Beaverknights
+    'nwl-35': 'team1',  # Marauders (Beaverknights) attacked
 }
 
 def get_tab_colors():
@@ -537,21 +538,22 @@ def main():
 
         date_key = s['date']
 
-        # Attacker priority: manual override > XLSX image detection
+        # Player swap is driven ONLY by image detection (logo-on-top = attacker,
+        # so that team's players are in the top CSV section). Overrides correct
+        # the attacker metadata label without touching physical layout — in
+        # NWL#33/34 the logo placement was wrong AND the players followed the
+        # wrong logo, so top-section != attacker and no swap should happen.
         slug = f'nwl-{nwl_num}'
-        attacker = ATTACKER_OVERRIDES.get(slug) or attacker_map.get(date_key)
+        override_attacker = ATTACKER_OVERRIDES.get(slug)
+        detected_attacker = attacker_map.get(date_key)
+        attacker = override_attacker or detected_attacker
         if attacker:
-            print(f"  -> Attacker: {attacker}")
+            print(f"  -> Attacker: {attacker}{' (override)' if override_attacker else ''}")
 
-        # The top section in the spreadsheet is always the attacker.
-        # parse_match() assigns the top section to team1, but if the attacker
-        # is actually team2 (Capyknights), we need to swap the team assignments
-        # BEFORE determining the winner.
-        if attacker == 'team2':
+        if not override_attacker and detected_attacker == 'team2':
             for g in groups:
                 g['team1'], g['team2'] = g['team2'], g['team1']
             totals['team1'], totals['team2'] = totals['team2'], totals['team1']
-            # Also swap VICTORY/DEFEAT result (it's from the attacker's perspective)
             if result == 'team1':
                 result = 'team2'
             elif result == 'team2':

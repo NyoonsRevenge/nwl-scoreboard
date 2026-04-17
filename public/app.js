@@ -551,6 +551,10 @@ const NAME_MAPPING_JSON = {
   // Hoosierz/Vore variants
   "Hoosierz(Vor": "Hoosierz",
   "Vore": "Hoosierz",
+
+  // Auto-synced from name_mapping.json
+  "BelleSprout": "Belle",
+  "GailibixX/Cou": "Couch1",
 };
 
 // Build bidirectional canonical name lookup
@@ -700,6 +704,7 @@ const LIVE_SYNC_RECENT_COUNT = 5;
 const ATTACKER_OVERRIDES = {
   'nwl-33': 'team2', // Syndicate (Capyknights) attacked, not Beaverknights
   'nwl-34': 'team2', // Syndicate (Capyknights) attacked, not Beaverknights
+  'nwl-35': 'team1', // Marauders (Beaverknights) attacked
 };
 
 // Google Form for submitting VODs. Set this once after running
@@ -1108,20 +1113,20 @@ async function processSheetEntry(entry, xlsxMeta, staticAttackers, staticWinners
   const csv = await fetchSheetCSV(entry.gid);
   const parsed = parseCSVMatch(csv);
   const slug = `nwl-${entry.nwlNumber}`;
-  // XLSX detection is primary, matches.json is fallback
-  // Priority: manual override > XLSX image detection > static fallback
-  const attacker = ATTACKER_OVERRIDES[slug] || xlsxMeta.attackers[entry.date] || staticAttackers[slug] || null;
+  // Player swap is driven ONLY by image detection (logo-on-top = attacker,
+  // so that team's players are in the top CSV section). Overrides correct
+  // the attacker metadata label without touching physical layout — in
+  // NWL#33/34 the logo placement was wrong AND the players followed the
+  // wrong logo, so top-section ≠ attacker and no swap should happen.
+  const overrideAttacker = ATTACKER_OVERRIDES[slug] || null;
+  const detectedAttacker = xlsxMeta.attackers[entry.date] || staticAttackers[slug] || null;
+  const attacker = overrideAttacker || detectedAttacker;
 
-  // The top section in the spreadsheet is always the attacker.
-  // parseCSVMatch() assigns the top section to team1, but if the attacker
-  // is actually team2 (Capyknights), we need to swap the team assignments
-  // BEFORE determining winner and kills.
-  if (attacker === 'team2') {
+  if (!overrideAttacker && detectedAttacker === 'team2') {
     for (const g of parsed.groups) {
       [g.team1, g.team2] = [g.team2, g.team1];
     }
     [parsed.totals.team1, parsed.totals.team2] = [parsed.totals.team2, parsed.totals.team1];
-    // Also swap VICTORY/DEFEAT result (it's from the attacker's perspective)
     if (parsed.winner === 'team1') parsed.winner = 'team2';
     else if (parsed.winner === 'team2') parsed.winner = 'team1';
   }
@@ -1135,10 +1140,12 @@ async function processSheetEntry(entry, xlsxMeta, staticAttackers, staticWinners
     winner = t1k > t2k ? 'team1' : (t2k > t1k ? 'team2' : null);
   }
 
-  // Map attacker/defender kills to team1/team2
+  // Map top/bottom section kill cells to team1/team2. Driven by detected
+  // (physical) attacker, since parsed.attackerKills/defenderKills come from
+  // fixed top/bottom cells — so follow the actual swap, not the override.
   let team1Kills, team2Kills;
   if (parsed.attackerKills || parsed.defenderKills) {
-    if (attacker === 'team2') {
+    if (!overrideAttacker && detectedAttacker === 'team2') {
       team1Kills = parsed.defenderKills;
       team2Kills = parsed.attackerKills;
     } else {
@@ -2302,6 +2309,12 @@ function renderSearchPage() {
 
 function renderChangelogPage() {
   const entries = [
+    {
+      date: '17.04.2026',
+      changes: [
+        'Fixed player team assignment for NWL#33 and NWL#34: the attacker override was incorrectly swapping Beaverknights and Capyknights players. Overrides now only correct the attacker label, not the physical player layout.',
+      ]
+    },
     {
       date: '16.04.2026',
       changes: [
