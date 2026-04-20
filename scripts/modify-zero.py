@@ -3,11 +3,12 @@ Modify Share Tech Mono: replace the slashed zero glyph with an unslashed version
 by copying the O glyph's contours to the zero glyph, preserving zero's metrics.
 """
 import copy
+from pathlib import Path
 from fontTools.ttLib import TTFont
 
-FONT_DIR = "C:/Users/Lia/Documents/Gravity/nwl-scoreboard/public/fonts"
-INPUT = f"{FONT_DIR}/ShareTechMono-Regular.woff2"
-OUTPUT = f"{FONT_DIR}/ShareTechMono-Regular-noslash.woff2"
+FONT_DIR = Path(__file__).parent.parent / "public" / "fonts"
+INPUT = str(FONT_DIR / "ShareTechMono-Regular.woff2")
+OUTPUT = str(FONT_DIR / "ShareTechMono-Regular-noslash.woff2")
 
 font = TTFont(INPUT)
 glyf = font["glyf"]
