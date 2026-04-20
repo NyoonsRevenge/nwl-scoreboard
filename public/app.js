@@ -555,6 +555,12 @@ const NAME_MAPPING_JSON = {
   // Auto-synced from name_mapping.json
   "BelleSprout": "Belle",
   "GailibixX/Cou": "Couch1",
+
+  // Auto-synced from name_mapping.json
+  "2nd kru": "Kru",
+  "BorisAriana": "BorisPotato",
+  "BorisPotato": "BorisAriana",
+  "laaap on a trip": "laaap",
 };
 
 // Build bidirectional canonical name lookup
@@ -705,6 +711,7 @@ const ATTACKER_OVERRIDES = {
   'nwl-33': 'team2', // Syndicate (Capyknights) attacked, not Beaverknights
   'nwl-34': 'team2', // Syndicate (Capyknights) attacked, not Beaverknights
   'nwl-35': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-36': 'team1', // Marauders (Beaverknights) attacked
 };
 
 // Google Form for submitting VODs. Set this once after running
@@ -1832,7 +1839,7 @@ function renderMatchPage(data) {
     <div class="page-footer">
       * <span class="ft1">Green rows</span> = Beaverknights player &nbsp;·&nbsp;
       <span class="ft2">Purple rows</span> = Capyknights player<br>
-      * Roles: AoE (Area Healer) · Group-Healer (Single-Target Healer) · BR (Bruiser) · IV (Ice/Void) · RD (Ranged DPS) · MD (Melee DPS) · PT (Point)<br>
+      * Roles: AoE (Area Healer) · Group-Healer (Single-Target Healer) · BR (Bruiser) · IV (Ice/Void) · RD (Ranged DPS) · MD (Melee DPS) · PT (Point) · VB (Voidblade)<br>
       * Click any player name to view their full match history
     </div>
   </div>`;
@@ -2310,6 +2317,12 @@ function renderSearchPage() {
 function renderChangelogPage() {
   const entries = [
     {
+      date: '20.04.2026',
+      changes: [
+        'Added VB role badge (dark blue) for the new Vanguard/Blocker role',
+      ]
+    },
+    {
       date: '17.04.2026',
       changes: [
         'Fixed player team assignment for NWL#33 and NWL#34: the attacker override was incorrectly swapping Beaverknights and Capyknights players. Overrides now only correct the attacker label, not the physical player layout.',
@@ -2535,7 +2548,7 @@ function renderPlayerPage(playerName) {
 
   // Role filter (only if player has multiple roles)
   if (hasMultipleRoles) {
-    const roleOrder = ['AoE', 'HL', 'RD', 'IV', 'BR', 'PT', 'MD', 'HD'];
+    const roleOrder = ['AoE', 'HL', 'RD', 'IV', 'BR', 'PT', 'MD', 'HD', 'VB'];
     const sorted = roles.sort((a, b) => (roleOrder.indexOf(a) === -1 ? 99 : roleOrder.indexOf(a)) - (roleOrder.indexOf(b) === -1 ? 99 : roleOrder.indexOf(b)));
     const roleCounts = {};
     for (const a of allAppearances) roleCounts[a.player.role] = (roleCounts[a.player.role] || 0) + 1;

@@ -24,6 +24,7 @@ ATTACKER_OVERRIDES = {
     'nwl-33': 'team2',  # Syndicate (Capyknights) attacked, not Beaverknights
     'nwl-34': 'team2',  # Syndicate (Capyknights) attacked, not Beaverknights
     'nwl-35': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-36': 'team1',  # Marauders (Beaverknights) attacked
 }
 
 def get_tab_colors():

@@ -1,5 +1,18 @@
 [
   {
+    "slug": "nwl-36",
+    "nwlNumber": 36,
+    "mapName": "Cutless Keys",
+    "date": "20.04.2026",
+    "duration": "19:03",
+    "winner": "team1",
+    "attacker": "team1",
+    "team1Kills": 172,
+    "team2Kills": 102,
+    "team1Name": "Beaverknights",
+    "team2Name": "Capyknights"
+  },
+  {
     "slug": "nwl-35",
     "nwlNumber": 35,
     "mapName": "Cutless Keys",
