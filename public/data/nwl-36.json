@@ -659,13 +659,13 @@
           "damage": 29673
         },
         {
-          "name": "SHORTY",
+          "name": "Sachse",
           "role": "MD",
-          "kills": 2,
-          "deaths": 3,
-          "assists": 18,
+          "kills": 0,
+          "deaths": 5,
+          "assists": 28,
           "healing": 0,
-          "damage": 308067
+          "damage": 316981
         },
         {
           "name": "Jeg",
@@ -765,13 +765,13 @@
           "damage": 1264806
         },
         {
-          "name": "Sachse",
+          "name": "SHORTY",
           "role": "MD",
-          "kills": 0,
-          "deaths": 5,
-          "assists": 28,
+          "kills": 2,
+          "deaths": 3,
+          "assists": 18,
           "healing": 0,
-          "damage": 316981
+          "damage": 308067
         },
         {
           "name": "Wijngaard",
