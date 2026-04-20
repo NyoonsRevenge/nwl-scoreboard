@@ -478,6 +478,7 @@ const NAME_MAPPING_JSON = {
   "Hoosierz": "Voyd",
   "Hop on me": "Nyxie",
   "Jormas Slave2": "jeszo",
+  "Jormamas Slave2": "jeszo",
   "JukerVG": "REBE BEXHA",
   "Jxsn": "Jxsn",
   "Kevin": "Smiamxiah",
