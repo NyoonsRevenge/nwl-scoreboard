@@ -1839,7 +1839,7 @@ function renderMatchPage(data) {
     <div class="page-footer">
       * <span class="ft1">Green rows</span> = Beaverknights player &nbsp;·&nbsp;
       <span class="ft2">Purple rows</span> = Capyknights player<br>
-      * Roles: AoE (Area Healer) · Group-Healer (Single-Target Healer) · BR (Bruiser) · IV (Ice/Void) · RD (Ranged DPS) · MD (Melee DPS) · PT (Point) · VB (Voidblade)<br>
+      * Roles: AoE (Area Healer) · Group-Healer (Single-Target Healer) · BR (Bruiser) · IV (Ice/Void) · RD (Ranged DPS) · MD (Melee DPS) · PT (Point) · HD (Heavy Dex) · VB (Voidblade)<br>
       * Click any player name to view their full match history
     </div>
   </div>`;
@@ -2319,7 +2319,7 @@ function renderChangelogPage() {
     {
       date: '20.04.2026',
       changes: [
-        'Added VB role badge (dark blue) for the new Vanguard/Blocker role',
+        'Added VB role badge (dark blue) for the new Voidblade role',
       ]
     },
     {
