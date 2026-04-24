@@ -45,6 +45,7 @@
   --r-md:  #5c6bc0;  --r-md-bg:  rgba(92,107,192,.14);    --r-md-b:  rgba(92,107,192,.25);
   --r-hd:  #ab47bc;  --r-hd-bg:  rgba(171,71,188,.14);     --r-hd-b:  rgba(171,71,188,.25);
   --r-vb:  #1565c0;  --r-vb-bg:  rgba(21,101,192,.18);    --r-vb-b:  rgba(21,101,192,.40);
+  --r-cw:  #00bfa5;  --r-cw-bg:  rgba(0,191,165,.16);    --r-cw-b:  rgba(0,191,165,.35);
 
   /* ── Sizing ── */
   --max-w: 1400px;
@@ -965,6 +966,7 @@ body::after {
 .role-badge.r-MD  { background: var(--r-md-bg);  color: var(--r-md);  border: 1px solid var(--r-md-b); }
 .role-badge.r-HD  { background: var(--r-hd-bg);  color: var(--r-hd);  border: 1px solid var(--r-hd-b); }
 .role-badge.r-VB  { background: var(--r-vb-bg);  color: var(--r-vb);  border: 1px solid var(--r-vb-b); }
+.role-badge.r-CW  { background: var(--r-cw-bg);  color: var(--r-cw);  border: 1px solid var(--r-cw-b); }
 
 /* ═══════════════════════════════════════════
    PLAYER PROFILE PAGE
@@ -1972,6 +1974,7 @@ body::after {
   .group-table { font-size: 12px; }
   .pt-name { font-size: 12px; }
   .pt-num { font-size: 11px; }
+  .ptr-t1 td, .ptr-t2 td { padding: 7px 4px; }
   .player-stats-row { grid-template-columns: repeat(2, 1fr); }
 }
 

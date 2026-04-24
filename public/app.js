@@ -562,6 +562,17 @@ const NAME_MAPPING_JSON = {
   "BorisAriana": "BorisPotato",
   "BorisPotato": "BorisAriana",
   "laaap on a trip": "laaap",
+
+  // Auto-synced from name_mapping.json
+  "KathienMermaid": "kathien",
+  "LIL CAPY": "CAPY",
+
+  // Auto-synced from name_mapping.json
+  "Baguetttte": "Inziar",
+  "Frend": "Kryee",
+  "Inziar": "Baguetttte",
+  "Kryee": "Frend",
+  "Raiduru": "Raiderer",
 };
 
 // Build bidirectional canonical name lookup
@@ -713,6 +724,8 @@ const ATTACKER_OVERRIDES = {
   'nwl-34': 'team2', // Syndicate (Capyknights) attacked, not Beaverknights
   'nwl-35': 'team1', // Marauders (Beaverknights) attacked
   'nwl-36': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-37': 'team2', // Syndicate (Capyknights) attacked
+  'nwl-38': 'team1', // Marauders (Beaverknights) attacked
 };
 
 // Google Form for submitting VODs. Set this once after running
@@ -1356,7 +1369,7 @@ function parseDate(dateStr) {
 
 // -- Utilities ------------------------------
 
-let compactNumbers = false;
+let compactNumbers = window.innerWidth < 600;
 let currentView = 'excel'; // 'excel', 'list', 'comparison'
 let fontSizeScale = parseInt(localStorage.getItem('nwl-font-size') || '100'); // percentage
 
@@ -2318,6 +2331,12 @@ function renderSearchPage() {
 function renderChangelogPage() {
   const entries = [
     {
+      date: '25.04.2026',
+      changes: [
+        'Added CW role badge (teal) for the new Crescent Wave role',
+      ]
+    },
+    {
       date: '20.04.2026',
       changes: [
         'Added VB role badge (dark blue) for the new Voidblade role',
@@ -2549,7 +2568,7 @@ function renderPlayerPage(playerName) {
 
   // Role filter (only if player has multiple roles)
   if (hasMultipleRoles) {
-    const roleOrder = ['AoE', 'HL', 'RD', 'IV', 'BR', 'PT', 'MD', 'HD', 'VB'];
+    const roleOrder = ['AoE', 'HL', 'RD', 'IV', 'BR', 'PT', 'MD', 'HD', 'VB', 'CW'];
     const sorted = roles.sort((a, b) => (roleOrder.indexOf(a) === -1 ? 99 : roleOrder.indexOf(a)) - (roleOrder.indexOf(b) === -1 ? 99 : roleOrder.indexOf(b)));
     const roleCounts = {};
     for (const a of allAppearances) roleCounts[a.player.role] = (roleCounts[a.player.role] || 0) + 1;
