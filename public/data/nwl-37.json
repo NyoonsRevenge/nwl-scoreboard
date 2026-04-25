@@ -658,6 +658,15 @@
           "damage": 1130438
         },
         {
+          "name": "Abary",
+          "role": "MD",
+          "kills": 3,
+          "deaths": 0,
+          "assists": 28,
+          "healing": 0,
+          "damage": 239511
+        },
+        {
           "name": "Shmünky",
           "role": "BR",
           "kills": 2,
@@ -978,11 +987,11 @@
       "damage": 29885661
     },
     "team2": {
-      "kills": 135,
+      "kills": 138,
       "deaths": 87,
-      "assists": 2286,
+      "assists": 2314,
       "healing": 19142142,
-      "damage": 31051730
+      "damage": 31291241
     }
   },
   "team1Name": "Beaverknights",
