@@ -717,8 +717,8 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 // sync entirely (pure static mode).
 const LIVE_SYNC_RECENT_COUNT = 5;
 
-// Manual attacker overrides: when the XLSX has the wrong logo placement,
-// these take priority over the image-based auto-detection.
+// Manual attacker overrides: which team (team1/team2) was the attacker.
+// Used to set the attacker label. Does NOT by itself control player layout.
 const ATTACKER_OVERRIDES = {
   'nwl-33': 'team2', // Syndicate (Capyknights) attacked, not Beaverknights
   'nwl-34': 'team2', // Syndicate (Capyknights) attacked, not Beaverknights
@@ -727,6 +727,13 @@ const ATTACKER_OVERRIDES = {
   'nwl-37': 'team2', // Syndicate (Capyknights) attacked
   'nwl-38': 'team1', // Marauders (Beaverknights) attacked
 };
+
+// Matches where the attacker is team2 (Capyknights at top of sheet) but the
+// players are ALREADY correctly laid out (Beaverknights at top) due to wrong
+// logo placement that the players followed — so no swap is needed.
+// NWL#33/34: wrong logo, players followed it → Beaverknights are at top → no swap.
+// All other team2-attacker matches: Capyknights physically at top → swap needed.
+const NO_SWAP_OVERRIDES = new Set(['nwl-33', 'nwl-34']);
 
 // Google Form for submitting VODs. Set this once after running
 // scripts/create-vod-form.gs (the script prints the URL). When non-empty, a
@@ -1134,16 +1141,26 @@ async function processSheetEntry(entry, xlsxMeta, staticAttackers, staticWinners
   const csv = await fetchSheetCSV(entry.gid);
   const parsed = parseCSVMatch(csv);
   const slug = `nwl-${entry.nwlNumber}`;
-  // Player swap is driven ONLY by image detection (logo-on-top = attacker,
-  // so that team's players are in the top CSV section). Overrides correct
-  // the attacker metadata label without touching physical layout — in
-  // NWL#33/34 the logo placement was wrong AND the players followed the
-  // wrong logo, so top-section ≠ attacker and no swap should happen.
+  // Determine who attacked and whether the physical CSV layout needs swapping.
+  //
+  // The sheet always puts the attacker in the top section (parsed as team1).
+  // When Capyknights attacked, their players are at top → we must swap so
+  // team1 always = Beaverknights in the output.
+  //
+  // Exception: NWL#33/34 had a wrong logo AND players followed the wrong logo,
+  // so Beaverknights ended up at top despite Capyknights attacking → no swap.
+  // Those matches are listed in NO_SWAP_OVERRIDES.
   const overrideAttacker = ATTACKER_OVERRIDES[slug] || null;
   const detectedAttacker = xlsxMeta.attackers[entry.date] || staticAttackers[slug] || null;
   const attacker = overrideAttacker || detectedAttacker;
 
-  if (!overrideAttacker && detectedAttacker === 'team2') {
+  // Capyknights (team2) are physically at the top of the sheet when they attacked,
+  // unless this match is in NO_SWAP_OVERRIDES.
+  const capyAtTop = (overrideAttacker === 'team2' || (!overrideAttacker && detectedAttacker === 'team2'))
+                    && !NO_SWAP_OVERRIDES.has(slug);
+  const didSwap = capyAtTop;
+
+  if (didSwap) {
     for (const g of parsed.groups) {
       [g.team1, g.team2] = [g.team2, g.team1];
     }
@@ -1166,7 +1183,8 @@ async function processSheetEntry(entry, xlsxMeta, staticAttackers, staticWinners
   // fixed top/bottom cells — so follow the actual swap, not the override.
   let team1Kills, team2Kills;
   if (parsed.attackerKills || parsed.defenderKills) {
-    if (!overrideAttacker && detectedAttacker === 'team2') {
+    if (didSwap) {
+      // After swap: team1 = Beaverknights (were defenders, bottom section)
       team1Kills = parsed.defenderKills;
       team2Kills = parsed.attackerKills;
     } else {
@@ -2333,6 +2351,7 @@ function renderChangelogPage() {
     {
       date: '25.04.2026',
       changes: [
+        'Fixed NWL#37 team assignment: Capyknights and Beaverknights players were swapped in the live sync. Root cause: the player-swap logic was suppressed whenever a manual attacker override was set, but NWL#37 genuinely needs the swap (unlike NWL#33/34 where it correctly should not swap).',
         'Added CW role badge (teal) for the new Crescent Wave role',
       ]
     },
