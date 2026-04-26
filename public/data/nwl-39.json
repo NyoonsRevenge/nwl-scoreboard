@@ -331,15 +331,6 @@
           "damage": 39935
         },
         {
-          "name": "Reserved",
-          "role": "HD",
-          "kills": 0,
-          "deaths": 0,
-          "assists": 0,
-          "healing": 0,
-          "damage": 0
-        },
-        {
           "name": "Kru",
           "role": "IV",
           "kills": 1,
@@ -868,11 +859,11 @@
         {
           "name": "shokkii",
           "role": "RD",
-          "kills": 0,
-          "deaths": 0,
-          "assists": 0,
+          "kills": 4,
+          "deaths": 2,
+          "assists": 41,
           "healing": 0,
-          "damage": 0
+          "damage": 700884
         },
         {
           "name": "Bloontee",
@@ -953,11 +944,11 @@
   ],
   "totals": {
     "team1": {
-      "kills": 142,
-      "deaths": 85,
-      "assists": 2278,
+      "kills": 146,
+      "deaths": 87,
+      "assists": 2319,
       "healing": 21017090,
-      "damage": 31580320
+      "damage": 32281204
     },
     "team2": {
       "kills": 88,
