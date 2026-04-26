@@ -439,11 +439,11 @@
         {
           "name": "Stronk",
           "role": "BR",
-          "kills": 0,
+          "kills": 1,
           "deaths": 4,
-          "assists": 30,
+          "assists": 38,
           "healing": 0,
-          "damage": 652824
+          "damage": 1144469
         },
         {
           "name": "kel(cherieFan",
@@ -951,11 +951,11 @@
       "damage": 32281204
     },
     "team2": {
-      "kills": 88,
+      "kills": 89,
       "deaths": 141,
-      "assists": 1258,
+      "assists": 1266,
       "healing": 19700981,
-      "damage": 31127240
+      "damage": 31618885
     }
   },
   "team1Name": "Beaverknights",
