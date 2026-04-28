@@ -402,10 +402,10 @@
           "name": "Belle",
           "role": "HL",
           "kills": 0,
-          "deaths": 3,
-          "assists": 43,
-          "healing": 6384285,
-          "damage": 292944
+          "deaths": 2,
+          "assists": 41,
+          "healing": 2571814,
+          "damage": 90851
         },
         {
           "name": "Revolutionair",
@@ -889,10 +889,10 @@
   "totals": {
     "team1": {
       "kills": 185,
-      "deaths": 200,
-      "assists": 3012,
-      "healing": 41020289,
-      "damage": 61395687
+      "deaths": 199,
+      "assists": 3010,
+      "healing": 37207818,
+      "damage": 61193594
     },
     "team2": {
       "kills": 199,
