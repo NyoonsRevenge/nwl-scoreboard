@@ -505,7 +505,7 @@ const NAME_MAPPING_JSON = {
 
   // Auto-synced from name_mapping.json
   "2nd Kru": "Kru",
-  "Babulmxxx": "Belle",
+  "Babulmxxx": "babulm",
   "Behind Lines": "Zeldris",
   "Grumpy Karen": "kathien",
   "IThinkHealers": "JukerVG",
@@ -521,7 +521,7 @@ const NAME_MAPPING_JSON = {
 
   // Auto-synced from name_mapping.json
   "2xPalim": "Palimpalim",
-  "Belle": "Babulmxxx",
+  "Belle": "Belle",
   "Holee": "WhyDidIDoThis",
   "Jegerys": "Jeg",
   "Jt23": "Jt",
@@ -555,6 +555,8 @@ const NAME_MAPPING_JSON = {
 
   // Auto-synced from name_mapping.json
   "BelleSprout": "Belle",
+  "Bella Aurora": "BellaAurora",
+  "Babulmphone": "babulm",
   "GailibixX/Cou": "Couch1",
 
   // Auto-synced from name_mapping.json
@@ -573,6 +575,19 @@ const NAME_MAPPING_JSON = {
   "Inziar": "Baguetttte",
   "Kryee": "Frend",
   "Raiduru": "Raiderer",
+
+  // Auto-synced from name_mapping.json
+  "Be my e-kitten": "Hahttori",
+  "Big Sword Dude": "bsd",
+  "Doakes": "joner",
+  "Hahttori": "Be my e-kitten",
+  "joner": "Doakes",
+
+  // Auto-synced from name_mapping.json
+  "AllMadd(Milk": "PhckinMilker",
+  "PhckinMilker": "AllMadd(Milk",
+  "Shunji": "shokkii",
+  "WOFL STENBERG": "Sten",
 };
 
 // Build bidirectional canonical name lookup
@@ -726,6 +741,8 @@ const ATTACKER_OVERRIDES = {
   'nwl-36': 'team1', // Marauders (Beaverknights) attacked
   'nwl-37': 'team2', // Syndicate (Capyknights) attacked
   'nwl-38': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-39': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-40': 'team2', // Syndicate (Capyknights) attacked
 };
 
 // Matches where the attacker is team2 (Capyknights at top of sheet) but the

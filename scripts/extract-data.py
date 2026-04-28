@@ -25,7 +25,18 @@ ATTACKER_OVERRIDES = {
     'nwl-34': 'team2',  # Syndicate (Capyknights) attacked, not Beaverknights
     'nwl-35': 'team1',  # Marauders (Beaverknights) attacked
     'nwl-36': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-37': 'team2',  # Syndicate (Capyknights) attacked
+    'nwl-38': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-39': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-40': 'team2',  # Syndicate (Capyknights) attacked
 }
+
+# Matches where ATTACKER_OVERRIDES corrects the label but players are already
+# in correct CSV positions, so no swap is needed:
+#   nwl-33/34: logo was wrong AND players followed wrong logo (pre-templates)
+#   nwl-37: Capys attacked but nwl_quick.py (old, buggy) put Beavers at top —
+#            the sheet layout is wrong but accidentally parses correctly without swap
+SKIP_SWAP_MATCHES = {'nwl-33', 'nwl-34', 'nwl-37'}
 
 def get_tab_colors():
     """Download XLSX and extract sheet tab colors"""
@@ -539,11 +550,10 @@ def main():
 
         date_key = s['date']
 
-        # Player swap is driven ONLY by image detection (logo-on-top = attacker,
-        # so that team's players are in the top CSV section). Overrides correct
-        # the attacker metadata label without touching physical layout — in
-        # NWL#33/34 the logo placement was wrong AND the players followed the
-        # wrong logo, so top-section != attacker and no swap should happen.
+        # Swap team1/team2 whenever the attacker is team2 (their players appear
+        # in the top/left CSV section and need to be moved to team2). NWL#33/34
+        # are exceptions: logo and player layout were both wrong together, so
+        # the top section already had the correct team — no swap needed.
         slug = f'nwl-{nwl_num}'
         override_attacker = ATTACKER_OVERRIDES.get(slug)
         detected_attacker = attacker_map.get(date_key)
@@ -551,7 +561,7 @@ def main():
         if attacker:
             print(f"  -> Attacker: {attacker}{' (override)' if override_attacker else ''}")
 
-        if not override_attacker and detected_attacker == 'team2':
+        if attacker == 'team2' and slug not in SKIP_SWAP_MATCHES:
             for g in groups:
                 g['team1'], g['team2'] = g['team2'], g['team1']
             totals['team1'], totals['team2'] = totals['team2'], totals['team1']
