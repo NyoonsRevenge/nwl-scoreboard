@@ -191,7 +191,6 @@ const NAME_MAPPING_JSON = {
   "Bober": "Krulaxx",
   "MEATLOVER PIZZA": "Abary",
   "Atheria": "Gunzpewpew",
-  "Trond": "Kream",
   "Melglinn": "Tarienna",
   "Lumino": "LyZy",
   "Elleria Dorn": "ElleiraDorn",
@@ -485,7 +484,6 @@ const NAME_MAPPING_JSON = {
   "Kevin": "Smiamxiah",
   "Kogame": "Frasian GOAT",
   "Koku": "Kohku",
-  "Kream": "Trond",
   "Lyynx": "Angel",
   "MARKEL1to": "MARKEL1to/US",
   "MARKEL1to/L": "MARKEL1to/US",
@@ -589,6 +587,13 @@ const NAME_MAPPING_JSON = {
   "PhckinMilker": "AllMadd(Milk",
   "Shunji": "shokkii",
   "WOFL STENBERG": "Sten",
+
+  // Auto-synced from name_mapping.json
+  "DoubleAgent2": "AGENT",
+  "Ictue": "MIchael Simons",
+  "MIchael Simons": "Ictue",
+  "Mablooze": "Mablỏỏzẽ",
+  "T93XBanger": "T93Asadi",
 };
 
 // Build bidirectional canonical name lookup
@@ -744,6 +749,7 @@ const ATTACKER_OVERRIDES = {
   'nwl-38': 'team1', // Marauders (Beaverknights) attacked
   'nwl-39': 'team1', // Marauders (Beaverknights) attacked
   'nwl-40': 'team2', // Syndicate (Capyknights) attacked
+  'nwl-41': 'team2', // Syndicate (Capyknights) attacked
 };
 
 // Matches where the attacker is team2 (Capyknights at top of sheet) but the
