@@ -584,6 +584,15 @@
           "damage": 8278
         },
         {
+          "name": "shokkii",
+          "role": "RD",
+          "kills": 16,
+          "deaths": 5,
+          "assists": 64,
+          "healing": 0,
+          "damage": 1703982
+        },
+        {
           "name": "Kinthelar",
           "role": "IV",
           "kills": 1,
@@ -642,11 +651,11 @@
         {
           "name": "Stronk",
           "role": "BR",
-          "kills": 0,
-          "deaths": 7,
-          "assists": 33,
-          "healing": 947,
-          "damage": 355475
+          "kills": 8,
+          "deaths": 8,
+          "assists": 62,
+          "healing": 0,
+          "damage": 2343719
         },
         {
           "name": "T93Asadi",
@@ -953,18 +962,18 @@
   ],
   "totals": {
     "team1": {
-      "kills": 217,
-      "deaths": 148,
-      "assists": 3868,
+      "kills": 233,
+      "deaths": 153,
+      "assists": 3932,
       "healing": 41167344,
-      "damage": 70614046
+      "damage": 72318028
     },
     "team2": {
-      "kills": 145,
-      "deaths": 230,
-      "assists": 2378,
-      "healing": 48288203,
-      "damage": 59999035
+      "kills": 153,
+      "deaths": 231,
+      "assists": 2407,
+      "healing": 48287256,
+      "damage": 61987279
     }
   },
   "team1Name": "Beaverknights",
