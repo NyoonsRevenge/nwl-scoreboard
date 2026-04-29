@@ -319,8 +319,9 @@ const NAME_MAPPING_JSON = {
   // Maalefis typo
   "Malaefis": "Maalefis",
 
-  // BL4CKSHP typo
+  // BL4CKSHP aliases
   "BL4CHKSHP": "BL4CKSHP",
+  "Blackshp": "BL4CKSHP",
 
   // Holee extra e
   "Holeee": "Holee",
