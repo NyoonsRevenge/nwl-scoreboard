@@ -859,11 +859,11 @@
         {
           "name": "Ictue",
           "role": "MD",
-          "kills": 0,
-          "deaths": 0,
-          "assists": 0,
+          "kills": 3,
+          "deaths": 3,
+          "assists": 32,
           "healing": 0,
-          "damage": 0
+          "damage": 473087
         },
         {
           "name": "Wijngaard",
@@ -944,11 +944,11 @@
   ],
   "totals": {
     "team1": {
-      "kills": 144,
-      "deaths": 165,
-      "assists": 2401,
+      "kills": 147,
+      "deaths": 168,
+      "assists": 2433,
       "healing": 27924343,
-      "damage": 42662248
+      "damage": 43135335
     },
     "team2": {
       "kills": 164,
