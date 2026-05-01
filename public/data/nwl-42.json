@@ -286,11 +286,11 @@
         {
           "name": "Liona/SkillIss",
           "role": "IV",
-          "kills": 11,
-          "deaths": 3,
-          "assists": 108,
-          "healing": 0,
-          "damage": 2377604
+          "kills": 2,
+          "deaths": 4,
+          "assists": 112,
+          "healing": 26396,
+          "damage": 1038159
         },
         {
           "name": "MARKEL1to/S",
@@ -557,13 +557,22 @@
           "damage": 1412676
         },
         {
+          "name": "Jeg",
+          "role": "MD",
+          "kills": 14,
+          "deaths": 4,
+          "assists": 78,
+          "healing": 0,
+          "damage": 1513465
+        },
+        {
           "name": "SmileyBill",
           "role": "BR",
-          "kills": 0,
-          "deaths": 0,
-          "assists": 0,
+          "kills": 3,
+          "deaths": 5,
+          "assists": 99,
           "healing": 0,
-          "damage": 0
+          "damage": 1331525
         },
         {
           "name": "Ruppert",
@@ -917,11 +926,11 @@
   ],
   "totals": {
     "team1": {
-      "kills": 189,
-      "deaths": 214,
-      "assists": 3167,
-      "healing": 31642269,
-      "damage": 55898794
+      "kills": 197,
+      "deaths": 224,
+      "assists": 3348,
+      "healing": 31668665,
+      "damage": 57404339
     },
     "team2": {
       "kills": 224,
