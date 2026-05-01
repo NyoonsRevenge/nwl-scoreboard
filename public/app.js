@@ -153,7 +153,7 @@ const NAME_MAPPING_JSON = {
   "Ulric Dorm": "UlricDorrn", "ChuckDorrris": "ChuckDorris",
   "Sonnihhh": "Sonnihh", "FroggyBalboa": "FroggyBalboa",
   "rdmMcffman": "moffman", "TheClover": "PinkClover",
-  "Where Arda": "Costa", "DrCosta": "Costa", "Billy Talent ll": "BillyTalent", "Billy Talent": "BillyTalent",
+  "Where Arda": "Costa", "DrCosta": "Costa", "100%ABRO": "Costa", "Billy Talent ll": "BillyTalent", "Billy Talent": "BillyTalent",
   "xTaRl": "Tarienna", "Lord Ethernity": "Lord Ethernity",
   "TheHottestSilk": "TheHottestSilk", "Irvine": "Irvine",
   "H3SHKVZ3D": "H4SHK4Z3D", "USE DETO NOW": "MARKEL1to/US",
