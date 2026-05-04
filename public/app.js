@@ -594,6 +594,26 @@ const NAME_MAPPING_JSON = {
   "MIchael Simons": "Ictue",
   "Mablooze": "Mablỏỏzẽ",
   "T93XBanger": "T93Asadi",
+
+  // Auto-synced from name_mapping.json
+  "Kream": "Trond",
+  "Trond": "Kream",
+
+  // Auto-synced from name_mapping.json
+  "KitKat(OnMe": "On Me Here",
+  "On Me Here": "KitKat(OnMe",
+  "Suzana01": "SK21",
+  "Winovore": "jhit lair",
+  "jhit lair": "Winovore",
+};
+
+// Role-specific overrides for ambiguous names. Some players share an in-game
+// name (e.g. "Skill Issue" exists as both Liona's alt and MARKEL1to/US's main —
+// the I/l visual collision makes them indistinguishable by name alone). The
+// weapon role disambiguates: Liona plays heal/support, MARKEL plays Blunderbuss.
+// Map: lowercased name -> { ROLE: canonical }
+const ROLE_OVERRIDES = {
+  "skill issue": { "BR": "MARKEL1to/US" },
 };
 
 // Build bidirectional canonical name lookup
@@ -642,9 +662,13 @@ function buildNameLookup() {
   }
 }
 
-function getCanonicalName(name) {
+function getCanonicalName(name, role) {
   if (!name) return '';
   const lower = name.toLowerCase().trim();
+  if (role && ROLE_OVERRIDES[lower] && ROLE_OVERRIDES[lower][role]) {
+    const override = ROLE_OVERRIDES[lower][role].toLowerCase().trim();
+    return nameAliasMap[override] || override;
+  }
   return nameAliasMap[lower] || lower;
 }
 
@@ -701,7 +725,7 @@ function buildMatchVodLookup(slug) {
     let matched = null;
     // Try matching against actual players in this match
     for (const p of allPlayers) {
-      const pCanonical = getCanonicalName(p.name);
+      const pCanonical = getCanonicalName(p.name, p.role);
       const pLower = p.name.toLowerCase();
       const pStripped = stripParens(pLower);
       // Exact canonical match (discord alias and player alias resolve to same person)
@@ -717,8 +741,8 @@ function buildMatchVodLookup(slug) {
   }
 }
 
-function getVodCell(playerName) {
-  const canonical = getCanonicalName(playerName);
+function getVodCell(playerName, role) {
+  const canonical = getCanonicalName(playerName, role);
   const url = currentMatchVods[canonical];
   if (!url) return '<td class="pt-vod"></td>';
   return `<td class="pt-vod"><a href="${url}" target="_blank" rel="noopener" class="vod-btn">&#9654; Watch VOD</a></td>`;
@@ -750,6 +774,8 @@ const ATTACKER_OVERRIDES = {
   'nwl-39': 'team1', // Marauders (Beaverknights) attacked
   'nwl-40': 'team2', // Syndicate (Capyknights) attacked
   'nwl-41': 'team2', // Syndicate (Capyknights) attacked
+  'nwl-42': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-43': 'team1', // Marauders (Beaverknights) attacked
 };
 
 // Matches where the attacker is team2 (Capyknights at top of sheet) but the
@@ -1936,12 +1962,12 @@ function renderMatchPage(data) {
 function makePlayerRow(p, team) {
   if (!p) return '';
   const cls = team === 't1' ? 'ptr-t1' : 'ptr-t2';
-  const canonical = getCanonicalName(p.name);
+  const canonical = getCanonicalName(p.name, p.role);
   const playerLink = `<a onclick="navigate('#/player/${encodePlayerForLink(canonical)}')">${p.name}</a>`;
   return `<tr class="${cls}">
     <td class="pt-role"><span class="role-badge r-${p.role}">${p.role}</span></td>
     <td class="pt-name">${playerLink}</td>
-    ${getVodCell(p.name)}
+    ${getVodCell(p.name, p.role)}
     <td class="pt-num pt-kills">${p.kills}</td>
     <td class="pt-num pt-deaths">${p.deaths}</td>
     <td class="pt-num">${p.assists}</td>
@@ -1953,12 +1979,12 @@ function makePlayerRow(p, team) {
 function makeExcelPlayerRow(p, team) {
   if (!p) return '';
   const cls = team === 't1' ? 'ptr-t1' : 'ptr-t2';
-  const canonical = getCanonicalName(p.name);
+  const canonical = getCanonicalName(p.name, p.role);
   const playerLink = `<a onclick="navigate('#/player/${encodePlayerForLink(canonical)}')">${p.name}</a>`;
   return `<tr class="${cls}" style="border-left:none;">
     <td class="pt-role"><span class="role-badge r-${p.role}">${p.role}</span></td>
     <td class="pt-name">${playerLink}</td>
-    ${getVodCell(p.name)}
+    ${getVodCell(p.name, p.role)}
     <td class="pt-num pt-kills">${p.kills}</td>
     <td class="pt-num pt-deaths">${p.deaths}</td>
     <td class="pt-num">${p.assists}</td>
@@ -2139,12 +2165,12 @@ function renderExcelViewGroup(g, team, placeholderLabel) {
       </tr></thead>
       <tbody>
         ${teamPlayers.map(p => {
-            const canonical = getCanonicalName(p.name);
+            const canonical = getCanonicalName(p.name, p.role);
             const playerLink = `<a onclick="navigate('#/player/${encodePlayerForLink(canonical)}')">${p.name}</a>`;
             return `<tr class="${rowClass}" style="border-left:none;">
               <td class="pt-role"><span class="role-badge r-${p.role}">${p.role}</span></td>
               <td class="pt-name">${playerLink}</td>
-              ${getVodCell(p.name)}
+              ${getVodCell(p.name, p.role)}
               <td class="pt-num pt-kills">${p.kills}</td>
               <td class="pt-num pt-deaths">${p.deaths}</td>
               <td class="pt-num">${p.assists}</td>
@@ -2252,7 +2278,7 @@ function findPlayerInMatches(canonicalName) {
   for (const [slug, match] of Object.entries(sheetsData.matchDetails)) {
     for (const g of match.groups) {
       for (const p of g.team1) {
-        if (getCanonicalName(p.name) === canon) {
+        if (getCanonicalName(p.name, p.role) === canon) {
           results.push({
             slug, nwlNumber: match.nwlNumber, mapName: match.mapName,
             date: match.date, winner: match.winner,
@@ -2262,7 +2288,7 @@ function findPlayerInMatches(canonicalName) {
         }
       }
       for (const p of g.team2) {
-        if (getCanonicalName(p.name) === canon) {
+        if (getCanonicalName(p.name, p.role) === canon) {
           results.push({
             slug, nwlNumber: match.nwlNumber, mapName: match.mapName,
             date: match.date, winner: match.winner,
@@ -2290,7 +2316,7 @@ function getAllPlayers() {
   for (const [slug, match] of Object.entries(sheetsData.matchDetails)) {
     for (const g of match.groups) {
       for (const p of [...g.team1, ...g.team2]) {
-        const canon = getCanonicalName(p.name);
+        const canon = getCanonicalName(p.name, p.role);
         if (!playerMap[canon]) {
           playerMap[canon] = { canonical: canon, appearances: 0, names: new Set() };
         }
@@ -2372,6 +2398,12 @@ function renderSearchPage() {
 
 function renderChangelogPage() {
   const entries = [
+    {
+      date: '03.05.2026',
+      changes: [
+        'Fixed name collision between Liona\'s "Skill Issue" alt and MARKEL1to/US (whose main is also "Skill Issue", with an I/l visual swap that breaks alias matching). Added role-based override: when "Skill Issue" appears with role BR (Blunderbuss), it now resolves to MARKEL1to/US; otherwise it stays mapped to Liona/Skillissu.',
+      ]
+    },
     {
       date: '25.04.2026',
       changes: [
