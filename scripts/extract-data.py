@@ -37,9 +37,7 @@ ATTACKER_OVERRIDES = {
 # Matches where ATTACKER_OVERRIDES corrects the label but players are already
 # in correct CSV positions, so no swap is needed:
 #   nwl-33/34: logo was wrong AND players followed wrong logo (pre-templates)
-#   nwl-37: Capys attacked but nwl_quick.py (old, buggy) put Beavers at top —
-#            the sheet layout is wrong but accidentally parses correctly without swap
-SKIP_SWAP_MATCHES = {'nwl-33', 'nwl-34', 'nwl-37'}
+SKIP_SWAP_MATCHES = {'nwl-33', 'nwl-34'}
 
 def get_tab_colors():
     """Download XLSX and extract sheet tab colors"""
