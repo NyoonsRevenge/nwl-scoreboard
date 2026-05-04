@@ -42,7 +42,8 @@ const LOADING_QUOTES = [
   "Fixing one bug (by secretly introducing three new ones)...",
   "Downloading 40GB patch for a minor text localization...",
   "Extending scheduled maintenance by another 4 hours...",
-  "Double-checking if the Trading Post actually works this time..."
+  "Double-checking if the Trading Post actually works this time...",
+  "Restarting the server 10 minutes before the war begins..."
 ];
 
 function getRandomQuote(exclude) {
@@ -2402,12 +2403,6 @@ function renderChangelogPage() {
       date: '04.05.2026',
       changes: [
         'Fixed NWL#37 team assignment again: Beaverknights and Capyknights players were swapped. Removed nwl-37 from SKIP_SWAP_MATCHES in extract-data.py so the swap is applied on future syncs, and corrected the static nwl-37.json data.',
-      ]
-    },
-    {
-      date: '03.05.2026',
-      changes: [
-        'Fixed name collision between Liona\'s "Skill Issue" alt and MARKEL1to/US (whose main is also "Skill Issue", with an I/l visual swap that breaks alias matching). Added role-based override: when "Skill Issue" appears with role BR (Blunderbuss), it now resolves to MARKEL1to/US; otherwise it stays mapped to Liona/Skillissu.',
       ]
     },
     {
