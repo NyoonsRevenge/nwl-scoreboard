@@ -877,13 +877,13 @@
       ],
       "team2": [
         {
-          "name": "Zeleen",
+          "name": "Jeszo",
           "role": "HL",
-          "kills": 7,
-          "deaths": 4,
-          "assists": 57,
-          "healing": 22014,
-          "damage": 848333
+          "kills": 0,
+          "deaths": 8,
+          "assists": 35,
+          "healing": 1516029,
+          "damage": 74877
         },
         {
           "name": "Kru",
@@ -895,13 +895,13 @@
           "damage": 901945
         },
         {
-          "name": "Jeszo",
+          "name": "Zeleen",
           "role": "MD",
-          "kills": 0,
-          "deaths": 8,
-          "assists": 35,
-          "healing": 1516029,
-          "damage": 74877
+          "kills": 7,
+          "deaths": 4,
+          "assists": 57,
+          "healing": 22014,
+          "damage": 848333
         },
         {
           "name": "Nolas",
