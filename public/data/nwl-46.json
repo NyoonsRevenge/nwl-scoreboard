@@ -840,13 +840,13 @@
       ],
       "team2": [
         {
-          "name": "Zeleen",
+          "name": "Jeszo",
           "role": "HL",
-          "kills": 6,
+          "kills": 0,
           "deaths": 5,
-          "assists": 38,
-          "healing": 25408,
-          "damage": 1094051
+          "assists": 20,
+          "healing": 1670586,
+          "damage": 54333
         },
         {
           "name": "Maseye",
@@ -867,13 +867,13 @@
           "damage": 974332
         },
         {
-          "name": "Jeszo",
+          "name": "Zeleen",
           "role": "MD",
-          "kills": 0,
+          "kills": 6,
           "deaths": 5,
-          "assists": 20,
-          "healing": 1670586,
-          "damage": 54333
+          "assists": 38,
+          "healing": 25408,
+          "damage": 1094051
         },
         {
           "name": "Birnzito",
