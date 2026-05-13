@@ -607,6 +607,21 @@ const NAME_MAPPING_JSON = {
   "Suzana01": "SK21",
   "Winovore": "jhit lair",
   "jhit lair": "Winovore",
+
+  // Auto-synced from name_mapping.json
+  "Andrew1999": "Jegerys",
+  "Migi": "SACRED ON POINT",
+  "SACRED ON POINT": "Migi",
+  "SmileyBill": "shield rush",
+  "shield rush": "SmileyBill",
+
+  // Auto-synced from name_mapping.json
+  "Emir Sama": "Uninstall.exe",
+  "Uninstall.exe": "Emir Sama",
+
+  // Auto-synced from name_mapping.json
+  "Bukaku": "EgirlsBathwater",
+  "EgirlsBathwater": "Bukaku",
 };
 
 // Role-specific overrides for ambiguous names. Some players share an in-game
