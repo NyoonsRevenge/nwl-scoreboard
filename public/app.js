@@ -293,6 +293,7 @@ const NAME_MAPPING_JSON = {
 
   // KaldieDarkleaf truncation
   "KaldieDarklea": "KaldieDarkleaf",
+  "KaldieDarkle": "KaldieDarkleaf",
 
   // MARKEL1to/US variants (truncations, I vs 1 confusion)
   "MARKEL1to/U": "MARKEL1to/US",
