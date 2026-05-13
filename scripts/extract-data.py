@@ -6,6 +6,7 @@ import os
 import re
 import sys
 import csv
+import time
 import hashlib
 from datetime import datetime
 import urllib.request
@@ -13,6 +14,33 @@ import zipfile
 import io
 
 sys.stdout.reconfigure(encoding='utf-8')
+
+DEFAULT_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+
+
+def fetch_url(url, timeout=60, retries=3, backoff=5, user_agent=DEFAULT_UA, label=None):
+    """Fetch a URL with retry on transient errors (timeouts, 5xx, connection resets).
+
+    Returns response bytes, or raises the last exception after exhausting retries.
+    Google Sheets export endpoints are occasionally slow / rate-limited, so a single
+    failure should not kill the whole sync.
+    """
+    tag = label or url
+    last_exc = None
+    for attempt in range(1, retries + 1):
+        try:
+            req = urllib.request.Request(url, headers={'User-Agent': user_agent})
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                return resp.read()
+        except Exception as e:
+            last_exc = e
+            if attempt < retries:
+                wait = backoff * attempt
+                print(f"  [retry {attempt}/{retries - 1}] {tag}: {e} — sleeping {wait}s")
+                time.sleep(wait)
+            else:
+                print(f"  [give up] {tag}: {e}")
+    raise last_exc
 
 PUBLISHED_ID = '2PACX-1vReMFS4C8UfVHqgl0rI14LVdU4adkyw8_ClQpAJgkXluqncRdqBHXer156nDt_A3deeB7qO0vuDaHE8'
 SPREADSHEET_ID = '1vYy9Zsn7hVN3Z3sEW2S0GsXEMh1VVM_P7vn6C5LMFgY'
@@ -32,6 +60,9 @@ ATTACKER_OVERRIDES = {
     'nwl-41': 'team2',  # Syndicate (Capyknights) attacked
     'nwl-42': 'team1',  # Marauders (Beaverknights) attacked
     'nwl-43': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-44': 'team2',  # Syndicate (Capyknights) attacked
+    'nwl-45': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-46': 'team1',  # Marauders (Beaverknights) attacked
 }
 
 # Matches where ATTACKER_OVERRIDES corrects the label but players are already
@@ -45,10 +76,8 @@ def get_tab_colors():
     colors = {}
     url = f'https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/export?format=xlsx'
     try:
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req) as resp:
-            xlsx_data = resp.read()
-            
+        xlsx_data = fetch_url(url, label='XLSX tab colors')
+
         with zipfile.ZipFile(io.BytesIO(xlsx_data)) as z:
             workbook_xml = z.read('xl/workbook.xml').decode('utf-8', errors='ignore')
             rels_xml = z.read('xl/_rels/workbook.xml.rels').decode('utf-8', errors='ignore')
@@ -75,10 +104,8 @@ def get_tab_colors():
 
 def fetch_sheet_list():
     url = f'https://docs.google.com/spreadsheets/d/e/{PUBLISHED_ID}/pubhtml'
-    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'})
     try:
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            html = resp.read().decode('utf-8')
+        html = fetch_url(url, label='sheet list (pubhtml)').decode('utf-8')
     except Exception as e:
         print(f"Error fetching sheet list: {e}")
         return []
@@ -290,9 +317,7 @@ def parse_player(row, col_offset):
 
 def fetch_sheet_csv(gid):
     url = f'https://docs.google.com/spreadsheets/d/e/{PUBLISHED_ID}/pub?output=csv&gid={gid}'
-    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'})
-    with urllib.request.urlopen(req, timeout=15) as resp:
-        text = resp.read().decode('utf-8')
+    text = fetch_url(url, label=f'sheet CSV gid={gid}').decode('utf-8')
     return list(csv.reader(text.splitlines()))
 
 def parse_match(rows):
@@ -415,10 +440,8 @@ def fetch_vod_responses():
         the existing vods.json in that case).
     """
     list_url = f'https://docs.google.com/spreadsheets/d/e/{PUBLISHED_ID}/pubhtml'
-    req = urllib.request.Request(list_url, headers={'User-Agent': 'Mozilla/5.0'})
     try:
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            html = resp.read().decode('utf-8')
+        html = fetch_url(list_url, label='VOD sheet list').decode('utf-8')
     except Exception as e:
         print(f"VOD: failed to fetch sheet list: {e}")
         return None
@@ -436,10 +459,8 @@ def fetch_vod_responses():
         return None
 
     csv_url = f'https://docs.google.com/spreadsheets/d/e/{PUBLISHED_ID}/pub?output=csv&gid={vod_gid}'
-    req = urllib.request.Request(csv_url, headers={'User-Agent': 'Mozilla/5.0'})
     try:
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            text = resp.read().decode('utf-8')
+        text = fetch_url(csv_url, label='VOD tab CSV').decode('utf-8')
         rows = list(csv.reader(text.splitlines()))
     except Exception as e:
         print(f"VOD: failed to fetch 'VODs' tab CSV: {e}")
@@ -519,9 +540,7 @@ def merge_vods(form_vods):
 def fetch_xlsx():
     """Download XLSX data once for reuse."""
     url = f'https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/export?format=xlsx'
-    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-    with urllib.request.urlopen(req) as resp:
-        return resp.read()
+    return fetch_url(url, label='XLSX export')
 
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)

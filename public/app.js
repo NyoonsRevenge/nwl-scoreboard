@@ -618,6 +618,7 @@ const NAME_MAPPING_JSON = {
   // Auto-synced from name_mapping.json
   "Emir Sama": "Uninstall.exe",
   "Uninstall.exe": "Emir Sama",
+  "Uninstall.ex": "Uninstall.exe",
 
   // Auto-synced from name_mapping.json
   "Bukaku": "EgirlsBathwater",
