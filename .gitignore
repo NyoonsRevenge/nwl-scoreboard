@@ -3,3 +3,10 @@ __pycache__/
 .env
 
 .vercel
+
+# Local Claude Code workspace state (launch configs, etc.)
+.claude/
+
+# Local War_Results / roster xlsx files used for manual data entry —
+# these are workflow inputs, never committed (data lives in Google Sheets).
+*.xlsx
