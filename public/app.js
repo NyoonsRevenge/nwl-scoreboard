@@ -623,6 +623,19 @@ const NAME_MAPPING_JSON = {
   // Auto-synced from name_mapping.json
   "Bukaku": "EgirlsBathwater",
   "EgirlsBathwater": "Bukaku",
+
+  // Auto-synced from name_mapping.json
+  "BOUFFEURDEMOULE": "Shiyrow",
+  "BeetleJuice": "Chewbacca",
+  "Chewbacca": "BeetleJuice",
+  "Jamel2boule": "Jamel",
+  "Master Yoghurt": "Nieksas",
+
+  // Auto-synced from name_mapping.json
+  "Ayzyenx": "Spyfromzoo",
+  "ProCoulD": "hkN.oO",
+  "Spyfromzoo": "Ayzyenx",
+  "hkN.oO": "ProCoulD",
 };
 
 // Role-specific overrides for ambiguous names. Some players share an in-game
@@ -794,6 +807,11 @@ const ATTACKER_OVERRIDES = {
   'nwl-41': 'team2', // Syndicate (Capyknights) attacked
   'nwl-42': 'team1', // Marauders (Beaverknights) attacked
   'nwl-43': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-44': 'team2', // Syndicate (Capyknights) attacked
+  'nwl-45': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-46': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-47': 'team2', // Syndicate (Capyknights) attacked
+  'nwl-48': 'team1', // Marauders (Beaverknights) attacked
 };
 
 // Matches where the attacker is team2 (Capyknights at top of sheet) but the
@@ -1825,6 +1843,152 @@ function renderHomePage(matches) {
 //  MATCH DETAIL PAGE
 // ===========================================
 
+// ===========================================
+//  ROLE MVP ALGORITHM (per match)
+// ===========================================
+
+// ── FEATURE FLAG ─────────────────────────────────────────────────────────
+// The Role MVP feature is on hold per league leadership. We keep the code in
+// the repo (so it ships in any build) but hide it on the live site. To force-
+// enable globally for production once approved, flip MVP_FORCE_ENABLED to true.
+//
+// Visibility rules (any one of these makes it visible):
+//   1. MVP_FORCE_ENABLED === true                  (master switch)
+//   2. running on localhost / 127.0.0.1            (local dev)
+//   3. URL contains ?mvp=1                         (share-link override)
+//   4. localStorage.nwl_mvp_preview === '1'        (per-browser opt-in)
+const MVP_FORCE_ENABLED = false;
+function isMvpEnabled() {
+  if (MVP_FORCE_ENABLED) return true;
+  const host = window.location.hostname;
+  if (host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0') return true;
+  if (/[?&]mvp=1\b/.test(window.location.search)) return true;
+  try { if (localStorage.getItem('nwl_mvp_preview') === '1') return true; } catch {}
+  return false;
+}
+
+// Score = Kills − W·Deaths + Assists/20 + Healing/K + Damage/K
+//   · W = 2 for DPS/tank roles, W = 5 for healers (staying alive is a healer's
+//     main job — high healing only counts if you survived to deliver it).
+//   · Healing/Damage raw values are in the millions, so K normalizes them into
+//     the same magnitude as kills/deaths.
+//   · Assists weighted only 1/20 — in NWL almost everyone racks up 80–110
+//     assists just by being near fights, so they are mostly noise.
+//   · MVPs are awarded *per role*, so the formula only ever compares players
+//     with similar stat profiles. Additionally, HL is split into two buckets:
+//     Main-Zerg healers (groups 1–6) and Dex-Groups healers (groups 7–10),
+//     because the main zerg healers see far more raw healing throughput.
+const MVP_SCORE_K = 100000;
+
+const MVP_ROLE_NAMES = {
+  AoE: 'Area Healer',
+  HL_zerg: 'Group Healer · Main Zerg (G1–6)',
+  HL_ks:   'Group Healer · Dex Groups (G7–10)',
+  RD: 'Ranged DPS', IV: 'Ice / Void',
+  BR: 'Bruiser', PT: 'Point', MD: 'Melee DPS', HD: 'Heavy Dex',
+  VB: 'Voidblade', CW: 'Crescent Wave',
+};
+const MVP_ROLE_ORDER = ['AoE', 'HL_zerg', 'HL_ks', 'RD', 'IV', 'BR', 'PT', 'MD', 'HD', 'VB', 'CW', 'FL'];
+
+// Buckets where staying alive matters more than anything else.
+const MVP_HEALER_BUCKETS = new Set(['AoE', 'HL_zerg', 'HL_ks']);
+
+let _mvpCollapsed = false;
+
+// Map a player to their MVP bucket. Most roles map 1:1; HL is split by group
+// number into Main-Zerg (G1–6) and Kill-Squad (G7–10).
+function mvpBucket(p, groupLabel) {
+  if (p.role === 'HL') {
+    const m = (groupLabel || '').match(/^G(\d+)/i);
+    const n = m ? parseInt(m[1], 10) : 0;
+    return n >= 7 ? 'HL_ks' : 'HL_zerg';
+  }
+  return p.role || '?';
+}
+
+// Role code used for the badge (HL_zerg / HL_ks both render as 'HL').
+function mvpBadge(bucket) {
+  return (bucket === 'HL_zerg' || bucket === 'HL_ks') ? 'HL' : bucket;
+}
+
+function mvpScore(p, bucket) {
+  const deathWeight = MVP_HEALER_BUCKETS.has(bucket) ? 5 : 2;
+  return (p.kills || 0)
+    - deathWeight * (p.deaths || 0)
+    + (p.assists || 0) / 20
+    + (p.healing || 0) / MVP_SCORE_K
+    + (p.damage || 0) / MVP_SCORE_K;
+}
+
+// Bucket every player of a match (both teams, all groups) and rank them.
+function computeRoleMVPs(data) {
+  const byBucket = {};
+  for (const g of data.groups) {
+    for (const teamKey of ['team1', 'team2']) {
+      for (const p of (g[teamKey] || [])) {
+        const bucket = mvpBucket(p, g.label);
+        (byBucket[bucket] = byBucket[bucket] || []).push({
+          ...p, team: teamKey, group: g.label, score: mvpScore(p, bucket),
+        });
+      }
+    }
+  }
+  return Object.keys(byBucket)
+    .sort((a, b) => {
+      const ia = MVP_ROLE_ORDER.indexOf(a), ib = MVP_ROLE_ORDER.indexOf(b);
+      return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+    })
+    .map(bucket => ({ bucket, players: byBucket[bucket].sort((a, b) => b.score - a.score) }));
+}
+
+function roleMVPsHTML(data) {
+  const roleMVPs = computeRoleMVPs(data);
+  let cards = '';
+  for (const { bucket, players } of roleMVPs) {
+    const badge = mvpBadge(bucket);
+    let entries = '';
+    players.slice(0, 3).forEach((p, i) => {
+      const canonical = getCanonicalName(p.name, p.role);
+      const teamCls = p.team === 'team1' ? 'mvp-t1' : 'mvp-t2';
+      entries += `<div class="mvp-entry${i === 0 ? ' mvp-entry-top' : ''}">
+        <span class="mvp-rank mvp-rank-${i + 1}">${i + 1}</span>
+        <div class="mvp-entry-main">
+          <a class="mvp-name ${teamCls}" onclick="navigate('#/player/${encodePlayerForLink(canonical)}')">${p.name}</a>
+          <div class="mvp-entry-stats">${p.kills}/${p.deaths}/${p.assists} · ${fmt(p.healing)} heal · ${fmt(p.damage)} dmg</div>
+        </div>
+        <span class="mvp-score">${p.score.toFixed(1)}</span>
+      </div>`;
+    });
+    cards += `<div class="mvp-card mvp-card-${badge}">
+      <div class="mvp-card-head">
+        <span class="role-badge r-${badge}">${badge}</span>
+        <span class="mvp-role-name">${MVP_ROLE_NAMES[bucket] || bucket}</span>
+      </div>
+      ${entries}
+    </div>`;
+  }
+  return `<div class="mvp-section">
+    <div class="mvp-head" onclick="toggleMvpPanel()">
+      <div class="mvp-head-text">
+        <span class="mvp-head-title">Role MVPs</span>
+        <span class="mvp-head-formula">Score = K − 2·D + A/20 + Heal/100k + Dmg/100k · healers: 5·D · HL split G1–6 / G7–10 · top 3 per role</span>
+      </div>
+      <span class="mvp-toggle-arrow" id="mvp-arrow">${_mvpCollapsed ? '▶' : '▼'}</span>
+    </div>
+    <div class="mvp-grid" id="mvp-grid"${_mvpCollapsed ? ' style="display:none"' : ''}>
+      ${cards}
+    </div>
+  </div>`;
+}
+
+function toggleMvpPanel() {
+  _mvpCollapsed = !_mvpCollapsed;
+  const grid = document.getElementById('mvp-grid');
+  const arrow = document.getElementById('mvp-arrow');
+  if (grid) grid.style.display = _mvpCollapsed ? 'none' : '';
+  if (arrow) arrow.textContent = _mvpCollapsed ? '▶' : '▼';
+}
+
 function renderMatchPage(data) {
   const t1 = data.totals.team1;
   const t2 = data.totals.team2;
@@ -1891,6 +2055,8 @@ function renderMatchPage(data) {
         </div>
       </div>
     </div>
+
+    ${isMvpEnabled() ? roleMVPsHTML(data) : ''}
 
     <div class="filter-toolbar">
       <div class="filter-panel" id="filter-panel">
@@ -2748,6 +2914,7 @@ window.navigate = navigate;
 window.toggleNav = toggleNav;
 window.toggleFilterPanel = toggleFilterPanel;
 window.setPlayerRoleFilter = setPlayerRoleFilter;
+window.toggleMvpPanel = toggleMvpPanel;
 
 // -- Re-render groups on breakpoint change --
 let _lastMobile = window.innerWidth <= 900;

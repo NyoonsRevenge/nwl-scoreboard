@@ -2024,3 +2024,169 @@ body::after {
   font-weight: bold;
 }
 
+/* ── Role MVPs ────────────────────────── */
+
+.mvp-section {
+  margin: 0 0 28px;
+  border: 1px solid var(--gold-dim);
+  background: var(--bg);
+}
+
+.mvp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--gold-dim);
+  user-select: none;
+}
+
+.mvp-head-text {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.mvp-head-title {
+  font-family: 'IM Fell DW Pica', serif;
+  font-size: 20px;
+  color: var(--gold-bright);
+  letter-spacing: 1px;
+}
+
+.mvp-head-formula {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: .5px;
+}
+
+.mvp-toggle-arrow {
+  color: var(--gold);
+  font-size: 11px;
+  flex: 0 0 auto;
+}
+
+.mvp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
+  gap: 10px;
+  padding: 14px;
+}
+
+.mvp-card {
+  border: 1px solid rgba(255,255,255,.07);
+  background: var(--bg2);
+  padding: 10px 12px;
+}
+
+/* Role-tinted card backgrounds: the soft role-bg layered over --bg2 so the
+   card stays dark enough for text but is recognizable by its role color. */
+.mvp-card-AoE { background: linear-gradient(var(--r-aoe-bg), var(--r-aoe-bg)), var(--bg2); border-color: var(--r-aoe-b); }
+.mvp-card-HL  { background: linear-gradient(var(--r-hl-bg),  var(--r-hl-bg)),  var(--bg2); border-color: var(--r-hl-b); }
+.mvp-card-RD  { background: linear-gradient(var(--r-rd-bg),  var(--r-rd-bg)),  var(--bg2); border-color: var(--r-rd-b); }
+.mvp-card-IV  { background: linear-gradient(var(--r-iv-bg),  var(--r-iv-bg)),  var(--bg2); border-color: var(--r-iv-b); }
+.mvp-card-BR  { background: linear-gradient(var(--r-br-bg),  var(--r-br-bg)),  var(--bg2); border-color: var(--r-br-b); }
+.mvp-card-PT  { background: linear-gradient(var(--r-pt-bg),  var(--r-pt-bg)),  var(--bg2); border-color: var(--r-pt-b); }
+.mvp-card-MD  { background: linear-gradient(var(--r-md-bg),  var(--r-md-bg)),  var(--bg2); border-color: var(--r-md-b); }
+.mvp-card-HD  { background: linear-gradient(var(--r-hd-bg),  var(--r-hd-bg)),  var(--bg2); border-color: var(--r-hd-b); }
+.mvp-card-VB  { background: linear-gradient(var(--r-vb-bg),  var(--r-vb-bg)),  var(--bg2); border-color: var(--r-vb-b); }
+.mvp-card-CW  { background: linear-gradient(var(--r-cw-bg),  var(--r-cw-bg)),  var(--bg2); border-color: var(--r-cw-b); }
+
+.mvp-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+.mvp-role-name {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.mvp-entry {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+}
+
+.mvp-entry + .mvp-entry {
+  border-top: 1px solid rgba(255,255,255,.04);
+}
+
+.mvp-rank {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  font-weight: bold;
+  border-radius: 50%;
+  color: var(--bg);
+  background: var(--muted);
+}
+
+.mvp-rank-1 { background: var(--gold-bright); }
+.mvp-rank-2 { background: #b8c0d0; }
+.mvp-rank-3 { background: #c08552; }
+
+.mvp-entry-main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.mvp-name {
+  display: block;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mvp-name.mvp-t1 { color: var(--t1-text); }
+.mvp-name.mvp-t2 { color: var(--t2-text); }
+.mvp-name:hover { color: var(--gold-bright); }
+
+.mvp-entry-stats {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: .3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mvp-score {
+  flex: 0 0 auto;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--gold);
+}
+
+.mvp-entry-top .mvp-score {
+  font-size: 15px;
+  color: var(--gold-bright);
+}
+
+@media (max-width: 600px) {
+  .mvp-grid { grid-template-columns: 1fr; }
+}
+
