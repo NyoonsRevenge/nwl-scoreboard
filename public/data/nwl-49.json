@@ -164,6 +164,15 @@
           "damage": 45272
         },
         {
+          "name": "setanko",
+          "role": "RD",
+          "kills": 2,
+          "deaths": 2,
+          "assists": 113,
+          "healing": 0,
+          "damage": 2634216
+        },
+        {
           "name": "ABOSLLOO",
           "role": "BR",
           "kills": 8,
@@ -252,6 +261,15 @@
           "damage": 121375
         },
         {
+          "name": "Pixieee",
+          "role": "RD",
+          "kills": 20,
+          "deaths": 4,
+          "assists": 75,
+          "healing": 0,
+          "damage": 2700190
+        },
+        {
           "name": "Uninstall.exe",
           "role": "IV",
           "kills": 2,
@@ -270,13 +288,13 @@
           "damage": 1838223
         },
         {
-          "name": "Alexiarae",
+          "name": "Where Clump",
           "role": "BR",
-          "kills": 0,
-          "deaths": 0,
-          "assists": 0,
+          "kills": 9,
+          "deaths": 5,
+          "assists": 119,
           "healing": 0,
-          "damage": 0
+          "damage": 1955083
         }
       ]
     },
@@ -338,6 +356,15 @@
           "assists": 29,
           "healing": 4391759,
           "damage": 27027
+        },
+        {
+          "name": "MighTs",
+          "role": "RD",
+          "kills": 12,
+          "deaths": 4,
+          "assists": 91,
+          "healing": 0,
+          "damage": 2976925
         },
         {
           "name": "sadshua",
@@ -428,6 +455,15 @@
           "damage": 73544
         },
         {
+          "name": "Jegerys",
+          "role": "CW",
+          "kills": 15,
+          "deaths": 4,
+          "assists": 84,
+          "healing": 0,
+          "damage": 2406491
+        },
+        {
           "name": "Liona/SkillIs",
           "role": "IV",
           "kills": 1,
@@ -514,6 +550,15 @@
           "assists": 43,
           "healing": 2833055,
           "damage": 62446
+        },
+        {
+          "name": "Carusoo",
+          "role": "RD",
+          "kills": 16,
+          "deaths": 0,
+          "assists": 60,
+          "healing": 0,
+          "damage": 1994478
         },
         {
           "name": "ProCoulD",
@@ -604,13 +649,22 @@
           "damage": 128891
         },
         {
-          "name": "Brit-ish",
-          "role": "IV",
-          "kills": 0,
-          "deaths": 0,
-          "assists": 0,
+          "name": "Hiko(Hikoah",
+          "role": "RD",
+          "kills": 9,
+          "deaths": 5,
+          "assists": 85,
           "healing": 0,
-          "damage": 0
+          "damage": 2588377
+        },
+        {
+          "name": "c0rpi",
+          "role": "PT",
+          "kills": 2,
+          "deaths": 3,
+          "assists": 95,
+          "healing": 9831,
+          "damage": 687638
         },
         {
           "name": "T93Asadi",
@@ -933,11 +987,11 @@
       "damage": 62372897
     },
     "team2": {
-      "kills": 180,
-      "deaths": 183,
-      "assists": 3278,
-      "healing": 40235115,
-      "damage": 42282925
+      "kills": 265,
+      "deaths": 210,
+      "assists": 4000,
+      "healing": 40244946,
+      "damage": 60226323
     }
   },
   "team1Name": "Beaverknights",
