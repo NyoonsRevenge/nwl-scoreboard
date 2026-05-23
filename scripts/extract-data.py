@@ -63,6 +63,9 @@ ATTACKER_OVERRIDES = {
     'nwl-44': 'team2',  # Syndicate (Capyknights) attacked
     'nwl-45': 'team1',  # Marauders (Beaverknights) attacked
     'nwl-46': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-47': 'team2',  # Syndicate (Capyknights) attacked
+    'nwl-48': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-49': 'team1',  # Marauders (Beaverknights) attacked
 }
 
 # Matches where ATTACKER_OVERRIDES corrects the label but players are already

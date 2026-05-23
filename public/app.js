@@ -201,6 +201,7 @@ const NAME_MAPPING_JSON = {
   "Nerfpoop": "NerfPooP",
   "Zarki": "Zar_ki",
   "Shiroyasha": "Shiroyasha34",
+  "Shiroyasha3": "Shiroyasha34",
   "Markel1to": "MARKEL1to/US",
   "Cloudninee": "Cloudninee/Blamy",
   "Rivzone": "Rivzone",
@@ -636,6 +637,13 @@ const NAME_MAPPING_JSON = {
   "ProCoulD": "hkN.oO",
   "Spyfromzoo": "Ayzyenx",
   "hkN.oO": "ProCoulD",
+
+  // Auto-synced from name_mapping.json
+  "J3G3R": "Jegerys",
+  "Jamel": "LastHitEnjoyer",
+  "LastHitEnjoyer": "Jamel",
+  "RediiN": "elf",
+  "elf": "RediiN",
 };
 
 // Role-specific overrides for ambiguous names. Some players share an in-game
@@ -812,6 +820,7 @@ const ATTACKER_OVERRIDES = {
   'nwl-46': 'team1', // Marauders (Beaverknights) attacked
   'nwl-47': 'team2', // Syndicate (Capyknights) attacked
   'nwl-48': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-49': 'team1', // Marauders (Beaverknights) attacked
 };
 
 // Matches where the attacker is team2 (Capyknights at top of sheet) but the
