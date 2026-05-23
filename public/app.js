@@ -570,6 +570,8 @@ const NAME_MAPPING_JSON = {
 
   // Auto-synced from name_mapping.json
   "KathienMermaid": "kathien",
+  "Kathien(Grun": "kathien",
+  "Kathien(Gru": "kathien",
   "LIL CAPY": "CAPY",
 
   // Auto-synced from name_mapping.json
