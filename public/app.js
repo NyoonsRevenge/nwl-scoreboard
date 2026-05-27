@@ -653,6 +653,18 @@ const NAME_MAPPING_JSON = {
   "GGEZ NO DISBAND": "Vago",
   "Hiko(Hikoah": "BRITISH EGIRL",
   "Vago": "GGEZ NO DISBAND",
+
+  // === BEGIN: Auto-synced from Character-Names-DB ===
+  "Shocking Myself": "MARKEL1to",
+  "escargot": "Nyxie",
+  "Njord": "kathien",
+  "KelHBK": "kel",
+  "xVoyd": "Inziar",
+  "throat bruiser": "Ruppert",
+  "Carryyou": "Shirohigo",
+  "CANBASANKÖYLÜ": "hypheer",
+  "kuroroEU": "ABOSLLOO",
+  // === END: Auto-synced from Character-Names-DB ===
 };
 
 // Role-specific overrides for ambiguous names. Some players share an in-game

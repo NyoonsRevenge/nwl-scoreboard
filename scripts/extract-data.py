@@ -67,6 +67,8 @@ ATTACKER_OVERRIDES = {
     'nwl-48': 'team1',  # Marauders (Beaverknights) attacked
     'nwl-49': 'team1',  # Marauders (Beaverknights) attacked
     'nwl-50': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-51': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-52': 'team2',  # Syndicate (Capyknights) attacked
 }
 
 # Matches where ATTACKER_OVERRIDES corrects the label but players are already
@@ -541,6 +543,183 @@ def merge_vods(form_vods):
     print(f"VOD: wrote {total} VODs across {len(sorted_vods)} matches to vods.json")
 
 
+NAME_MAPPING_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'name_mapping.json')
+APP_JS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'public', 'app.js')
+SYNC_BEGIN_MARKER = '  // === BEGIN: Auto-synced from Character-Names-DB ==='
+SYNC_END_MARKER = '  // === END: Auto-synced from Character-Names-DB ==='
+
+
+def fetch_character_names_db():
+    """Read player name mappings from the 'Character-Names-DB' tab.
+
+    Sheet format: column 0 = canonical (Discord/Roster-planner name),
+    columns 1-3 = aliases (in-game Character Name #1, #2, #3). Each non-empty
+    alias gets mapped to the canonical name.
+
+    Tolerates the leading emoji prefix the tab name currently uses
+    ('🔧 Character-Names-DB').
+
+    Returns:
+        list of (alias, canonical) tuples preserving original casing,
+        or None on fetch failure (caller should then skip the sync).
+    """
+    list_url = f'https://docs.google.com/spreadsheets/d/e/{PUBLISHED_ID}/pubhtml'
+    try:
+        html = fetch_url(list_url, label='Name-DB sheet list').decode('utf-8')
+    except Exception as e:
+        print(f"NameDB: failed to fetch sheet list: {e}")
+        return None
+
+    db_gid = None
+    pattern = r'name:\s*"([^"]+)"[^}}]*gid:\s*"(\d+)"'
+    for match in re.finditer(pattern, html):
+        raw_name = match.group(1).replace(r'\/', '/').strip()
+        # Strip leading non-letter chars (emoji + whitespace), then compare
+        stripped = re.sub(r'^[^A-Za-z]+', '', raw_name).strip().lower()
+        if stripped == 'character-names-db':
+            db_gid = match.group(2)
+            break
+
+    if not db_gid:
+        print("NameDB: no 'Character-Names-DB' tab found — skipping sync")
+        return None
+
+    csv_url = f'https://docs.google.com/spreadsheets/d/e/{PUBLISHED_ID}/pub?output=csv&gid={db_gid}'
+    try:
+        text = fetch_url(csv_url, label='Name-DB CSV').decode('utf-8')
+        rows = list(csv.reader(io.StringIO(text)))
+    except Exception as e:
+        print(f"NameDB: failed to fetch 'Character-Names-DB' CSV: {e}")
+        return None
+
+    pairs = []
+    for row in rows:
+        if len(row) < 2:
+            continue
+        canonical = row[0].replace('\r', '').replace('\n', ' ').strip()
+        if not canonical or canonical.lower() == 'roster/raid-planner name':
+            continue
+        if canonical.lower().startswith('if your character name'):
+            continue
+        for cell in row[1:]:
+            alias = cell.replace('\r', '').replace('\n', ' ').strip()
+            if not alias or alias == canonical:
+                continue
+            pairs.append((alias, canonical))
+    return pairs
+
+
+def sync_name_mappings(pairs):
+    """Merge Character-Names-DB pairs into name_mapping.json and app.js.
+
+    name_mapping.json: add missing alias keys (preserving any manual entries
+    and never overwriting a key that already exists, so manual fixes for
+    typo'd in-game names take precedence).
+
+    app.js: rewrite the marked Auto-synced block between SYNC_BEGIN_MARKER
+    and SYNC_END_MARKER with all sheet entries. If markers are absent, the
+    block is inserted just before the closing `};` of NAME_MAPPING_JSON.
+    """
+    if pairs is None:
+        return
+
+    # --- name_mapping.json ---
+    existing = {}
+    if os.path.exists(NAME_MAPPING_PATH):
+        try:
+            with open(NAME_MAPPING_PATH, 'r', encoding='utf-8') as f:
+                existing = json.load(f)
+        except Exception as e:
+            print(f"NameDB: failed to read name_mapping.json: {e}")
+            return
+
+    existing_keys_lower = {k.lower() for k in existing.keys()}
+    added = 0
+    for alias, canonical in pairs:
+        if alias.lower() not in existing_keys_lower:
+            existing[alias] = canonical
+            existing_keys_lower.add(alias.lower())
+            added += 1
+
+    if added:
+        with open(NAME_MAPPING_PATH, 'w', encoding='utf-8') as f:
+            json.dump(existing, f, ensure_ascii=False, indent=2)
+        print(f"NameDB: added {added} new alias(es) to name_mapping.json")
+    else:
+        print("NameDB: name_mapping.json is up to date")
+
+    # --- app.js NAME_MAPPING_JSON ---
+    if not os.path.exists(APP_JS_PATH):
+        return
+    with open(APP_JS_PATH, 'r', encoding='utf-8') as f:
+        app_src = f.read()
+
+    # Locate the NAME_MAPPING_JSON object literal and extract its existing keys
+    # (case-insensitive). The sync is additive only: we never overwrite a key
+    # that's already manually defined in app.js, because the same in-game name
+    # might be intentionally pointed at a different canonical (e.g. a role
+    # override resolved manually).
+    obj_match = re.search(r'const NAME_MAPPING_JSON = \{(.*?)\n\};', app_src, re.DOTALL)
+    if not obj_match:
+        print("NameDB: couldn't locate NAME_MAPPING_JSON block in app.js — skipping")
+        return
+    obj_body = obj_match.group(1)
+    # Strip the existing sync block (if any) so its keys don't count as "manual"
+    obj_body_for_keys = re.sub(
+        re.escape(SYNC_BEGIN_MARKER) + r'.*?' + re.escape(SYNC_END_MARKER),
+        '',
+        obj_body,
+        flags=re.DOTALL,
+    )
+    existing_app_keys = set()
+    for km in re.finditer(r'"((?:[^"\\]|\\.)*)"\s*:\s*"', obj_body_for_keys):
+        existing_app_keys.add(km.group(1).lower())
+
+    # Build sync block: one entry per unique (alias_lower), and only if it
+    # doesn't collide with a manual entry already in app.js.
+    seen = set()
+    skipped = 0
+    lines = []
+    for alias, canonical in pairs:
+        kl = alias.lower()
+        if kl in seen:
+            continue
+        seen.add(kl)
+        if kl in existing_app_keys:
+            skipped += 1
+            continue
+        a_escaped = alias.replace('\\', '\\\\').replace('"', '\\"')
+        c_escaped = canonical.replace('\\', '\\\\').replace('"', '\\"')
+        lines.append(f'  "{a_escaped}": "{c_escaped}",')
+    block_body = '\n'.join(lines) if lines else ''
+    new_block = f"{SYNC_BEGIN_MARKER}\n{block_body}\n{SYNC_END_MARKER}" if block_body else f"{SYNC_BEGIN_MARKER}\n{SYNC_END_MARKER}"
+
+    if SYNC_BEGIN_MARKER in app_src and SYNC_END_MARKER in app_src:
+        block_pattern = re.compile(
+            re.escape(SYNC_BEGIN_MARKER) + r'.*?' + re.escape(SYNC_END_MARKER),
+            re.DOTALL,
+        )
+        new_src, n = block_pattern.subn(new_block, app_src, count=1)
+        if n == 0:
+            print("NameDB: app.js markers present but regex replace failed — skipping")
+            return
+    else:
+        # First-time insert: place block just before the closing `};` of NAME_MAPPING_JSON.
+        insert_pattern = re.compile(r'(const NAME_MAPPING_JSON = \{.*?)(\n\};)', re.DOTALL)
+        m = insert_pattern.search(app_src)
+        if not m:
+            print("NameDB: couldn't locate NAME_MAPPING_JSON block in app.js — skipping")
+            return
+        new_src = app_src[:m.end(1)] + f"\n\n{new_block}" + app_src[m.start(2):]
+
+    if new_src != app_src:
+        with open(APP_JS_PATH, 'w', encoding='utf-8') as f:
+            f.write(new_src)
+        print(f"NameDB: updated NAME_MAPPING_JSON block in app.js — {len(lines)} new, {skipped} already defined manually")
+    else:
+        print(f"NameDB: app.js already in sync ({skipped} entries already defined manually)")
+
+
 def fetch_xlsx():
     """Download XLSX data once for reuse."""
     url = f'https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/export?format=xlsx'
@@ -644,6 +823,10 @@ def main():
     for m in matches:
         w = '🟢' if m['winner'] == 'team1' else '🟣'
         print(f"  {w} NWL#{m['nwlNumber']}: {m['mapName']} ({m['date']}) — {m['team1Kills']}:{m['team2Kills']}")
+
+    print("\nFetching Character-Names-DB...")
+    name_db_pairs = fetch_character_names_db()
+    sync_name_mappings(name_db_pairs)
 
     print("\nFetching VODs from form responses...")
     form_vods = fetch_vod_responses()
