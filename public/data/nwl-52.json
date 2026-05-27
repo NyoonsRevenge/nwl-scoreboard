@@ -214,6 +214,15 @@
           "damage": 92107
         },
         {
+          "name": "SHORTY",
+          "role": "MD",
+          "kills": 4,
+          "deaths": 5,
+          "assists": 80,
+          "healing": 76450,
+          "damage": 1393694
+        },
+        {
           "name": "Zar_ki",
           "role": "IV",
           "kills": 0,
@@ -302,6 +311,15 @@
           "damage": 327332
         },
         {
+          "name": "Pixieee",
+          "role": "RD",
+          "kills": 8,
+          "deaths": 4,
+          "assists": 93,
+          "healing": 0,
+          "damage": 2860558
+        },
+        {
           "name": "IKreePaHI",
           "role": "IV",
           "kills": 7,
@@ -338,6 +356,15 @@
           "assists": 50,
           "healing": 2740790,
           "damage": 113726
+        },
+        {
+          "name": "Maseye",
+          "role": "RD",
+          "kills": 8,
+          "deaths": 3,
+          "assists": 65,
+          "healing": 0,
+          "damage": 1635752
         },
         {
           "name": "Kru",
@@ -514,6 +541,15 @@
           "assists": 22,
           "healing": 2560012,
           "damage": 28571
+        },
+        {
+          "name": "Sachse",
+          "role": "MD",
+          "kills": 0,
+          "deaths": 7,
+          "assists": 55,
+          "healing": 19954,
+          "damage": 853071
         },
         {
           "name": "sadshua",
@@ -853,18 +889,18 @@
   ],
   "totals": {
     "team1": {
-      "kills": 174,
-      "deaths": 174,
-      "assists": 2907,
-      "healing": 32108154,
-      "damage": 50697774
+      "kills": 186,
+      "deaths": 183,
+      "assists": 3080,
+      "healing": 32184604,
+      "damage": 54952026
     },
     "team2": {
-      "kills": 175,
-      "deaths": 176,
-      "assists": 2799,
-      "healing": 34586172,
-      "damage": 49204531
+      "kills": 183,
+      "deaths": 186,
+      "assists": 2919,
+      "healing": 34606126,
+      "damage": 51693354
     }
   },
   "team1Name": "Beaverknights",
