@@ -654,6 +654,7 @@ const NAME_MAPPING_JSON = {
   "Hiko(Hikoah": "BRITISH EGIRL",
   "Hiko(Hikoah)": "Hiko(Hikoah",
   "Vago": "GGEZ NO DISBAND",
+  "SAKIC8D": "SAKIC",
 
   // === BEGIN: Auto-synced from Character-Names-DB ===
   "Shocking Myself": "MARKEL1to",
