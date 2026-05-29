@@ -223,7 +223,6 @@ const NAME_MAPPING_JSON = {
   "Zekke": "Zekke",
   "Benzema": "Benzema",
   "Crimson Blader": "Apfel",
-  "YourWetestDream": "TheHottestSilk",
   "Babulmoox": "babulm",
   "iBreezyJR": "Breezy",
   "StronkFis": "Stronk",
@@ -278,7 +277,6 @@ const NAME_MAPPING_JSON = {
   // TheHottestSilk truncations
   "TheHottestSil": "TheHottestSilk",
   "TheHottestSi": "TheHottestSilk",
-  "YourWettestDream": "TheHottestSilk",
 
   // Jeaysu/Naosuk variants
   "Jeaysu/Naosu": "Jeaysu/Naosuk",
@@ -637,9 +635,7 @@ const NAME_MAPPING_JSON = {
 
   // Auto-synced from name_mapping.json
   "Ayzyenx": "Spyfromzoo",
-  "ProCoulD": "hkN.oO",
   "Spyfromzoo": "Ayzyenx",
-  "hkN.oO": "ProCoulD",
 
   // Auto-synced from name_mapping.json
   "J3G3R": "Jegerys",
@@ -663,10 +659,17 @@ const NAME_MAPPING_JSON = {
   "KelHBK": "kel",
   "xVoyd": "Inziar",
   "throat bruiser": "Ruppert",
-  "Carryyou": "Shirohigo",
   "CANBASANKÖYLÜ": "hypheer",
   "kuroroEU": "ABOSLLOO",
+  "Nordseekrabbe": "BeetleJuice",
   // === END: Auto-synced from Character-Names-DB ===
+
+  // Auto-synced from name_mapping.json
+  "ABOSLLOO": "kuroroEU",
+  "Actubutperkele": "actu",
+  "Hikoah": "Hiko(Hikoah)",
+  "Ruppert": "throat bruiser",
+  "hypheer": "CANBASANKÖYLÜ",
 };
 
 // Role-specific overrides for ambiguous names. Some players share an in-game
@@ -845,6 +848,7 @@ const ATTACKER_OVERRIDES = {
   'nwl-48': 'team1', // Marauders (Beaverknights) attacked
   'nwl-49': 'team1', // Marauders (Beaverknights) attacked
   'nwl-50': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-53': 'team1', // Marauders (Beaverknights) attacked
 };
 
 // Matches where the attacker is team2 (Capyknights at top of sheet) but the

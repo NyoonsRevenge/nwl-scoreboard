@@ -69,6 +69,7 @@ ATTACKER_OVERRIDES = {
     'nwl-50': 'team1',  # Marauders (Beaverknights) attacked
     'nwl-51': 'team1',  # Marauders (Beaverknights) attacked
     'nwl-52': 'team2',  # Syndicate (Capyknights) attacked
+    'nwl-53': 'team1',  # Marauders (Beaverknights) attacked
 }
 
 # Matches where ATTACKER_OVERRIDES corrects the label but players are already
@@ -548,6 +549,16 @@ APP_JS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'pu
 SYNC_BEGIN_MARKER = '  // === BEGIN: Auto-synced from Character-Names-DB ==='
 SYNC_END_MARKER = '  // === END: Auto-synced from Character-Names-DB ==='
 
+# Aliases that were WRONGLY entered as the same person in Character-Names-DB:
+# they are actually different people on OPPOSING teams (proven in NWL#53 where
+# each pair plays simultaneously — one account cannot be two characters in one
+# war). Skipped during sync so the scoreboard never merges their stats.
+WRONG_CROSS_TEAM_ALIASES = {
+    'yourwettestdream', 'yourwetestdream',  # Beaver — not TheHottestSilk (Capy)
+    'procould',                             # Capy   — not hkN.oO (Beaver)
+    'carryyou',                             # Capy   — not Shirohigo (Beaver)
+}
+
 
 def fetch_character_names_db():
     """Read player name mappings from the 'Character-Names-DB' tab.
@@ -604,6 +615,8 @@ def fetch_character_names_db():
         for cell in row[1:]:
             alias = cell.replace('\r', '').replace('\n', ' ').strip()
             if not alias or alias == canonical:
+                continue
+            if alias.lower() in WRONG_CROSS_TEAM_ALIASES:
                 continue
             pairs.append((alias, canonical))
     return pairs
