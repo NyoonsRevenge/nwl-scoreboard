@@ -214,6 +214,15 @@
           "damage": 90860
         },
         {
+          "name": "shokkii",
+          "role": "RD",
+          "kills": 9,
+          "deaths": 6,
+          "assists": 36,
+          "healing": 0,
+          "damage": 1337192
+        },
+        {
           "name": "Zar_ki",
           "role": "IV",
           "kills": 2,
@@ -250,6 +259,15 @@
           "assists": 39,
           "healing": 3493467,
           "damage": 49413
+        },
+        {
+          "name": "Carusoo",
+          "role": "RD",
+          "kills": 13,
+          "deaths": 4,
+          "assists": 59,
+          "healing": 0,
+          "damage": 1455764
         },
         {
           "name": "manuleo",
@@ -293,6 +311,15 @@
           "damage": 71847
         },
         {
+          "name": "Mablỏỏzẽ",
+          "role": "RD",
+          "kills": 8,
+          "deaths": 4,
+          "assists": 54,
+          "healing": 0,
+          "damage": 2957642
+        },
+        {
           "name": "IKreePaHI",
           "role": "IV",
           "kills": 6,
@@ -329,6 +356,15 @@
           "assists": 50,
           "healing": 2829370,
           "damage": 91269
+        },
+        {
+          "name": "MighTs",
+          "role": "RD",
+          "kills": 12,
+          "deaths": 5,
+          "assists": 80,
+          "healing": 0,
+          "damage": 2770085
         },
         {
           "name": "Proguni",
@@ -372,6 +408,15 @@
           "damage": 12256
         },
         {
+          "name": "actu",
+          "role": "RD",
+          "kills": 2,
+          "deaths": 7,
+          "assists": 47,
+          "healing": 0,
+          "damage": 1537129
+        },
+        {
           "name": "Hammer",
           "role": "IV",
           "kills": 0,
@@ -408,6 +453,15 @@
           "assists": 45,
           "healing": 2716675,
           "damage": 34774
+        },
+        {
+          "name": "Pixieee",
+          "role": "RD",
+          "kills": 16,
+          "deaths": 3,
+          "assists": 86,
+          "healing": 0,
+          "damage": 2302766
         },
         {
           "name": "Uninstall.exe",
@@ -451,6 +505,15 @@
           "damage": 94503
         },
         {
+          "name": "Maseye",
+          "role": "RD",
+          "kills": 2,
+          "deaths": 3,
+          "assists": 31,
+          "healing": 0,
+          "damage": 1275521
+        },
+        {
           "name": "Nyxie",
           "role": "IV",
           "kills": 0,
@@ -487,6 +550,15 @@
           "assists": 45,
           "healing": 2993991,
           "damage": 51615
+        },
+        {
+          "name": "2xPalim",
+          "role": "RD",
+          "kills": 2,
+          "deaths": 4,
+          "assists": 36,
+          "healing": 0,
+          "damage": 722148
         },
         {
           "name": "ProCoulD",
@@ -730,7 +802,7 @@
         },
         {
           "name": "Ictue",
-          "role": "FS",
+          "role": "RD",
           "kills": 6,
           "deaths": 2,
           "assists": 36,
@@ -816,18 +888,18 @@
   ],
   "totals": {
     "team1": {
-      "kills": 124,
-      "deaths": 213,
-      "assists": 2075,
+      "kills": 145,
+      "deaths": 233,
+      "assists": 2243,
       "healing": 29051694,
-      "damage": 45273822
+      "damage": 52381306
     },
     "team2": {
-      "kills": 190,
-      "deaths": 129,
-      "assists": 2907,
+      "kills": 233,
+      "deaths": 145,
+      "assists": 3168,
       "healing": 33995552,
-      "damage": 43402816
+      "damage": 50653579
     }
   },
   "team1Name": "Beaverknights",
