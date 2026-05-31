@@ -241,13 +241,13 @@
           "damage": 1681531
         },
         {
-          "name": "Shirohigo",
+          "name": "aespa",
           "role": "BR",
-          "kills": 5,
-          "deaths": 2,
-          "assists": 71,
+          "kills": 3,
+          "deaths": 4,
+          "assists": 75,
           "healing": 0,
-          "damage": 1684009
+          "damage": 1460985
         }
       ],
       "team2": [
@@ -532,13 +532,13 @@
           "damage": 2266421
         },
         {
-          "name": "aespa",
+          "name": "Shirohigo",
           "role": "BR",
-          "kills": 3,
-          "deaths": 4,
-          "assists": 75,
+          "kills": 5,
+          "deaths": 2,
+          "assists": 71,
           "healing": 0,
-          "damage": 1460985
+          "damage": 1684009
         }
       ],
       "team2": [
