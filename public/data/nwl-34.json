@@ -9,6 +9,8 @@
   "groups": [
     {
       "label": "G1: Point",
+      "team1Label": "G1: Point",
+      "team2Label": "G1: Point",
       "team1": [
         {
           "name": "Hucky",
@@ -106,6 +108,8 @@
     },
     {
       "label": "G2: Point",
+      "team1Label": "G2: Point",
+      "team2Label": "G2: Point",
       "team1": [
         {
           "name": "ElleiraDorn",
@@ -203,6 +207,8 @@
     },
     {
       "label": "G3: btm strong",
+      "team1Label": "G3: btm strong",
+      "team2Label": "G3: Top weak",
       "team1": [
         {
           "name": "JerryPat",
@@ -300,6 +306,8 @@
     },
     {
       "label": "G4: btm weak",
+      "team1Label": "G4: btm weak",
+      "team2Label": "G4: Top Strong",
       "team1": [
         {
           "name": "Ambrozja/1.6",
@@ -388,6 +396,8 @@
     },
     {
       "label": "G5: top strong",
+      "team1Label": "G5: top strong",
+      "team2Label": "G5: bm weak",
       "team1": [
         {
           "name": "SK21",
@@ -485,6 +495,8 @@
     },
     {
       "label": "G6: bot weak",
+      "team1Label": "G6: bot weak",
+      "team2Label": "G6: btm strong",
       "team1": [
         {
           "name": "Zeraphine",
@@ -582,6 +594,8 @@
     },
     {
       "label": "G7: btm stong",
+      "team1Label": "G7: btm stong",
+      "team2Label": "G7: btm strong",
       "team1": [
         {
           "name": "myopic",
@@ -661,6 +675,8 @@
     },
     {
       "label": "G8: Bonfire",
+      "team1Label": "G8: Bonfire",
+      "team2Label": "G8: Bonfire",
       "team1": [
         {
           "name": "Knaak",
@@ -758,6 +774,8 @@
     },
     {
       "label": "G9: Inner narnia",
+      "team1Label": "G9: Inner narnia",
+      "team2Label": "G9: Inner narnia",
       "team1": [
         {
           "name": "lolubroke",
@@ -855,6 +873,8 @@
     },
     {
       "label": "G10: Outer narnia",
+      "team1Label": "G10: Outer narnia",
+      "team2Label": "G10: Outer narnia",
       "team1": [
         {
           "name": "PinkClover",

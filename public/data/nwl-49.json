@@ -9,6 +9,8 @@
   "groups": [
     {
       "label": "G1: Point",
+      "team1Label": "G1: Point",
+      "team2Label": "G1: Point",
       "team1": [
         {
           "name": "Kathien(Gru",
@@ -106,6 +108,8 @@
     },
     {
       "label": "G2: Point",
+      "team1Label": "G2: Point",
+      "team2Label": "G2: Point",
       "team1": [
         {
           "name": "LilNatalie",
@@ -203,6 +207,8 @@
     },
     {
       "label": "G3: Top weak",
+      "team1Label": "G3: Top weak",
+      "team2Label": "G3: Bottom strong",
       "team1": [
         {
           "name": "KitKat(OnMe",
@@ -300,6 +306,8 @@
     },
     {
       "label": "G4: Top Strong",
+      "team1Label": "G4: Top Strong",
+      "team2Label": "G4: Bottom weak",
       "team1": [
         {
           "name": "Belle",
@@ -397,6 +405,8 @@
     },
     {
       "label": "G5: Bot weak",
+      "team1Label": "G5: Bot weak",
+      "team2Label": "G5: Top strong",
       "team1": [
         {
           "name": "BeetleJuice",
@@ -494,6 +504,8 @@
     },
     {
       "label": "G6: bot strong",
+      "team1Label": "G6: bot strong",
+      "team2Label": "G6: Top weak",
       "team1": [
         {
           "name": "JerryPat",
@@ -591,6 +603,8 @@
     },
     {
       "label": "G7: Pali/Flex",
+      "team1Label": "G7: Pali/Flex",
+      "team2Label": "G7: Pali/Flex",
       "team1": [
         {
           "name": "Ambrozja/1.",
@@ -688,6 +702,8 @@
     },
     {
       "label": "G8: Bonfire",
+      "team1Label": "G8: Bonfire",
+      "team2Label": "G8: Bonfire",
       "team1": [
         {
           "name": "Brown-Noise",
@@ -785,6 +801,8 @@
     },
     {
       "label": "G9: Inner narnia",
+      "team1Label": "G9: Inner narnia",
+      "team2Label": "G9: Inner narnia",
       "team1": [
         {
           "name": "Nalany",
@@ -882,6 +900,8 @@
     },
     {
       "label": "G10: Outer narnia",
+      "team1Label": "G10: Outer narnia",
+      "team2Label": "G10: Outer narnia",
       "team1": [
         {
           "name": "PinkClover",

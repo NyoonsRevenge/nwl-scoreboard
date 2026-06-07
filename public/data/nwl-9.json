@@ -9,6 +9,8 @@
   "groups": [
     {
       "label": "G1: Point",
+      "team1Label": "G1: Point",
+      "team2Label": "G1: Point",
       "team1": [
         {
           "name": "JerryPat",
@@ -106,6 +108,8 @@
     },
     {
       "label": "G2: Point",
+      "team1Label": "G2: Point",
+      "team2Label": "G2: Point",
       "team1": [
         {
           "name": "Hucky",
@@ -203,6 +207,8 @@
     },
     {
       "label": "G3: Top weak",
+      "team1Label": "G3: Bottom strong",
+      "team2Label": "G3: Top weak",
       "team1": [
         {
           "name": "n0madic",
@@ -282,6 +288,8 @@
     },
     {
       "label": "G4: Top Strong",
+      "team1Label": "G4: Bottom weak",
+      "team2Label": "G4: Top Strong",
       "team1": [
         {
           "name": "Shiroyasha34",
@@ -370,6 +378,8 @@
     },
     {
       "label": "G5: Bot weak",
+      "team1Label": "G5: Top strong",
+      "team2Label": "G5: Bot weak",
       "team1": [
         {
           "name": "ChuckDorrris",
@@ -449,6 +459,8 @@
     },
     {
       "label": "G6: bot strong",
+      "team1Label": "G6: Top weak",
+      "team2Label": "G6: bot strong",
       "team1": [
         {
           "name": "xquiv4heals",
@@ -519,6 +531,8 @@
     },
     {
       "label": "G7: Pali/Flex",
+      "team1Label": "G7: Pali/Flex",
+      "team2Label": "G7: Pali/Flex",
       "team1": [
         {
           "name": "TheClover",
@@ -616,6 +630,8 @@
     },
     {
       "label": "G8: Bonfire",
+      "team1Label": "G8: Bonfire",
+      "team2Label": "G8: Bonfire",
       "team1": [
         {
           "name": "xTaRI",
@@ -713,6 +729,8 @@
     },
     {
       "label": "G9: Inner narnia",
+      "team1Label": "G9: Inner narnia",
+      "team2Label": "G9: Inner narnia",
       "team1": [],
       "team2": [
         {
@@ -755,6 +773,8 @@
     },
     {
       "label": "G10: Outer narnia",
+      "team1Label": "G10: Outer narnia",
+      "team2Label": "G10: Outer narnia",
       "team1": [
         {
           "name": "Magiuli",

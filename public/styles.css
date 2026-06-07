@@ -802,6 +802,10 @@ body::after {
   text-transform: uppercase;
   white-space: nowrap;
 }
+.grp-pos { letter-spacing: 1.5px; }
+.grp-pos-t1 { color: #6fc06f; }
+.grp-pos-t2 { color: #b88ee0; }
+.grp-pos-sep { color: var(--gold); opacity: .5; margin: 0 4px; }
 .group-label-line {
   flex: 1;
   height: 1px;

@@ -658,10 +658,12 @@ const NAME_MAPPING_JSON = {
   "Njord": "kathien",
   "KelHBK": "kel",
   "xVoyd": "Inziar",
+  "Dogtierplay": "Bukaku",
   "throat bruiser": "Ruppert",
   "CANBASANKÖYLÜ": "hypheer",
   "kuroroEU": "ABOSLLOO",
   "Nordseekrabbe": "BeetleJuice",
+  "banshe9": "SnakySan",
   // === END: Auto-synced from Character-Names-DB ===
 
   // Auto-synced from name_mapping.json
@@ -670,6 +672,42 @@ const NAME_MAPPING_JSON = {
   "Hikoah": "Hiko(Hikoah)",
   "Ruppert": "throat bruiser",
   "hypheer": "CANBASANKÖYLÜ",
+
+  // Auto-synced from name_mapping.json
+  "Carryyou": "Shirohigo",
+  "ProCoulD": "hkN.oO",
+  "Shirohigo": "Carryyou",
+  "YourWettestDream": "TheHottestSilk",
+  "hkN.oO": "ProCoulD",
+  "lil capy": "capy",
+  "not a healer": "Maalefis",
+
+  // Auto-synced from name_mapping.json
+  "KaliyaSan": "SnakySan",
+  "Pork Daddy": "Ruppert",
+  "SnakySan": "KaliyaSan",
+  "TzudemBag": "Emir Sama",
+
+  // Auto-synced from name_mapping.json
+  "Alexiarae": "Where Clump",
+  "Anwreq": "Parship",
+  "Hop on DOOMER": "Hiko(Hikoah)",
+  "Lewis": "thuggin",
+  "Parship": "Anwreq",
+  "Where Clump": "Alexiarae",
+  "thuggin": "Lewis",
+
+  // Auto-synced from name_mapping.json
+  "Hiko": "Hiko(Hikoah)",
+
+  // Auto-synced from name_mapping.json
+  "Ayzvenx": "Spyfromzoo",
+  "HydeeFEIN": "Hydee",
+  "IIIII": "IIIII",
+  "Scrap": "screup",
+  "Vietmam": "Vietmam",
+  "jimijefet": "JukerVG",
+  "xGodias": "Godias",
 };
 
 // Role-specific overrides for ambiguous names. Some players share an in-game
@@ -849,6 +887,10 @@ const ATTACKER_OVERRIDES = {
   'nwl-49': 'team1', // Marauders (Beaverknights) attacked
   'nwl-50': 'team1', // Marauders (Beaverknights) attacked
   'nwl-53': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-54': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-55': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-56': 'team2', // Syndicate (Capyknights) attacked
+  'nwl-57': 'team1', // Marauders (Beaverknights) attacked
 };
 
 // Matches where the attacker is team2 (Capyknights at top of sheet) but the
@@ -1216,9 +1258,16 @@ function parseCSVMatch(csvText) {
     for (const num of allNums) {
       const t1 = t1ByNum[num] || null;
       const t2 = t2ByNum[num] || null;
-      const label = (t1 || t2 || {}).label || `G${num}`;
+      // Each team has its own position label per group (e.g. G3 is "Top weak"
+      // for one and "Bottom strong" for the other since they fight from
+      // opposite ends). Keep both for team-aware rendering.
+      const t1Label = t1 ? t1.label : null;
+      const t2Label = t2 ? t2.label : null;
+      const label = t1Label || t2Label || `G${num}`;
       groups.push({
         label,
+        team1Label: t1Label || label,
+        team2Label: t2Label || label,
         team1: t1 ? t1.players : [],
         team2: t2 ? t2.players : [],
       });
@@ -1286,6 +1335,9 @@ async function processSheetEntry(entry, xlsxMeta, staticAttackers, staticWinners
   if (didSwap) {
     for (const g of parsed.groups) {
       [g.team1, g.team2] = [g.team2, g.team1];
+      // Position labels are team-specific; swap them with the players so each
+      // side keeps its own perspective label.
+      [g.team1Label, g.team2Label] = [g.team2Label, g.team1Label];
     }
     [parsed.totals.team1, parsed.totals.team2] = [parsed.totals.team2, parsed.totals.team1];
     if (parsed.winner === 'team1') parsed.winner = 'team2';
@@ -2214,6 +2266,23 @@ function makeExcelPlayerRow(p, team) {
   </tr>`;
 }
 
+function renderGroupLabelHtml(g) {
+  // Each team has its own position label per group (e.g. G3 is "Top weak" for
+  // Beaver and "Bottom strong" for Capy because they fight from opposite ends).
+  // Show both when they differ; fall back to the single label for older data.
+  const t1 = g.team1Label || g.label || '';
+  const t2 = g.team2Label || g.label || '';
+  if (!t1 && !t2) return g.label || '';
+  if (t1 === t2 || !t2 || !t1) return g.label || t1 || t2;
+  // Extract "Gn:" prefix once and team-specific position text after.
+  const m1 = t1.match(/^(G\d+\s*:?\s*)(.*)$/i);
+  const m2 = t2.match(/^(G\d+\s*:?\s*)(.*)$/i);
+  const prefix = (m1 && m1[1]) || (m2 && m2[1]) || '';
+  const pos1 = m1 ? m1[2].trim() : t1;
+  const pos2 = m2 ? m2[2].trim() : t2;
+  return `${prefix.replace(/\s*:?\s*$/, '')}: <span class="grp-pos grp-pos-t1">🟢 ${pos1}</span> <span class="grp-pos-sep">·</span> <span class="grp-pos grp-pos-t2">🟣 ${pos2}</span>`;
+}
+
 function renderGroupExcel(g) {
   const t1Players = g.team1;
   const t2Players = g.team2;
@@ -2250,7 +2319,7 @@ function renderGroupExcel(g) {
 
   return `<div class="group-section">
     <div class="group-label">
-      <span class="group-label-text">${g.label}</span>
+      <span class="group-label-text">${renderGroupLabelHtml(g)}</span>
       <span class="group-label-line"></span>
     </div>
     <div class="excel-group-block">
@@ -2295,7 +2364,7 @@ function renderGroupList(g) {
 
   return `<div class="group-section">
     <div class="group-label">
-      <span class="group-label-text">${g.label}</span>
+      <span class="group-label-text">${renderGroupLabelHtml(g)}</span>
       <span class="group-label-line"></span>
     </div>
     <div class="group-content">
@@ -2362,7 +2431,11 @@ function renderExcelViewGroup(g, team, placeholderLabel) {
   const players = team === 't1' ? 'team1' : 'team2';
   const rowClass = team === 't1' ? 'ptr-t1' : 'ptr-t2';
   const teamPlayers = g ? g[players] : [];
-  const label = g ? g.label : placeholderLabel;
+  // Each team has its own position label per group (e.g. G3 is "Top weak" for
+  // one team and "Bottom strong" for the other since they fight from opposite
+  // ends). Fall back to the generic label for older match JSONs.
+  const teamLabelKey = team === 't1' ? 'team1Label' : 'team2Label';
+  const label = g ? (g[teamLabelKey] || g.label) : placeholderLabel;
 
   if (!g || teamPlayers.length === 0) {
     return `<div class="ev-group ev-group-empty">

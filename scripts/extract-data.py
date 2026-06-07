@@ -70,6 +70,10 @@ ATTACKER_OVERRIDES = {
     'nwl-51': 'team1',  # Marauders (Beaverknights) attacked
     'nwl-52': 'team2',  # Syndicate (Capyknights) attacked
     'nwl-53': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-54': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-55': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-56': 'team2',  # Syndicate (Capyknights) attacked
+    'nwl-57': 'team1',  # Marauders (Beaverknights) attacked
 }
 
 # Matches where ATTACKER_OVERRIDES corrects the label but players are already
@@ -409,9 +413,17 @@ def parse_match(rows):
         for num in all_nums:
             t1 = t1_by_num.get(num)
             t2 = t2_by_num.get(num)
-            label = (t1 or t2 or {}).get('label', f'G{num}')
+            # Each team has its own position label per group (e.g. G3 is
+            # "Top weak" for one team and "Bottom strong" for the other since
+            # they fight from opposite ends). Keep both side-specific labels
+            # and a generic `label` (fallback / legacy) for older clients.
+            t1_label = (t1 or {}).get('label')
+            t2_label = (t2 or {}).get('label')
+            generic_label = t1_label or t2_label or f'G{num}'
             groups.append({
-                'label': label,
+                'label': generic_label,
+                'team1Label': t1_label or generic_label,
+                'team2Label': t2_label or generic_label,
                 'team1': (t1 or {}).get('players', []),
                 'team2': (t2 or {}).get('players', []),
             })
@@ -780,6 +792,9 @@ def main():
         if attacker == 'team2' and slug not in SKIP_SWAP_MATCHES:
             for g in groups:
                 g['team1'], g['team2'] = g['team2'], g['team1']
+                # Position labels are team-specific (Top weak vs Bottom strong);
+                # swap them along with the players so each side keeps its own.
+                g['team1Label'], g['team2Label'] = g.get('team2Label', g.get('label')), g.get('team1Label', g.get('label'))
             totals['team1'], totals['team2'] = totals['team2'], totals['team1']
             if result == 'team1':
                 result = 'team2'
