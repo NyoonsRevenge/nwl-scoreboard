@@ -290,7 +290,7 @@
           "deaths": 7,
           "assists": 67,
           "healing": 0,
-          "damage": 1337131
+          "damage": 1637131
         },
         {
           "name": "TeeZa",
@@ -311,15 +311,6 @@
           "assists": 15,
           "healing": 3031704,
           "damage": 1970
-        },
-        {
-          "name": "Mablỏỏzẽ",
-          "role": "RD",
-          "kills": 14,
-          "deaths": 0,
-          "assists": 112,
-          "healing": 0,
-          "damage": 4294080
         },
         {
           "name": "Hammer",
@@ -780,13 +771,13 @@
           "damage": 21599
         },
         {
-          "name": "Abary",
-          "role": "VB",
-          "kills": 0,
+          "name": "Mablỏỏzẽ",
+          "role": "RD",
+          "kills": 14,
           "deaths": 0,
-          "assists": 0,
+          "assists": 112,
           "healing": 0,
-          "damage": 0
+          "damage": 4294080
         },
         {
           "name": "Nolas",
@@ -921,7 +912,7 @@
       "deaths": 194,
       "assists": 3156,
       "healing": 40145411,
-      "damage": 58399551
+      "damage": 58699551
     },
     "team2": {
       "kills": 194,
