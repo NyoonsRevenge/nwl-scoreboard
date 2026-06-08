@@ -400,6 +400,7 @@ const NAME_MAPPING_JSON = {
   "StryjuIBakel": "Stryju|Bakelolo",
   "StryjuIBakelofi": "Stryju|Bakelolo",
   "Stryju Bakelot": "Stryju|Bakelolo",
+  "Stryju|Bakel": "Stryju|Bakelolo",
 
   // END3RR variant
   "END3R": "END3RR",
@@ -430,8 +431,9 @@ const NAME_MAPPING_JSON = {
   // M7K capitalization
   "M7K": "M7k",
 
-  // OSISAN (l vs I)
+  // OSISAN (l vs I vs ||)
   "ll OSISAN ll": "II OSISAN II",
+  "|| OSISAN ||": "II OSISAN II",
 
   // Nameless II variants
   "Nameless II.": "JerryPat",
