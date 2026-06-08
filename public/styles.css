@@ -73,7 +73,11 @@ body {
   min-height: 100vh;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  /* `clip` not `hidden`: hidden coerces overflow-y from visible to auto and
+     turns body into a scroll container, which breaks `position: sticky` on
+     descendants (they anchor to the body, which doesn't actually scroll).
+     `clip` clips overflow without establishing a scroll container. */
+  overflow-x: clip;
 }
 
 /* ── Animated Aeternum Background ── */
@@ -2192,5 +2196,333 @@ body::after {
 
 @media (max-width: 600px) {
   .mvp-grid { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════════
+   TIER LIST PAGE
+   ═══════════════════════════════════════════ */
+
+.tier-filter-bar {
+  margin: 24px 0 12px;
+}
+.tier-filter-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.tier-filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tier-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: var(--text-dim);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all .15s;
+}
+.tier-filter-btn:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+.tier-filter-btn.active {
+  background: rgba(201,168,76,0.18);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.tier-filter-name { font-size: 10px; }
+
+.tier-grid {
+  display: grid;
+  gap: 1px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  margin: 12px 0 24px;
+  /* No overflow here on purpose: `overflow-x: auto` would make the grid its
+     own scroll container, and `position: sticky` on the tier header would
+     then anchor to the grid (which barely scrolls) instead of the page
+     viewport. */
+}
+.tier-grid-cell {
+  background: var(--bg2);
+  padding: 8px;
+  min-height: 60px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+}
+.tier-grid-corner {
+  background: var(--bg2);
+  min-height: 0;
+  position: sticky;
+  top: 0;
+  z-index: 6;
+}
+.tier-grid-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 56px;
+  padding: 10px 6px;
+  text-align: center;
+}
+.tier-col-name {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.tier-col-count {
+  font-size: 8px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+
+/* Tier row label cells — sticky so they stay visible while scrolling the long
+   class rows below. */
+.tier-grid-tier {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'IM Fell DW Pica', 'Cinzel Decorative', serif;
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  /* Sticky needs an opaque-ish fill so chips don't bleed through;
+     the per-tier classes below layer a tint over var(--bg2). */
+}
+.tier-tier-S { color: #ff4444; background: linear-gradient(rgba(255,68,68,0.18), rgba(255,68,68,0.06)), var(--bg2); }
+.tier-tier-A { color: #ff9800; background: linear-gradient(rgba(255,152,0,0.15), rgba(255,152,0,0.05)), var(--bg2); }
+.tier-tier-B { color: #ffd54f; background: linear-gradient(rgba(255,213,79,0.12), rgba(255,213,79,0.04)), var(--bg2); }
+.tier-tier-C { color: #4caf50; background: linear-gradient(rgba(76,175,80,0.12), rgba(76,175,80,0.04)), var(--bg2); }
+.tier-tier-D { color: #6a8caf; background: linear-gradient(rgba(106,140,175,0.12), rgba(106,140,175,0.04)), var(--bg2); }
+
+/* Per-tier column separators — colored right-border picks up each tier's
+   header hue so the divider visually belongs to the column on its left.
+   S also gets a matching left edge (separates from the role-label column),
+   D gets a right edge in its own blue-grey (closes off the grid). */
+.tier-col-S { box-shadow:
+  inset  2px 0 0 rgba(255, 68, 68, 0.55),
+  inset -2px 0 0 rgba(255, 68, 68, 0.55);
+}
+.tier-col-A { box-shadow: inset -2px 0 0 rgba(255, 152, 0, 0.50); }
+.tier-col-B { box-shadow: inset -2px 0 0 rgba(255, 213, 79, 0.50); }
+.tier-col-C { box-shadow: inset -2px 0 0 rgba(76, 175, 80, 0.50); }
+.tier-col-D { box-shadow: inset -2px 0 0 rgba(106, 140, 175, 0.55); }
+/* The tier-header row already has a strong colored fill; layer a slightly
+   stronger right (and where applicable left) edge for the same effect there. */
+.tier-grid-tier.tier-col-S { box-shadow:
+  inset  3px 0 0 rgba(255, 68, 68, 0.85),
+  inset -3px 0 0 rgba(255, 68, 68, 0.85);
+}
+.tier-grid-tier.tier-col-A { box-shadow: inset -3px 0 0 rgba(255, 152, 0, 0.80); }
+.tier-grid-tier.tier-col-B { box-shadow: inset -3px 0 0 rgba(255, 213, 79, 0.80); }
+.tier-grid-tier.tier-col-C { box-shadow: inset -3px 0 0 rgba(76, 175, 80, 0.80); }
+.tier-grid-tier.tier-col-D { box-shadow: inset -3px 0 0 rgba(106, 140, 175, 0.85); }
+
+/* Role-tinted rows — same colors as the role-badge variables */
+.tier-row-AoE { background: linear-gradient(var(--r-aoe-bg), var(--r-aoe-bg)), var(--bg2); }
+.tier-row-HL  { background: linear-gradient(var(--r-hl-bg),  var(--r-hl-bg)),  var(--bg2); }
+.tier-row-RD  { background: linear-gradient(var(--r-rd-bg),  var(--r-rd-bg)),  var(--bg2); }
+.tier-row-IV  { background: linear-gradient(var(--r-iv-bg),  var(--r-iv-bg)),  var(--bg2); }
+.tier-row-BR  { background: linear-gradient(var(--r-br-bg),  var(--r-br-bg)),  var(--bg2); }
+.tier-row-PT  { background: linear-gradient(var(--r-pt-bg),  var(--r-pt-bg)),  var(--bg2); }
+.tier-row-MD  { background: linear-gradient(var(--r-md-bg),  var(--r-md-bg)),  var(--bg2); }
+.tier-row-HD  { background: linear-gradient(var(--r-hd-bg),  var(--r-hd-bg)),  var(--bg2); }
+.tier-row-VB  { background: linear-gradient(var(--r-vb-bg),  var(--r-vb-bg)),  var(--bg2); }
+.tier-row-CW  { background: linear-gradient(var(--r-cw-bg),  var(--r-cw-bg)),  var(--bg2); }
+
+/* Role-row dividers — only when multiple roles are visible. Each role row
+   gets a bottom border in its own role color so neighbouring bands are easy
+   to tell apart. The last visible row skips this (no double-up with the
+   grid's outer border). `border-bottom` (not inset box-shadow) because the
+   data cells already carry a column box-shadow and stacking both via
+   box-shadow would require a combinatorial set of rules. */
+.tier-grid.multi-role .tier-row-AoE:not(.tier-row-last) { border-bottom: 2px solid rgba(57, 255, 20, 0.35); }
+.tier-grid.multi-role .tier-row-HL:not(.tier-row-last)  { border-bottom: 2px solid rgba(46, 125, 50, 0.55); }
+.tier-grid.multi-role .tier-row-RD:not(.tier-row-last)  { border-bottom: 2px solid rgba(255, 152, 0, 0.40); }
+.tier-grid.multi-role .tier-row-IV:not(.tier-row-last)  { border-bottom: 2px solid rgba(0, 229, 255, 0.45); }
+.tier-grid.multi-role .tier-row-BR:not(.tier-row-last)  { border-bottom: 2px solid rgba(184, 154, 0, 0.60); }
+.tier-grid.multi-role .tier-row-PT:not(.tier-row-last)  { border-bottom: 2px solid rgba(153, 153, 153, 0.45); }
+.tier-grid.multi-role .tier-row-MD:not(.tier-row-last)  { border-bottom: 2px solid rgba(92, 107, 192, 0.55); }
+.tier-grid.multi-role .tier-row-HD:not(.tier-row-last)  { border-bottom: 2px solid rgba(171, 71, 188, 0.55); }
+.tier-grid.multi-role .tier-row-VB:not(.tier-row-last)  { border-bottom: 2px solid rgba(21, 101, 192, 0.60); }
+.tier-grid.multi-role .tier-row-CW:not(.tier-row-last)  { border-bottom: 2px solid rgba(0, 191, 165, 0.55); }
+
+/* Row-label cells get a slightly stronger tint + right border so each role band is clearly framed */
+.tier-grid-head.tier-row-AoE { background: linear-gradient(rgba(57,255,20,0.28),  rgba(57,255,20,0.20)),  var(--bg2); border-right: 1px solid var(--r-aoe-b); }
+.tier-grid-head.tier-row-HL  { background: linear-gradient(rgba(46,125,50,0.30),  rgba(46,125,50,0.20)),  var(--bg2); border-right: 1px solid var(--r-hl-b); }
+.tier-grid-head.tier-row-RD  { background: linear-gradient(rgba(255,152,0,0.25),  rgba(255,152,0,0.15)),  var(--bg2); border-right: 1px solid var(--r-rd-b); }
+.tier-grid-head.tier-row-IV  { background: linear-gradient(rgba(0,229,255,0.24),   rgba(0,229,255,0.16)),   var(--bg2); border-right: 1px solid var(--r-iv-b); }
+.tier-grid-head.tier-row-BR  { background: linear-gradient(rgba(184,154,0,0.35),   rgba(184,154,0,0.25)),   var(--bg2); border-right: 1px solid var(--r-br-b); }
+.tier-grid-head.tier-row-PT  { background: linear-gradient(rgba(153,153,153,0.22), rgba(153,153,153,0.14)), var(--bg2); border-right: 1px solid var(--r-pt-b); }
+.tier-grid-head.tier-row-MD  { background: linear-gradient(rgba(92,107,192,0.26),  rgba(92,107,192,0.16)),  var(--bg2); border-right: 1px solid var(--r-md-b); }
+.tier-grid-head.tier-row-HD  { background: linear-gradient(rgba(171,71,188,0.26),  rgba(171,71,188,0.16)),  var(--bg2); border-right: 1px solid var(--r-hd-b); }
+.tier-grid-head.tier-row-VB  { background: linear-gradient(rgba(21,101,192,0.30),  rgba(21,101,192,0.18)),  var(--bg2); border-right: 1px solid var(--r-vb-b); }
+.tier-grid-head.tier-row-CW  { background: linear-gradient(rgba(0,191,165,0.26),   rgba(0,191,165,0.16)),   var(--bg2); border-right: 1px solid var(--r-cw-b); }
+
+.tier-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: stretch;
+  padding: 6px;
+}
+.tier-chip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  background: rgba(0,0,0,0.40);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 3px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all .15s;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.tier-chip:hover {
+  background: rgba(0,0,0,0.65);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.tier-chip-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.tier-chip-games {
+  font-size: 11px;
+  color: var(--text-dim);
+  flex-shrink: 0;
+  font-family: 'Share Tech Mono', monospace;
+}
+.tier-empty {
+  padding: 60px 20px;
+  text-align: center;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--muted);
+}
+
+@media (max-width: 700px) {
+  .tier-grid-tier { font-size: 22px; }
+  .tier-chip { font-size: 12px; padding: 4px 6px; }
+  .tier-col-name { font-size: 8px; }
+}
+
+/* ── Tier-List Disclaimer Modal ── */
+.tier-disclaimer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: tierDisclaimerFadeIn .3s ease both;
+}
+.tier-disclaimer-overlay.dismissed {
+  opacity: 0;
+  transition: opacity .25s ease;
+  pointer-events: none;
+}
+@keyframes tierDisclaimerFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.tier-disclaimer-card {
+  max-width: 720px;
+  width: 100%;
+  background: linear-gradient(rgba(201,168,76,0.05), rgba(201,168,76,0.02)), var(--bg2);
+  border: 1px solid rgba(201,168,76,0.45);
+  padding: 36px 36px 28px;
+  border-radius: 4px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.6), 0 0 30px rgba(201,168,76,0.12);
+  animation: tierDisclaimerSlideIn .4s cubic-bezier(.2,.7,.2,1) both;
+}
+@keyframes tierDisclaimerSlideIn {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.tier-disclaimer-eyebrow {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 15px;
+  letter-spacing: 6px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 22px;
+  opacity: .9;
+}
+.tier-disclaimer-text {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 22px;
+  line-height: 1.6;
+  color: var(--text);
+  letter-spacing: .4px;
+  margin-bottom: 28px;
+}
+.tier-disclaimer-btn {
+  display: block;
+  width: 100%;
+  padding: 14px 22px;
+  background: rgba(201,168,76,0.08);
+  border: 1px solid rgba(201,168,76,0.25);
+  color: var(--text-dim);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  cursor: not-allowed;
+  border-radius: 3px;
+  margin-bottom: 12px;
+  transition: background .2s, border-color .2s, color .2s, transform .1s;
+}
+.tier-disclaimer-btn.ready {
+  background: rgba(201,168,76,0.22);
+  border-color: var(--gold);
+  color: var(--gold);
+  cursor: pointer;
+}
+.tier-disclaimer-btn.ready:hover {
+  background: rgba(201,168,76,0.36);
+  color: var(--gold-bright, #f0e6d0);
+}
+.tier-disclaimer-btn.ready:active {
+  transform: translateY(1px);
+}
+.tier-disclaimer-progress-track {
+  height: 4px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.tier-disclaimer-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--gold), #e8b830);
+  transition: width 80ms linear;
 }
 

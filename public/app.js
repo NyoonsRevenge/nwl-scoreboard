@@ -1609,6 +1609,9 @@ function getRoute() {
   if (hash === '/changelog') {
     return { page: 'changelog' };
   }
+  if (hash === '/tier-list') {
+    return { page: 'tier-list' };
+  }
   return { page: 'home' };
 }
 
@@ -1656,6 +1659,10 @@ function getHamburgerHTML() {
         <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01m-.01 4h.01"/></svg>
         Changelog
       </a>
+      ${isTierListMenuVisible() ? `<a onclick="toggleNav(); navigate('#/tier-list');">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h10M4 18h6"/><circle cx="19" cy="12" r="2"/><circle cx="13" cy="18" r="2"/></svg>
+        Tier-List
+      </a>` : ''}
     </nav>`;
 }
 
@@ -1780,6 +1787,21 @@ async function render() {
       renderSearchPage();
     } else if (route.page === 'changelog') {
       renderChangelogPage();
+    } else if (route.page === 'tier-list') {
+      if (!isTierListEnabled()) { navigate(''); return; }
+      if (!sheetsData && !_tierStaticData) {
+        app.innerHTML = loadingScreenHTML('Loading Tier-List', 'Fetching match archive...');
+        startLoadingQuotes();
+        // Race the Sheets sync against a fast static fallback so the page
+        // still renders if Sheets are unreachable.
+        await Promise.race([
+          ensureSheetsSync(),
+          loadStaticTierData(),
+        ]);
+        // If Sheets won, prefer it (more up-to-date), otherwise fall back.
+        if (!sheetsData && !_tierStaticData) await loadStaticTierData();
+      }
+      renderTierListPage();
     } else if (route.page === 'player') {
       // Player profile needs full Sheets data
       if (!sheetsData) {
@@ -3019,12 +3041,355 @@ function setPlayerRoleFilter(role, canon) {
   renderPlayerPage(canon);
 }
 
+// ===========================================
+//  TIER LIST PAGE
+// ===========================================
+
+// ── FEATURE FLAG (mirrors MVP flag pattern) ─────────────────────────────
+// Tier-List is a "hidden" feature in production: the burger-menu link only
+// shows up on localhost, but the route itself is reachable via the unlock
+// link `…/#/tier-list?tier=1`. Hitting that URL once also persists the
+// unlock in localStorage, so afterwards bare `/#/tier-list` works in the
+// same browser until storage is cleared.
+const TIER_LIST_FORCE_ENABLED = false;
+function isTierListEnabled() {
+  if (TIER_LIST_FORCE_ENABLED) return true;
+  if (isTierListMenuVisible()) return true; // localhost dev
+  // Unlock link: ?tier=1 grants access AND persists for this browser.
+  if (/[?&]tier=1\b/.test(window.location.search)) {
+    try { localStorage.setItem('nwl_tier_preview', '1'); } catch {}
+    return true;
+  }
+  try { if (localStorage.getItem('nwl_tier_preview') === '1') return true; } catch {}
+  return false;
+}
+// Strictly local — controls the burger-menu visibility so production users
+// never see the link even if they've already unlocked the route. Keeps the
+// feature "hidden in the scoreboard".
+function isTierListMenuVisible() {
+  const host = window.location.hostname;
+  return host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0';
+}
+
+// Minimum games on a role before that role-slot is shown in the tier list.
+const TIER_MIN_GAMES = 5;
+
+// Role buckets: damage roles share a single dmg-vs-mirror bonus formula;
+// healers share the group-survival bonus.
+const TIER_DAMAGE_ROLES = new Set(['RD','MD','IV','BR','PT','HD','VB','CW']);
+// Roles that are nominally dex-side (kill-squad) even when they happen to be
+// listed in groups 1–6. Their deaths are excluded from the healer group-deaths
+// penalty so a tank/healer trio isn't punished for the MD's solo dives.
+const TIER_DEX_SIDE_ROLES = new Set(['MD','RD','CW']);
+
+function tierNormRole(role) {
+  return role === 'Aoe' ? 'AoE' : (role || '?');
+}
+
+// Map a player to their tier bucket. HL is split into G1–6 (zerg) and G7–10 (ks).
+function tierBucketOf(p, groupLabel) {
+  const role = tierNormRole(p.role);
+  if (role === 'HL') {
+    const m = (groupLabel || '').match(/^G(\d+)/i);
+    const n = m ? parseInt(m[1], 10) : 0;
+    return n >= 7 ? 'HL_ks' : 'HL_zerg';
+  }
+  return role;
+}
+
+const TIER_BUCKET_NAMES = {
+  AoE: 'Area Healer',
+  HL_zerg: 'Group Healer · G1–6',
+  HL_ks:   'Dex Healer · G7–10',
+  RD: 'Ranged DPS', IV: 'IG / VG · Support',
+  BR: 'Bruiser', PT: 'Point', MD: 'Melee DPS', HD: 'Heavy Dex',
+  VB: 'Voidblade', CW: 'Crescent Wave',
+};
+// Column order — keep healers/tanky frontline first, damage right.
+const TIER_BUCKET_ORDER = ['AoE','HL_zerg','HL_ks','BR','PT','IV','RD','MD','HD','VB','CW'];
+// Role-badge CSS code for a bucket (HL_zerg / HL_ks both render as HL).
+function tierBadgeOf(bucket) {
+  return (bucket === 'HL_zerg' || bucket === 'HL_ks') ? 'HL' : bucket;
+}
+
+// Per-match score. Extends MVP formula:
+//   - Healer bonus: (mirror group deaths − own group deaths), with MD/RD/CW
+//     excluded from both sides (those roles are dex-side even in groups 1–6).
+//   - IV (Ice Gauntlet / Void Gauntlet) — treated as a CC/Support role:
+//     higher death weight (CC chain breaks when you die), assists weighted
+//     much higher (assists ARE the output for IV: oblivions, slows, roots,
+//     ice storm tags), no damage-vs-mirror bonus (IV isn't in the damage
+//     race), plus a half-strength group-survival bonus since CC keeps the
+//     point alive. Same MD/RD/CW exclusion as healers.
+//   - Other damage roles: damage compared to same-role peers across own +
+//     mirror group, so kill-stealers without damage output are de-weighted.
+function tierMatchScore(p, bucket, ownGroup, mirrorGroup) {
+  const isHealer = bucket === 'AoE' || bucket === 'HL_zerg' || bucket === 'HL_ks';
+  const isSupport = bucket === 'IV';
+
+  // Death weight & assist weight differ for support / healer / dps.
+  const deathW   = isHealer ? 5 : (isSupport ? 3 : 2);
+  const assistW  = isSupport ? 8 : 20; // smaller divisor = higher weight
+
+  let s = (p.kills || 0)
+        - deathW * (p.deaths || 0)
+        + (p.assists || 0) / assistW
+        + (p.healing || 0) / 100000
+        + (p.damage || 0) / 100000;
+
+  const sumGroupDeaths = (arr) => arr.reduce((acc, x) =>
+    TIER_DEX_SIDE_ROLES.has(tierNormRole(x.role)) ? acc : acc + (x.deaths || 0), 0);
+
+  if (isHealer) {
+    const ownDeaths = sumGroupDeaths(ownGroup || []);
+    const mirrorDeaths = sumGroupDeaths(mirrorGroup || []);
+    s += (mirrorDeaths - ownDeaths);
+  } else if (isSupport) {
+    // Half-strength survival bonus for IV — CC contributes to group survival,
+    // but not as directly as healing does.
+    const ownDeaths = sumGroupDeaths(ownGroup || []);
+    const mirrorDeaths = sumGroupDeaths(mirrorGroup || []);
+    s += 0.5 * (mirrorDeaths - ownDeaths);
+  } else if (TIER_DAMAGE_ROLES.has(bucket)) {
+    const peers = [...(ownGroup || []), ...(mirrorGroup || [])]
+      .filter(x => tierNormRole(x.role) === bucket);
+    if (peers.length > 0) {
+      const avgDmg = peers.reduce((a, x) => a + (x.damage || 0), 0) / peers.length;
+      s += ((p.damage || 0) - avgDmg) / 100000;
+    }
+  }
+  return s;
+}
+
+// Static fallback: load every per-match JSON via matches.json index so the
+// tier list still works when Google Sheets is unreachable.
+let _tierStaticData = null;
+async function loadStaticTierData() {
+  if (_tierStaticData) return _tierStaticData;
+  try {
+    const summaries = await fetch(`data/matches.json?_cb=${Date.now()}`, { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : []);
+    const details = await Promise.all(
+      summaries.map(m => loadStaticMatchDetail(m.slug).then(d => d ? [m.slug, d] : null))
+    );
+    const matchDetails = {};
+    for (const entry of details) if (entry) matchDetails[entry[0]] = entry[1];
+    _tierStaticData = { matchDetails };
+    return _tierStaticData;
+  } catch (e) {
+    console.warn('Static tier data load failed:', e);
+    _tierStaticData = { matchDetails: {} };
+    return _tierStaticData;
+  }
+}
+
+function computeTierList() {
+  const src = sheetsData || _tierStaticData;
+  if (!src || !src.matchDetails) return { buckets: {}, order: TIER_BUCKET_ORDER };
+  const agg = {}; // bucket -> canonical -> { canon, names:Set, sum, count }
+
+  for (const match of Object.values(src.matchDetails)) {
+    for (const g of match.groups) {
+      for (const teamKey of ['team1','team2']) {
+        const own = g[teamKey] || [];
+        const mirror = g[teamKey === 'team1' ? 'team2' : 'team1'] || [];
+        for (const p of own) {
+          // Skip empty roster slots (all-zero rows).
+          if (!p.name) continue;
+          const bucket = tierBucketOf(p, g.label);
+          const score = tierMatchScore(p, bucket, own, mirror);
+          const canon = getCanonicalName(p.name, p.role);
+          if (!agg[bucket]) agg[bucket] = {};
+          if (!agg[bucket][canon]) agg[bucket][canon] = { canon, names: new Set(), sum: 0, count: 0 };
+          agg[bucket][canon].sum += score;
+          agg[bucket][canon].count += 1;
+          agg[bucket][canon].names.add(p.name);
+        }
+      }
+    }
+  }
+
+  const out = {};
+  for (const [bucket, players] of Object.entries(agg)) {
+    const list = Object.values(players)
+      .filter(x => x.count >= TIER_MIN_GAMES)
+      .map(x => ({
+        canon: x.canon,
+        displayName: findDisplayName(x.canon, x.names),
+        games: x.count,
+        avg: x.sum / x.count,
+      }))
+      .sort((a, b) => b.avg - a.avg);
+
+    const n = list.length;
+    list.forEach((p, i) => {
+      // Percentile-based tier — robust against scale differences between roles.
+      const pct = n > 0 ? (i + 0.5) / n : 0;
+      if (pct <= 0.15) p.tier = 'S';
+      else if (pct <= 0.35) p.tier = 'A';
+      else if (pct <= 0.65) p.tier = 'B';
+      else if (pct <= 0.85) p.tier = 'C';
+      else p.tier = 'D';
+    });
+    out[bucket] = list;
+  }
+  return { buckets: out, order: TIER_BUCKET_ORDER };
+}
+
+const TIER_ORDER = ['S','A','B','C','D'];
+let _tierFilter = new Set(); // selected buckets; empty = show all
+
+function toggleTierFilter(bucket) {
+  if (_tierFilter.has(bucket)) _tierFilter.delete(bucket);
+  else _tierFilter.add(bucket);
+  renderTierListPage();
+}
+function clearTierFilter() {
+  _tierFilter = new Set();
+  renderTierListPage();
+}
+
+function renderTierListPage() {
+  const { buckets, order } = computeTierList();
+  const allBuckets = order.filter(b => buckets[b] && buckets[b].length > 0);
+  const visibleBuckets = _tierFilter.size === 0 ? allBuckets : allBuckets.filter(b => _tierFilter.has(b));
+
+  let filterBtns = `<button class="tier-filter-btn ${_tierFilter.size === 0 ? 'active' : ''}" onclick="clearTierFilter()">All</button>`;
+  for (const b of allBuckets) {
+    const badge = tierBadgeOf(b);
+    const active = _tierFilter.has(b) ? 'active' : '';
+    filterBtns += `<button class="tier-filter-btn ${active}" onclick="toggleTierFilter('${b}')">
+      <span class="role-badge r-${badge}">${badge}</span>
+      <span class="tier-filter-name">${TIER_BUCKET_NAMES[b] || b}</span>
+    </button>`;
+  }
+
+  let grid = '';
+  if (visibleBuckets.length === 0) {
+    grid = `<div class="tier-empty">No qualifying players yet · need ${TIER_MIN_GAMES}+ games on a role</div>`;
+  } else {
+    // Tiers across the top as columns; one row per class bucket. Class color
+    // tints the whole row so each role band is recognizable at a glance.
+    // When more than one role row is visible, draw a thin role-colored line
+    // under each row (except the last) so neighbouring roles are easy to tell
+    // apart. With a single role visible the dividers would be redundant.
+    const isMultiRole = visibleBuckets.length > 1;
+    const lastBucket = isMultiRole ? visibleBuckets[visibleBuckets.length - 1] : null;
+    grid = `<div class="tier-grid${isMultiRole ? ' multi-role' : ''}" style="grid-template-columns: 200px repeat(${TIER_ORDER.length}, minmax(180px, 1fr));">`;
+    grid += `<div class="tier-grid-cell tier-grid-corner"></div>`;
+    for (const tier of TIER_ORDER) {
+      grid += `<div class="tier-grid-cell tier-grid-tier tier-tier-${tier} tier-col-${tier}">${tier}-Tier</div>`;
+    }
+    for (const b of visibleBuckets) {
+      const badge = tierBadgeOf(b);
+      const rowExtra = (b === lastBucket) ? ' tier-row-last' : '';
+      grid += `<div class="tier-grid-cell tier-grid-head tier-row-${badge}${rowExtra}">
+        <span class="role-badge r-${badge}">${badge}</span>
+        <span class="tier-col-name">${TIER_BUCKET_NAMES[b] || b}</span>
+        <span class="tier-col-count">${(buckets[b] || []).length} players</span>
+      </div>`;
+      for (const tier of TIER_ORDER) {
+        const players = (buckets[b] || []).filter(p => p.tier === tier);
+        let chips = '';
+        for (const p of players) {
+          chips += `<a class="tier-chip" onclick="navigate('#/player/${encodePlayerForLink(p.canon)}')" title="${p.games} games · avg score ${p.avg.toFixed(1)}">
+            <span class="tier-chip-name">${p.displayName}</span><span class="tier-chip-games">${p.games}</span>
+          </a>`;
+        }
+        grid += `<div class="tier-grid-cell tier-cell tier-row-${badge} tier-col-${tier}${rowExtra}">${chips}</div>`;
+      }
+    }
+    grid += `</div>`;
+  }
+
+  // Per-session disclaimer — shown once per browser session, button locked for 10s.
+  let disclaimerAck = false;
+  try { disclaimerAck = sessionStorage.getItem('nwl_tier_disclaimer_ack') === '1'; } catch {}
+  const disclaimerHTML = disclaimerAck ? '' : `
+    <div class="tier-disclaimer-overlay" id="tier-disclaimer">
+      <div class="tier-disclaimer-card">
+        <div class="tier-disclaimer-eyebrow">Disclaimer</div>
+        <div class="tier-disclaimer-text">
+          I understand this list is purely fictional and doesn't reflect actual skill or macro in the slightest, it's just tracking some silly numbers. On top of that, the formulas were written by someone who is awful at math, which adds a whole new layer of clowning to it.
+        </div>
+        <button class="tier-disclaimer-btn" id="tier-disclaimer-btn" disabled>
+          <span id="tier-disclaimer-btn-label">I understand (10s)</span>
+        </button>
+        <div class="tier-disclaimer-progress-track">
+          <div class="tier-disclaimer-progress-bar" id="tier-disclaimer-bar"></div>
+        </div>
+      </div>
+    </div>`;
+
+  app.innerHTML = `<div class="wrap">
+    <a class="back-link" onclick="navigate('')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to Matches
+    </a>
+    <div class="player-header">
+      <div class="player-eyebrow">NWL Scoreboard · Preview</div>
+      <h1 class="player-name">Tier-List</h1>
+      <div class="player-aliases">Per-role rankings · ${TIER_MIN_GAMES}+ games required · MVP formula extended with healer group survival vs. mirror &amp; DPS damage-share vs. mirror</div>
+    </div>
+    <div class="tier-filter-bar">
+      <div class="tier-filter-label">Filter Class</div>
+      <div class="tier-filter-buttons">${filterBtns}</div>
+    </div>
+    ${grid}
+    <div class="page-footer">
+      * Tiers are percentile-assigned within each role column (S=top 15%, A=15–35%, B=35–65%, C=65–85%, D=bottom 15%).<br>
+      * Healer score adds (mirrorGroupDeaths − ownGroupDeaths), excluding dex-side MD/RD/CW from both sides.<br>
+      * IG/VG (Support): K − 3·D + A/8 + Heal/100k + Dmg/100k + ½·(mirrorGroupDeaths − ownGroupDeaths). Assists weighted high because CC/oblivion/slow are the real output; no damage-vs-mirror bonus.<br>
+      * DPS score adds (playerDamage − sameRoleAvg) / 100k across own + mirror group.
+    </div>
+  </div>${disclaimerHTML}`;
+  window.scrollTo(0, 0);
+  if (!disclaimerAck) activateTierDisclaimer();
+}
+
+// 10s countdown on the disclaimer "I understand" button + progress bar.
+// requestAnimationFrame for smooth bar; one tick/sec for the label text.
+function activateTierDisclaimer() {
+  const overlay = document.getElementById('tier-disclaimer');
+  if (!overlay) return;
+  const btn = document.getElementById('tier-disclaimer-btn');
+  const label = document.getElementById('tier-disclaimer-btn-label');
+  const bar = document.getElementById('tier-disclaimer-bar');
+  const TOTAL = 10000;
+  const start = performance.now();
+
+  function tick(now) {
+    const elapsed = now - start;
+    const pct = Math.min(1, elapsed / TOTAL);
+    if (bar) bar.style.width = (pct * 100) + '%';
+    const remaining = Math.max(0, Math.ceil((TOTAL - elapsed) / 1000));
+    if (pct < 1) {
+      if (label) label.textContent = `I understand (${remaining}s)`;
+      requestAnimationFrame(tick);
+    } else {
+      if (label) label.textContent = 'I understand';
+      if (btn) { btn.disabled = false; btn.classList.add('ready'); }
+    }
+  }
+  requestAnimationFrame(tick);
+
+  btn?.addEventListener('click', () => {
+    if (btn.disabled) return;
+    try { sessionStorage.setItem('nwl_tier_disclaimer_ack', '1'); } catch {}
+    overlay.classList.add('dismissed');
+    setTimeout(() => overlay.remove(), 250);
+  });
+}
+
 // Make functions globally accessible
 window.navigate = navigate;
 window.toggleNav = toggleNav;
 window.toggleFilterPanel = toggleFilterPanel;
 window.setPlayerRoleFilter = setPlayerRoleFilter;
 window.toggleMvpPanel = toggleMvpPanel;
+window.toggleTierFilter = toggleTierFilter;
+window.clearTierFilter = clearTierFilter;
+window.isTierListEnabled = isTierListEnabled;
 
 // -- Re-render groups on breakpoint change --
 let _lastMobile = window.innerWidth <= 900;
