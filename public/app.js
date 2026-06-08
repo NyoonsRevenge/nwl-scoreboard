@@ -1720,9 +1720,23 @@ function ensureSheetsSync() {
   return _sheetsSyncPromise;
 }
 
+// One-shot guard so navigating away from the tier-list (back to home, etc.)
+// doesn't immediately bounce back via the secret-link auto-redirect.
+let _tierSecretRedirected = false;
+
 async function render() {
   stopLoadingQuotes();
   applyWallpaper();
+
+  // Secret-link entry: visiting "/?secret=aeternum" (no hash) jumps straight
+  // to the tier list on first render. After the initial redirect the user is
+  // free to navigate elsewhere without being pulled back.
+  if (!_tierSecretRedirected && isTierListEnabled() && !window.location.hash) {
+    _tierSecretRedirected = true;
+    window.location.hash = '#/tier-list';
+    return; // hashchange will re-trigger render()
+  }
+
   const route = getRoute();
 
   try {
@@ -3045,30 +3059,16 @@ function setPlayerRoleFilter(role, canon) {
 //  TIER LIST PAGE
 // ===========================================
 
-// ── FEATURE FLAG (mirrors MVP flag pattern) ─────────────────────────────
-// Tier-List is a "hidden" feature in production: the burger-menu link only
-// shows up on localhost, but the route itself is reachable via the unlock
-// link `…/#/tier-list?tier=1`. Hitting that URL once also persists the
-// unlock in localStorage, so afterwards bare `/#/tier-list` works in the
-// same browser until storage is cleared.
-const TIER_LIST_FORCE_ENABLED = false;
+// ── ACCESS GATE ─────────────────────────────────────────────────────────
+// Tier-List is a hidden feature. The ONLY way in is the secret URL:
+//     https://<host>/?secret=aeternum
+// No burger-menu link, no localhost shortcut, no localStorage persistence.
+// If the query param is missing, the route 404s back to the homepage.
 function isTierListEnabled() {
-  if (TIER_LIST_FORCE_ENABLED) return true;
-  if (isTierListMenuVisible()) return true; // localhost dev
-  // Unlock link: ?tier=1 grants access AND persists for this browser.
-  if (/[?&]tier=1\b/.test(window.location.search)) {
-    try { localStorage.setItem('nwl_tier_preview', '1'); } catch {}
-    return true;
-  }
-  try { if (localStorage.getItem('nwl_tier_preview') === '1') return true; } catch {}
-  return false;
+  return /[?&]secret=aeternum\b/.test(window.location.search);
 }
-// Strictly local — controls the burger-menu visibility so production users
-// never see the link even if they've already unlocked the route. Keeps the
-// feature "hidden in the scoreboard".
 function isTierListMenuVisible() {
-  const host = window.location.hostname;
-  return host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0';
+  return false; // never advertise the page anywhere in the UI
 }
 
 // Minimum games on a role before that role-slot is shown in the tier list.
