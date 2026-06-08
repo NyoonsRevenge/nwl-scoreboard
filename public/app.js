@@ -3302,7 +3302,7 @@ function renderTierListPage() {
     grid += `</div>`;
   }
 
-  // Per-session disclaimer — shown once per browser session, button locked for 10s.
+  // Per-session disclaimer — shown once per browser session, button locked for 20s.
   let disclaimerAck = false;
   try { disclaimerAck = sessionStorage.getItem('nwl_tier_disclaimer_ack') === '1'; } catch {}
   const disclaimerHTML = disclaimerAck ? '' : `
@@ -3313,7 +3313,7 @@ function renderTierListPage() {
           I understand this list is purely fictional and doesn't reflect actual skill or macro in the slightest, it's just tracking some silly numbers. On top of that, the formulas were written by someone who is awful at math, which adds a whole new layer of clowning to it.
         </div>
         <button class="tier-disclaimer-btn" id="tier-disclaimer-btn" disabled>
-          <span id="tier-disclaimer-btn-label">I understand (10s)</span>
+          <span id="tier-disclaimer-btn-label">I understand (20s)</span>
         </button>
         <div class="tier-disclaimer-progress-track">
           <div class="tier-disclaimer-progress-bar" id="tier-disclaimer-bar"></div>
@@ -3347,7 +3347,7 @@ function renderTierListPage() {
   if (!disclaimerAck) activateTierDisclaimer();
 }
 
-// 10s countdown on the disclaimer "I understand" button + progress bar.
+// 20s countdown on the disclaimer "I understand" button + progress bar.
 // requestAnimationFrame for smooth bar; one tick/sec for the label text.
 function activateTierDisclaimer() {
   const overlay = document.getElementById('tier-disclaimer');
@@ -3355,7 +3355,7 @@ function activateTierDisclaimer() {
   const btn = document.getElementById('tier-disclaimer-btn');
   const label = document.getElementById('tier-disclaimer-btn-label');
   const bar = document.getElementById('tier-disclaimer-bar');
-  const TOTAL = 10000;
+  const TOTAL = 20000;
   const start = performance.now();
 
   function tick(now) {
