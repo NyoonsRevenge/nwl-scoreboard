@@ -121,6 +121,15 @@
           "damage": 260531
         },
         {
+          "name": "shokkii",
+          "role": "RD",
+          "kills": 16,
+          "deaths": 7,
+          "assists": 45,
+          "healing": 0,
+          "damage": 1392061
+        },
+        {
           "name": "BLACK3AST",
           "role": "BR",
           "kills": 19,
@@ -157,6 +166,15 @@
           "assists": 43,
           "healing": 2720280,
           "damage": 168002
+        },
+        {
+          "name": "Carusoo",
+          "role": "RD",
+          "kills": 11,
+          "deaths": 4,
+          "assists": 37,
+          "healing": 0,
+          "damage": 1338560
         },
         {
           "name": "kogame",
@@ -202,6 +220,15 @@
           "damage": 130464
         },
         {
+          "name": "Mablỏỏzẽ",
+          "role": "RD",
+          "kills": 11,
+          "deaths": 2,
+          "assists": 110,
+          "healing": 411,
+          "damage": 3093381
+        },
+        {
           "name": "Ictue",
           "role": "IV",
           "kills": 4,
@@ -238,6 +265,15 @@
           "assists": 34,
           "healing": 3169176,
           "damage": 164708
+        },
+        {
+          "name": "actu",
+          "role": "RD",
+          "kills": 1,
+          "deaths": 3,
+          "assists": 72,
+          "healing": 0,
+          "damage": 2583991
         },
         {
           "name": "Birnzito",
@@ -283,6 +319,15 @@
           "damage": 3057
         },
         {
+          "name": "RediiN",
+          "role": "RD",
+          "kills": 21,
+          "deaths": 6,
+          "assists": 84,
+          "healing": 0,
+          "damage": 2380682
+        },
+        {
           "name": "Hammer",
           "role": "IV",
           "kills": 4,
@@ -319,6 +364,15 @@
           "assists": 42,
           "healing": 4022920,
           "damage": 88305
+        },
+        {
+          "name": "Nevnev",
+          "role": "RD",
+          "kills": 16,
+          "deaths": 7,
+          "assists": 66,
+          "healing": 424,
+          "damage": 3278915
         },
         {
           "name": "Lutsch",
@@ -364,6 +418,15 @@
           "damage": 88129
         },
         {
+          "name": "Jegerys",
+          "role": "CW",
+          "kills": 4,
+          "deaths": 2,
+          "assists": 129,
+          "healing": 0,
+          "damage": 2544415
+        },
+        {
           "name": "IKreePaHI",
           "role": "IV",
           "kills": 2,
@@ -400,6 +463,15 @@
           "assists": 37,
           "healing": 2982119,
           "damage": 60494
+        },
+        {
+          "name": "Bloontee",
+          "role": "CW",
+          "kills": 7,
+          "deaths": 4,
+          "assists": 55,
+          "healing": 0,
+          "damage": 2831742
         },
         {
           "name": "Kru",
@@ -571,6 +643,15 @@
           "assists": 29,
           "healing": 2981773,
           "damage": 44948
+        },
+        {
+          "name": "Cannabis",
+          "role": "MD",
+          "kills": 1,
+          "deaths": 10,
+          "assists": 44,
+          "healing": 94071,
+          "damage": 773580
         },
         {
           "name": "ShadowTricki",
@@ -901,18 +982,18 @@
   ],
   "totals": {
     "team1": {
-      "kills": 230,
-      "deaths": 127,
-      "assists": 4018,
-      "healing": 41321045,
-      "damage": 51573530
+      "kills": 282,
+      "deaths": 144,
+      "assists": 4386,
+      "healing": 41321456,
+      "damage": 60984069
     },
     "team2": {
-      "kills": 112,
-      "deaths": 261,
-      "assists": 2133,
-      "healing": 36889177,
-      "damage": 51794275
+      "kills": 148,
+      "deaths": 289,
+      "assists": 2407,
+      "healing": 36983672,
+      "damage": 62601063
     }
   },
   "team1Name": "Beaverknights",
