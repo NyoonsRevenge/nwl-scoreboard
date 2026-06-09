@@ -1,5 +1,18 @@
 [
   {
+    "slug": "nwl-58",
+    "nwlNumber": 58,
+    "mapName": "Cutless Keys",
+    "date": "09.06.2026",
+    "duration": "30:00",
+    "winner": "team1",
+    "attacker": "team2",
+    "team1Kills": 230,
+    "team2Kills": 112,
+    "team1Name": "Beaverknights",
+    "team2Name": "Capyknights"
+  },
+  {
     "slug": "nwl-57",
     "nwlNumber": 57,
     "mapName": "Edengrove",
