@@ -607,6 +607,15 @@
           "damage": 76419
         },
         {
+          "name": "SHORTY",
+          "role": "MD",
+          "kills": 7,
+          "deaths": 4,
+          "assists": 127,
+          "healing": 0,
+          "damage": 1459650
+        },
+        {
           "name": "Zar_ki",
           "role": "IV",
           "kills": 7,
@@ -982,11 +991,11 @@
   ],
   "totals": {
     "team1": {
-      "kills": 282,
-      "deaths": 144,
-      "assists": 4386,
+      "kills": 289,
+      "deaths": 148,
+      "assists": 4513,
       "healing": 41321456,
-      "damage": 60984069
+      "damage": 62443719
     },
     "team2": {
       "kills": 148,
