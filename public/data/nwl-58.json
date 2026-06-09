@@ -555,13 +555,13 @@
           "damage": 58864
         },
         {
-          "name": "Chammm",
+          "name": "TheHottestSilk",
           "role": "PT",
           "kills": 0,
-          "deaths": 3,
-          "assists": 30,
-          "healing": 0,
-          "damage": 475187
+          "deaths": 1,
+          "assists": 23,
+          "healing": 28876,
+          "damage": 42624
         },
         {
           "name": "ProCoulD",
@@ -672,13 +672,13 @@
           "damage": 1578631
         },
         {
-          "name": "TheHottestSilk",
+          "name": "Chammm",
           "role": "PT",
           "kills": 0,
-          "deaths": 1,
-          "assists": 23,
-          "healing": 28876,
-          "damage": 42624
+          "deaths": 3,
+          "assists": 30,
+          "healing": 0,
+          "damage": 475187
         }
       ]
     },
