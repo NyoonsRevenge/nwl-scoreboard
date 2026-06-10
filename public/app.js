@@ -310,6 +310,8 @@ const NAME_MAPPING_JSON = {
   // GernhartReinda truncations
   "GernhartReind": "GernhartRein",
   "GernhartReinda": "GernhartRein",
+  "GernhartReir": "GernhartRein",
+  "GernhartRei": "GernhartRein",
 
   // Brown-Noise variants
   "Brown Noise": "Brown-Noise",
@@ -893,6 +895,7 @@ const ATTACKER_OVERRIDES = {
   'nwl-55': 'team1', // Marauders (Beaverknights) attacked
   'nwl-56': 'team2', // Syndicate (Capyknights) attacked
   'nwl-57': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-58': 'team2', // Syndicate (Capyknights) attacked
 };
 
 // Matches where the attacker is team2 (Capyknights at top of sheet) but the
