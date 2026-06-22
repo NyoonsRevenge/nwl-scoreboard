@@ -136,7 +136,7 @@
           "deaths": 5,
           "assists": 113,
           "healing": 0,
-          "damage": 327907
+          "damage": 3279907
         },
         {
           "name": "yonoz",
@@ -849,7 +849,7 @@
       "deaths": 136,
       "assists": 3316,
       "healing": 33629018,
-      "damage": 54539842
+      "damage": 57491842
     },
     "team2": {
       "kills": 136,
