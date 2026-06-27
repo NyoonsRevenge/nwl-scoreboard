@@ -506,8 +506,37 @@
       "label": "G7: Pali/Flex",
       "team1Label": "G7: Pali/Flex",
       "team2Label": "G7: Pali/Flex",
-      "team1": [],
-      "team2": []
+      "team1": [
+        {
+          "name": "Solomons",
+          "role": "PT",
+          "kills": 0,
+          "deaths": 11,
+          "assists": 23,
+          "healing": 0,
+          "damage": 910622
+        }
+      ],
+      "team2": [
+        {
+          "name": "Mablooze",
+          "role": "RD",
+          "kills": 6,
+          "deaths": 3,
+          "assists": 55,
+          "healing": 0,
+          "damage": 2289689
+        },
+        {
+          "name": "Dr. Costa",
+          "role": "MD",
+          "kills": 3,
+          "deaths": 0,
+          "assists": 42,
+          "healing": 0,
+          "damage": 1644408
+        }
+      ]
     },
     {
       "label": "G8: Bonfire",
@@ -783,17 +812,17 @@
   "totals": {
     "team1": {
       "kills": 94,
-      "deaths": 164,
-      "assists": 1359,
+      "deaths": 175,
+      "assists": 1382,
       "healing": 30908085,
-      "damage": 50897939
+      "damage": 51808561
     },
     "team2": {
-      "kills": 166,
-      "deaths": 91,
-      "assists": 2667,
+      "kills": 175,
+      "deaths": 94,
+      "assists": 2764,
       "healing": 36122147,
-      "damage": 44654382
+      "damage": 48588479
     }
   },
   "team1Name": "Beaverknights",
