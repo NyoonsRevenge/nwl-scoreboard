@@ -1,5 +1,18 @@
 [
   {
+    "slug": "nwl-65",
+    "nwlNumber": 65,
+    "mapName": "Edengrove",
+    "date": "05.07.2026",
+    "duration": "30:00",
+    "winner": "team1",
+    "attacker": "team2",
+    "team1Kills": 165,
+    "team2Kills": 164,
+    "team1Name": "Beaverknights",
+    "team2Name": "Capyknights"
+  },
+  {
     "slug": "nwl-64",
     "nwlNumber": 64,
     "mapName": "Ebonscale Reach",
