@@ -1,0 +1,99 @@
+{
+  "slug": "nwl-67",
+  "nwlNumber": 67,
+  "mapName": "Ebonscale Reach",
+  "date": "08.07.2026",
+  "duration": null,
+  "winner": "team1",
+  "attacker": "team1",
+  "groups": [
+    {
+      "label": "G1: Point",
+      "team1Label": "G1: Point",
+      "team2Label": "G1: Point",
+      "team1": [],
+      "team2": []
+    },
+    {
+      "label": "G2: Point",
+      "team1Label": "G2: Point",
+      "team2Label": "G2: Point",
+      "team1": [],
+      "team2": []
+    },
+    {
+      "label": "G3: Top weak",
+      "team1Label": "G3: Top weak",
+      "team2Label": "G3: Bottom strong",
+      "team1": [],
+      "team2": []
+    },
+    {
+      "label": "G4: Top Strong",
+      "team1Label": "G4: Top Strong",
+      "team2Label": "G4: Bottom weak",
+      "team1": [],
+      "team2": []
+    },
+    {
+      "label": "G5: Bot weak",
+      "team1Label": "G5: Bot weak",
+      "team2Label": "G5: Top strong",
+      "team1": [],
+      "team2": []
+    },
+    {
+      "label": "G6: bot strong",
+      "team1Label": "G6: bot strong",
+      "team2Label": "G6: Top weak",
+      "team1": [],
+      "team2": []
+    },
+    {
+      "label": "G7: Pali/Flex",
+      "team1Label": "G7: Pali/Flex",
+      "team2Label": "G7: Pali/Flex",
+      "team1": [],
+      "team2": []
+    },
+    {
+      "label": "G8: Bonfire",
+      "team1Label": "G8: Bonfire",
+      "team2Label": "G8: Bonfire",
+      "team1": [],
+      "team2": []
+    },
+    {
+      "label": "G9: Inner narnia",
+      "team1Label": "G9: Inner narnia",
+      "team2Label": "G9: Inner narnia",
+      "team1": [],
+      "team2": []
+    },
+    {
+      "label": "G10: Outer narnia",
+      "team1Label": "G10: Outer narnia",
+      "team2Label": "G10: Outer narnia",
+      "team1": [],
+      "team2": []
+    }
+  ],
+  "totals": {
+    "team1": {
+      "kills": 0,
+      "deaths": 0,
+      "assists": 0,
+      "healing": 0,
+      "damage": 0
+    },
+    "team2": {
+      "kills": 0,
+      "deaths": 0,
+      "assists": 0,
+      "healing": 0,
+      "damage": 0
+    }
+  },
+  "team1Name": "Beaverknights",
+  "team2Name": "Capyknights"
+}
