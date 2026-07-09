@@ -655,6 +655,23 @@ const NAME_MAPPING_JSON = {
   "Hiko(Hikoah)": "Hiko(Hikoah",
   "Vago": "GGEZ NO DISBAND",
   "SAKIC8D": "SAKIC",
+  "Goatfryed": "goatfryed",
+  "BLAACKB3AST": "BLACK3AST",
+  "Rupp3rt": "Ruppert",
+  "Jeszo": "jormamas slave2",
+  "LilNatalie V2": "LilNatalie",
+  "Billy Talent II": "BillyTalent",
+  "ShdwTrckr": "ShadowTrickier",
+  "Lynnxxx": "Lynnx",
+  "Shiro34": "Shiroyasha34",
+  "shua": "sadshua",
+  "Zeraphinea": "Zeraphine",
+  "NotFjayy": "Fjayy",
+  "Guni": "Proguni",
+  "Hanrich": "Ganrich",
+  "Absolute Drama": "Braczyn/Abso",
+  "Kel(CherieFa": "kel(cherieFan",
+  "Kel(CherieFai": "kel(cherieFan",
 
   // === BEGIN: Auto-synced from Character-Names-DB ===
   "Shocking Myself": "MARKEL1to",
@@ -712,6 +729,64 @@ const NAME_MAPPING_JSON = {
   "Vietmam": "Vietmam",
   "jimijefet": "JukerVG",
   "xGodias": "Godias",
+
+  // Auto-synced from name_mapping.json
+  "Not Peb": "peb",
+
+  // Auto-synced from name_mapping.json
+  "Calingo": "N3crome",
+  "Edating Demon": "Shiroyasha34",
+  "Lumson": "Lumino",
+  "N3crome": "Calingo",
+
+  // Auto-synced from name_mapping.json
+  "Harambibi": "sbe3",
+  "WestMilker": "AllMadd(Milk",
+  "Zarkoï": "Zar_ki",
+  "sbe3": "Harambibi",
+
+  // Auto-synced from name_mapping.json
+  "Djemba": "NWisbackCOPIUM",
+  "NWisbackCOPIUM": "Djemba",
+  "Point Princess": "belle",
+  "Theo": "Thiu",
+  "Thiu": "Theo",
+  "belle": "Point Princess",
+  "cac light": "Spyfromzoo",
+
+  // Auto-synced from name_mapping.json
+  "Dogtierplaye": "Bukaku",
+
+  // Auto-synced from name_mapping.json
+  "Hawk.-": "Yohnoz's Kitten",
+  "Spymaster": "Yohnoz",
+  "Take Care Bear": "belle",
+  "Yohnoz": "Spymaster",
+  "Yohnoz's Kitten": "Hawk.-",
+
+  // Auto-synced from name_mapping.json
+  "Artenug": "Frubella",
+  "Baker": "nowasuwe",
+  "Beaversspyb": "Bukaku",
+  "Bjorn(Grump": "Grumpy Karen",
+  "Frubella": "Artenug",
+  "Mabl": "Mablỏỏzẽ",
+  "OLD MAN MELEE": "Voyd",
+  "Queen Screup": "screup",
+  "nowasuwe": "Baker",
+
+  // Auto-synced from name_mapping.json
+  "Gaehr Kalan": "Gaehr",
+
+  // Auto-synced from name_mapping.json
+  "Aelvyn": "Ambrozja/1.6",
+  "I WhoHow I": "LyZy",
+
+  // Auto-synced from name_mapping.json
+  "Niki": "Nykhi",
+  "Nykhi": "Niki",
+  "Ta2": "Tattooo",
+  "Tattooo": "Ta2",
 };
 
 // Role-specific overrides for ambiguous names. Some players share an in-game
@@ -767,6 +842,10 @@ function buildNameLookup() {
     }
     nameAliasMap[canon] = canon;
   }
+}
+
+function roleBadgeClass(role) {
+  return (!role || role === '?') ? 'r-unknown' : `r-${role}`;
 }
 
 function getCanonicalName(name, role) {
@@ -896,6 +975,15 @@ const ATTACKER_OVERRIDES = {
   'nwl-56': 'team2', // Syndicate (Capyknights) attacked
   'nwl-57': 'team1', // Marauders (Beaverknights) attacked
   'nwl-58': 'team2', // Syndicate (Capyknights) attacked
+  'nwl-59': 'team2', // Syndicate (Capyknights) attacked
+  'nwl-60': 'team2', // Syndicate (Capyknights) attacked
+  'nwl-61': 'team2', // Syndicate (Capyknights) attacked
+  'nwl-62': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-63': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-64': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-65': 'team2', // Syndicate (Capyknights) attacked
+  'nwl-66': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-67': 'team1', // Marauders (Beaverknights) attacked
 };
 
 // Matches where the attacker is team2 (Capyknights at top of sheet) but the
@@ -1152,9 +1240,10 @@ function isGroupLabel(val) {
 
 function parsePlayer(row, colOffset) {
   if (!row || row.length < colOffset + 7) return null;
-  const role = (row[colOffset] || '').trim();
+  let role = (row[colOffset] || '').trim();
   const name = (row[colOffset + 1] || '').trim();
-  if (!name || !role || role.length > 5 || !/^[a-zA-Z]+$/.test(role)) return null;
+  if (!name) return null;
+  if (!role || role.length > 5 || !/^[a-zA-Z]+$/.test(role)) role = '?';
   return {
     name,
     role,
@@ -2091,7 +2180,7 @@ function roleMVPsHTML(data) {
     });
     cards += `<div class="mvp-card mvp-card-${badge}">
       <div class="mvp-card-head">
-        <span class="role-badge r-${badge}">${badge}</span>
+        <span class="role-badge ${roleBadgeClass(badge)}">${badge}</span>
         <span class="mvp-role-name">${MVP_ROLE_NAMES[bucket] || bucket}</span>
       </div>
       ${entries}
@@ -2279,7 +2368,7 @@ function makePlayerRow(p, team) {
   const canonical = getCanonicalName(p.name, p.role);
   const playerLink = `<a onclick="navigate('#/player/${encodePlayerForLink(canonical)}')">${p.name}</a>`;
   return `<tr class="${cls}">
-    <td class="pt-role"><span class="role-badge r-${p.role}">${p.role}</span></td>
+    <td class="pt-role"><span class="role-badge ${roleBadgeClass(p.role)}">${p.role}</span></td>
     <td class="pt-name">${playerLink}</td>
     ${getVodCell(p.name, p.role)}
     <td class="pt-num pt-kills">${p.kills}</td>
@@ -2296,7 +2385,7 @@ function makeExcelPlayerRow(p, team) {
   const canonical = getCanonicalName(p.name, p.role);
   const playerLink = `<a onclick="navigate('#/player/${encodePlayerForLink(canonical)}')">${p.name}</a>`;
   return `<tr class="${cls}" style="border-left:none;">
-    <td class="pt-role"><span class="role-badge r-${p.role}">${p.role}</span></td>
+    <td class="pt-role"><span class="role-badge ${roleBadgeClass(p.role)}">${p.role}</span></td>
     <td class="pt-name">${playerLink}</td>
     ${getVodCell(p.name, p.role)}
     <td class="pt-num pt-kills">${p.kills}</td>
@@ -2503,7 +2592,7 @@ function renderExcelViewGroup(g, team, placeholderLabel) {
             const canonical = getCanonicalName(p.name, p.role);
             const playerLink = `<a onclick="navigate('#/player/${encodePlayerForLink(canonical)}')">${p.name}</a>`;
             return `<tr class="${rowClass}" style="border-left:none;">
-              <td class="pt-role"><span class="role-badge r-${p.role}">${p.role}</span></td>
+              <td class="pt-role"><span class="role-badge ${roleBadgeClass(p.role)}">${p.role}</span></td>
               <td class="pt-name">${playerLink}</td>
               ${getVodCell(p.name, p.role)}
               <td class="pt-num pt-kills">${p.kills}</td>
@@ -2733,6 +2822,15 @@ function renderSearchPage() {
 
 function renderChangelogPage() {
   const entries = [
+    {
+      date: '19.06.2026',
+      changes: [
+        'Merged Dogtierplaye alias into Bukaku player profile',
+        'Merged NWL62 name variants: Goatfryed→goatfryed, BLAACKB3AST→BLACK3AST, Rupp3rt→Ruppert, Jeszo→jormamas slave2, LilNatalie V2→LilNatalie, Billy Talent II→BillyTalent, ShdwTrckr→ShadowTrickier, Lynnxxx→Lynnx, Shiro34→Shiroyasha34, shua→sadshua, Zeraphinea→Zeraphine, NotFjayy→Fjayy, Guni→Proguni, Hanrich→Ganrich, Absolute Drama→Braczyn/Abso',
+        'Merged Kel(CherieFa and Kel(CherieFai aliases into kel(cherieFan player profile',
+        'Players with missing or unmapped roles now appear on the scoreboard with a "?" badge instead of being hidden',
+      ]
+    },
     {
       date: '04.05.2026',
       changes: [
@@ -2988,7 +3086,7 @@ function renderPlayerPage(playerName) {
       <div class="player-role-filter-buttons">
         <button class="role-filter-btn ${!_playerRoleFilter ? 'active' : ''}" onclick="setPlayerRoleFilter(null, '${canon.replace(/'/g, "\\x27")}')">All</button>
         ${sorted.map(r => `<button class="role-filter-btn ${_playerRoleFilter === r ? 'active' : ''}" onclick="setPlayerRoleFilter('${r}', '${canon.replace(/'/g, "\\x27")}')">
-          <span class="role-badge r-${r}">${r}</span> <span class="role-filter-count">${roleCounts[r]}</span>
+          <span class="role-badge ${roleBadgeClass(r)}">${r}</span> <span class="role-filter-count">${roleCounts[r]}</span>
         </button>`).join('')}
       </div>
     </div>`;
@@ -3031,7 +3129,7 @@ function renderPlayerPage(playerName) {
         <td class="pm-date">${a.date}</td>
         <td class="pm-date">${teamLabel}</td>
         <td class="pm-date">${a.group}</td>
-        <td><span class="role-badge r-${a.player.role}">${a.player.role}</span></td>
+        <td><span class="role-badge ${roleBadgeClass(a.player.role)}">${a.player.role}</span></td>
         <td class="pm-num">${a.player.kills}</td>
         <td class="pm-num">${a.player.deaths}</td>
         <td class="pm-num">${a.player.assists}</td>
@@ -3264,7 +3362,7 @@ function renderTierListPage() {
     const badge = tierBadgeOf(b);
     const active = _tierFilter.has(b) ? 'active' : '';
     filterBtns += `<button class="tier-filter-btn ${active}" onclick="toggleTierFilter('${b}')">
-      <span class="role-badge r-${badge}">${badge}</span>
+      <span class="role-badge ${roleBadgeClass(badge)}">${badge}</span>
       <span class="tier-filter-name">${TIER_BUCKET_NAMES[b] || b}</span>
     </button>`;
   }
@@ -3289,7 +3387,7 @@ function renderTierListPage() {
       const badge = tierBadgeOf(b);
       const rowExtra = (b === lastBucket) ? ' tier-row-last' : '';
       grid += `<div class="tier-grid-cell tier-grid-head tier-row-${badge}${rowExtra}">
-        <span class="role-badge r-${badge}">${badge}</span>
+        <span class="role-badge ${roleBadgeClass(badge)}">${badge}</span>
         <span class="tier-col-name">${TIER_BUCKET_NAMES[b] || b}</span>
         <span class="tier-col-count">${(buckets[b] || []).length} players</span>
       </div>`;

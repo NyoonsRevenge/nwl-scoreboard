@@ -74,6 +74,16 @@ ATTACKER_OVERRIDES = {
     'nwl-55': 'team1',  # Marauders (Beaverknights) attacked
     'nwl-56': 'team2',  # Syndicate (Capyknights) attacked
     'nwl-57': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-58': 'team2',  # Syndicate (Capyknights) attacked
+    'nwl-59': 'team2',  # Syndicate (Capyknights) attacked
+    'nwl-60': 'team2',  # Syndicate (Capyknights) attacked
+    'nwl-61': 'team2',  # Syndicate (Capyknights) attacked
+    'nwl-62': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-63': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-64': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-65': 'team2',  # Syndicate (Capyknights) attacked
+    'nwl-66': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-67': 'team1',  # Marauders (Beaverknights) attacked
 }
 
 # Matches where ATTACKER_OVERRIDES corrects the label but players are already
@@ -312,10 +322,10 @@ def parse_player(row, col_offset):
         return None
     role = str(row[col_offset]).strip()
     name = str(row[col_offset + 1]).strip()
-    if not name or not role:
+    if not name:
         return None
-    if len(role) > 5 or not role.isalpha():
-        return None
+    if not role or len(role) > 5 or not role.isalpha():
+        role = '?'
     return {
         'name': name,
         'role': role,
