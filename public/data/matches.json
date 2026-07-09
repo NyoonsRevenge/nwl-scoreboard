@@ -7,8 +7,8 @@
     "duration": "20:17",
     "winner": "team1",
     "attacker": "team1",
-    "team1Kills": 0,
-    "team2Kills": 0,
+    "team1Kills": 164,
+    "team2Kills": 113,
     "team1Name": "Beaverknights",
     "team2Name": "Capyknights"
   },
@@ -358,7 +358,7 @@
     "duration": "20:04",
     "winner": "team2",
     "attacker": "team2",
-    "team1Kills": 147,
+    "team1Kills": 149,
     "team2Kills": 164,
     "team1Name": "Beaverknights",
     "team2Name": "Capyknights"
@@ -488,7 +488,7 @@
     "duration": "30:00",
     "winner": "team2",
     "attacker": "team1",
-    "team1Kills": 111,
+    "team1Kills": 126,
     "team2Kills": 198,
     "team1Name": "Beaverknights",
     "team2Name": "Capyknights"
@@ -501,7 +501,7 @@
     "duration": "30:00",
     "winner": "team2",
     "attacker": "team1",
-    "team1Kills": 153,
+    "team1Kills": 156,
     "team2Kills": 221,
     "team1Name": "Beaverknights",
     "team2Name": "Capyknights"
@@ -566,8 +566,8 @@
     "duration": "17:31",
     "winner": "team1",
     "attacker": "team1",
-    "team1Kills": 170,
-    "team2Kills": 65,
+    "team1Kills": 188,
+    "team2Kills": 81,
     "team1Name": "Beaverknights",
     "team2Name": "Capyknights"
   },
@@ -619,7 +619,7 @@
     "winner": "team2",
     "attacker": "team1",
     "team1Kills": 172,
-    "team2Kills": 227,
+    "team2Kills": 228,
     "team1Name": "Beaverknights",
     "team2Name": "Capyknights"
   },
@@ -670,8 +670,8 @@
     "duration": "30:00",
     "winner": "team2",
     "attacker": "team1",
-    "team1Kills": 186,
-    "team2Kills": 267,
+    "team1Kills": 187,
+    "team2Kills": 272,
     "team1Name": "Beaverknights",
     "team2Name": "Capyknights"
   },

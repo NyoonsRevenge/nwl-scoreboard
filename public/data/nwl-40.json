@@ -589,6 +589,15 @@
           "damage": 78805
         },
         {
+          "name": "2xPalim",
+          "role": "?",
+          "kills": 2,
+          "deaths": 1,
+          "assists": 39,
+          "healing": 0,
+          "damage": 624177
+        },
+        {
           "name": "Proguni",
           "role": "IV",
           "kills": 0,
@@ -964,11 +973,11 @@
   ],
   "totals": {
     "team1": {
-      "kills": 147,
-      "deaths": 168,
-      "assists": 2433,
+      "kills": 149,
+      "deaths": 169,
+      "assists": 2472,
       "healing": 27924343,
-      "damage": 43135335
+      "damage": 43759512
     },
     "team2": {
       "kills": 164,

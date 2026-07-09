@@ -211,6 +211,15 @@
           "damage": 82279
         },
         {
+          "name": "Rawberry",
+          "role": "?",
+          "kills": 13,
+          "deaths": 8,
+          "assists": 37,
+          "healing": 0,
+          "damage": 2365008
+        },
+        {
           "name": "Zeleen",
           "role": "IV",
           "kills": 0,
@@ -299,6 +308,15 @@
           "assists": 45,
           "healing": 2338460,
           "damage": 139046
+        },
+        {
+          "name": "BellaAurora",
+          "role": "?",
+          "kills": 2,
+          "deaths": 8,
+          "assists": 32,
+          "healing": 19556,
+          "damage": 434735
         },
         {
           "name": "LilNatalie",
@@ -855,11 +873,11 @@
   ],
   "totals": {
     "team1": {
-      "kills": 111,
-      "deaths": 174,
-      "assists": 1841,
-      "healing": 31507947,
-      "damage": 41888323
+      "kills": 126,
+      "deaths": 190,
+      "assists": 1910,
+      "healing": 31527503,
+      "damage": 44688066
     },
     "team2": {
       "kills": 198,

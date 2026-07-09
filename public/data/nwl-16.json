@@ -159,6 +159,15 @@
       ],
       "team2": [
         {
+          "name": "Cortezz",
+          "role": "?",
+          "kills": 5,
+          "deaths": 6,
+          "assists": 90,
+          "healing": 36294,
+          "damage": 864483
+        },
+        {
           "name": "BLACKSHP",
           "role": "HL",
           "kills": 0,
@@ -209,6 +218,15 @@
           "assists": 32,
           "healing": 2238040,
           "damage": 33814
+        },
+        {
+          "name": "Kream",
+          "role": "?",
+          "kills": 1,
+          "deaths": 2,
+          "assists": 28,
+          "healing": 0,
+          "damage": 446824
         },
         {
           "name": "StryjuIBakel",
@@ -973,18 +991,18 @@
   ],
   "totals": {
     "team1": {
-      "kills": 186,
-      "deaths": 270,
-      "assists": 2721,
+      "kills": 187,
+      "deaths": 272,
+      "assists": 2749,
       "healing": 27737516,
-      "damage": 46382313
+      "damage": 46829137
     },
     "team2": {
-      "kills": 267,
-      "deaths": 181,
-      "assists": 4113,
-      "healing": 27469814,
-      "damage": 49765169
+      "kills": 272,
+      "deaths": 187,
+      "assists": 4203,
+      "healing": 27506108,
+      "damage": 50629652
     }
   },
   "team1Name": "Beaverknights",

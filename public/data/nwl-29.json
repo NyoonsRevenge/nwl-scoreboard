@@ -463,6 +463,15 @@
           "damage": 68528
         },
         {
+          "name": "AceAngel",
+          "role": "?",
+          "kills": 3,
+          "deaths": 13,
+          "assists": 58,
+          "healing": 0,
+          "damage": 1465130
+        },
+        {
           "name": "Tira",
           "role": "IV",
           "kills": 0,
@@ -836,11 +845,11 @@
   ],
   "totals": {
     "team1": {
-      "kills": 153,
-      "deaths": 208,
-      "assists": 2325,
+      "kills": 156,
+      "deaths": 221,
+      "assists": 2383,
       "healing": 35585973,
-      "damage": 54433838
+      "damage": 55898968
     },
     "team2": {
       "kills": 221,

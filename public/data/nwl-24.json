@@ -211,6 +211,15 @@
           "damage": 163390
         },
         {
+          "name": "Rawberry",
+          "role": "?",
+          "kills": 12,
+          "deaths": 3,
+          "assists": 51,
+          "healing": 0,
+          "damage": 802010
+        },
+        {
           "name": "Shirohigo",
           "role": "BR",
           "kills": 10,
@@ -238,6 +247,15 @@
           "assists": 22,
           "healing": 1023993,
           "damage": 65784
+        },
+        {
+          "name": "pandatanga",
+          "role": "?",
+          "kills": 16,
+          "deaths": 10,
+          "assists": 9,
+          "healing": 0,
+          "damage": 613056
         },
         {
           "name": "KaldieDarkleaf",
@@ -272,6 +290,15 @@
           "assists": 46,
           "healing": 1902281,
           "damage": 84886
+        },
+        {
+          "name": "Maseye",
+          "role": "?",
+          "kills": 3,
+          "deaths": 3,
+          "assists": 82,
+          "healing": 0,
+          "damage": 1210180
         },
         {
           "name": "Lutsch",
@@ -443,6 +470,15 @@
           "assists": 39,
           "healing": 1480470,
           "damage": 56106
+        },
+        {
+          "name": "UlricDorrn",
+          "role": "?",
+          "kills": 3,
+          "deaths": 5,
+          "assists": 20,
+          "healing": 0,
+          "damage": 363563
         },
         {
           "name": "T93Asadi",
@@ -782,18 +818,18 @@
   ],
   "totals": {
     "team1": {
-      "kills": 170,
-      "deaths": 71,
-      "assists": 2308,
+      "kills": 188,
+      "deaths": 82,
+      "assists": 2461,
       "healing": 18264994,
-      "damage": 27232700
+      "damage": 29608453
     },
     "team2": {
-      "kills": 65,
-      "deaths": 169,
-      "assists": 983,
+      "kills": 81,
+      "deaths": 179,
+      "assists": 992,
       "healing": 17266622,
-      "damage": 26977862
+      "damage": 27590918
     }
   },
   "team1Name": "Beaverknights",

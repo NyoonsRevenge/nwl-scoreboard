@@ -348,6 +348,15 @@
           "damage": 163361
         },
         {
+          "name": "FS Kreamy",
+          "role": "?",
+          "kills": 1,
+          "deaths": 9,
+          "assists": 26,
+          "healing": 0,
+          "damage": 751467
+        },
+        {
           "name": "Kru",
           "role": "IV",
           "kills": 1,
@@ -879,11 +888,11 @@
       "damage": 43972465
     },
     "team2": {
-      "kills": 227,
-      "deaths": 162,
-      "assists": 2559,
+      "kills": 228,
+      "deaths": 171,
+      "assists": 2585,
       "healing": 29409623,
-      "damage": 49663250
+      "damage": 50414717
     }
   },
   "team1Name": "Beaverknights",
