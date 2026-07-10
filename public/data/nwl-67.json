@@ -14,7 +14,7 @@
       "team1": [
         {
           "name": "Hucky",
-          "role": "?",
+          "role": "AoE",
           "kills": 0,
           "deaths": 5,
           "assists": 39,
@@ -23,7 +23,7 @@
         },
         {
           "name": "Blackshp",
-          "role": "?",
+          "role": "HL",
           "kills": 0,
           "deaths": 1,
           "assists": 33,
@@ -32,7 +32,7 @@
         },
         {
           "name": "Irvine",
-          "role": "?",
+          "role": "PT",
           "kills": 1,
           "deaths": 0,
           "assists": 66,
@@ -41,7 +41,7 @@
         },
         {
           "name": "Seiler",
-          "role": "?",
+          "role": "IV",
           "kills": 2,
           "deaths": 0,
           "assists": 103,
@@ -50,7 +50,7 @@
         },
         {
           "name": "K0KHU",
-          "role": "?",
+          "role": "BR",
           "kills": 10,
           "deaths": 3,
           "assists": 80,
@@ -61,7 +61,7 @@
       "team2": [
         {
           "name": "My0pic",
-          "role": "?",
+          "role": "AoE",
           "kills": 1,
           "deaths": 4,
           "assists": 29,
@@ -70,7 +70,7 @@
         },
         {
           "name": "c0rpi",
-          "role": "?",
+          "role": "IV",
           "kills": 1,
           "deaths": 4,
           "assists": 40,
@@ -79,7 +79,7 @@
         },
         {
           "name": "Parship",
-          "role": "?",
+          "role": "PT",
           "kills": 0,
           "deaths": 5,
           "assists": 54,
@@ -88,7 +88,7 @@
         },
         {
           "name": "aespa",
-          "role": "?",
+          "role": "BR",
           "kills": 6,
           "deaths": 6,
           "assists": 49,
@@ -97,7 +97,7 @@
         },
         {
           "name": "Cannab3s",
-          "role": "?",
+          "role": "MD",
           "kills": 1,
           "deaths": 5,
           "assists": 27,
@@ -113,7 +113,7 @@
       "team1": [
         {
           "name": "Arvaysa",
-          "role": "?",
+          "role": "RD",
           "kills": 1,
           "deaths": 5,
           "assists": 33,
@@ -122,7 +122,7 @@
         },
         {
           "name": "LilNatalie",
-          "role": "?",
+          "role": "HL",
           "kills": 0,
           "deaths": 0,
           "assists": 28,
@@ -131,7 +131,7 @@
         },
         {
           "name": "Babulmxxx",
-          "role": "?",
+          "role": "PT",
           "kills": 0,
           "deaths": 4,
           "assists": 82,
@@ -140,7 +140,7 @@
         },
         {
           "name": "eke",
-          "role": "?",
+          "role": "BR",
           "kills": 8,
           "deaths": 3,
           "assists": 78,
@@ -149,7 +149,7 @@
         },
         {
           "name": "BLACK3AST",
-          "role": "?",
+          "role": "BR",
           "kills": 9,
           "deaths": 1,
           "assists": 81,
@@ -160,7 +160,7 @@
       "team2": [
         {
           "name": "IThinkHealers",
-          "role": "?",
+          "role": "BR",
           "kills": 5,
           "deaths": 3,
           "assists": 63,
@@ -169,7 +169,7 @@
         },
         {
           "name": "Migi",
-          "role": "?",
+          "role": "BR",
           "kills": 5,
           "deaths": 8,
           "assists": 51,
@@ -178,7 +178,7 @@
         },
         {
           "name": "M7k",
-          "role": "?",
+          "role": "PT",
           "kills": 0,
           "deaths": 3,
           "assists": 57,
@@ -187,7 +187,7 @@
         },
         {
           "name": "Blamy",
-          "role": "?",
+          "role": "HL",
           "kills": 0,
           "deaths": 2,
           "assists": 24,
@@ -203,7 +203,7 @@
       "team1": [
         {
           "name": "Alexiaraae",
-          "role": "?",
+          "role": "BR",
           "kills": 5,
           "deaths": 7,
           "assists": 66,
@@ -212,7 +212,7 @@
         },
         {
           "name": "Zarkoï",
-          "role": "?",
+          "role": "IV",
           "kills": 1,
           "deaths": 1,
           "assists": 112,
@@ -221,7 +221,7 @@
         },
         {
           "name": "Zeraphine",
-          "role": "?",
+          "role": "HL",
           "kills": 1,
           "deaths": 0,
           "assists": 45,
@@ -230,7 +230,7 @@
         },
         {
           "name": "Alleria Gale",
-          "role": "?",
+          "role": "BR",
           "kills": 4,
           "deaths": 6,
           "assists": 55,
@@ -250,7 +250,7 @@
       "team2": [
         {
           "name": "sintrael",
-          "role": "?",
+          "role": "HL",
           "kills": 0,
           "deaths": 2,
           "assists": 16,
@@ -259,7 +259,7 @@
         },
         {
           "name": "Tattooo",
-          "role": "?",
+          "role": "BR",
           "kills": 3,
           "deaths": 3,
           "assists": 58,
@@ -268,7 +268,7 @@
         },
         {
           "name": "ZKDD",
-          "role": "?",
+          "role": "IV",
           "kills": 1,
           "deaths": 5,
           "assists": 64,
@@ -277,7 +277,7 @@
         },
         {
           "name": "hkN",
-          "role": "?",
+          "role": "BR",
           "kills": 7,
           "deaths": 2,
           "assists": 56,
@@ -293,7 +293,7 @@
       "team1": [
         {
           "name": "WestMilker",
-          "role": "?",
+          "role": "HL",
           "kills": 0,
           "deaths": 0,
           "assists": 36,
@@ -302,7 +302,7 @@
         },
         {
           "name": "ABOSLLOO",
-          "role": "?",
+          "role": "BR",
           "kills": 5,
           "deaths": 3,
           "assists": 77,
@@ -311,7 +311,7 @@
         },
         {
           "name": "escargot",
-          "role": "?",
+          "role": "IV",
           "kills": 4,
           "deaths": 0,
           "assists": 88,
@@ -320,7 +320,7 @@
         },
         {
           "name": "CherieFanClub",
-          "role": "?",
+          "role": "BR",
           "kills": 3,
           "deaths": 3,
           "assists": 68,
@@ -331,7 +331,7 @@
       "team2": [
         {
           "name": "Jeszo",
-          "role": "?",
+          "role": "HL",
           "kills": 0,
           "deaths": 3,
           "assists": 31,
@@ -340,7 +340,7 @@
         },
         {
           "name": "Carryyou",
-          "role": "?",
+          "role": "BR",
           "kills": 8,
           "deaths": 4,
           "assists": 50,
@@ -349,7 +349,7 @@
         },
         {
           "name": "Kru",
-          "role": "?",
+          "role": "BR",
           "kills": 2,
           "deaths": 7,
           "assists": 54,
@@ -358,7 +358,7 @@
         },
         {
           "name": "Zeleen",
-          "role": "?",
+          "role": "IV",
           "kills": 1,
           "deaths": 3,
           "assists": 53,
@@ -374,7 +374,7 @@
       "team1": [
         {
           "name": "Guni",
-          "role": "?",
+          "role": "IV",
           "kills": 1,
           "deaths": 1,
           "assists": 99,
@@ -383,7 +383,7 @@
         },
         {
           "name": "Hiko",
-          "role": "?",
+          "role": "BR",
           "kills": 7,
           "deaths": 2,
           "assists": 87,
@@ -392,7 +392,7 @@
         },
         {
           "name": "Die3neMika",
-          "role": "?",
+          "role": "BR",
           "kills": 7,
           "deaths": 1,
           "assists": 88,
@@ -401,7 +401,7 @@
         },
         {
           "name": "Yohnoz's Kitten",
-          "role": "?",
+          "role": "HL",
           "kills": 0,
           "deaths": 1,
           "assists": 35,
@@ -412,7 +412,7 @@
       "team2": [
         {
           "name": "Beetle Juice",
-          "role": "?",
+          "role": "HL",
           "kills": 0,
           "deaths": 3,
           "assists": 27,
@@ -421,7 +421,7 @@
         },
         {
           "name": "JeaysuTokugawa",
-          "role": "?",
+          "role": "BR",
           "kills": 2,
           "deaths": 6,
           "assists": 49,
@@ -430,7 +430,7 @@
         },
         {
           "name": "ShdwTrckr",
-          "role": "?",
+          "role": "IV",
           "kills": 2,
           "deaths": 4,
           "assists": 52,
@@ -439,7 +439,7 @@
         },
         {
           "name": "Absolute Drama",
-          "role": "?",
+          "role": "BR",
           "kills": 3,
           "deaths": 7,
           "assists": 52,
@@ -455,7 +455,7 @@
       "team1": [
         {
           "name": "Samson",
-          "role": "?",
+          "role": "BR",
           "kills": 2,
           "deaths": 4,
           "assists": 71,
@@ -464,7 +464,7 @@
         },
         {
           "name": "JerryPat",
-          "role": "?",
+          "role": "HL",
           "kills": 0,
           "deaths": 1,
           "assists": 6,
@@ -473,7 +473,7 @@
         },
         {
           "name": "Chris P. Beacon",
-          "role": "?",
+          "role": "IV",
           "kills": 1,
           "deaths": 0,
           "assists": 74,
@@ -482,7 +482,7 @@
         },
         {
           "name": "Gernhart Reinda",
-          "role": "?",
+          "role": "BR",
           "kills": 6,
           "deaths": 4,
           "assists": 74,
@@ -493,7 +493,7 @@
       "team2": [
         {
           "name": "NWisbackCOPIUM",
-          "role": "?",
+          "role": "HL",
           "kills": 0,
           "deaths": 1,
           "assists": 20,
@@ -502,7 +502,7 @@
         },
         {
           "name": "shua",
-          "role": "?",
+          "role": "BR",
           "kills": 3,
           "deaths": 4,
           "assists": 47,
@@ -511,7 +511,7 @@
         },
         {
           "name": "Mabl",
-          "role": "?",
+          "role": "BR",
           "kills": 1,
           "deaths": 1,
           "assists": 59,
@@ -520,7 +520,7 @@
         },
         {
           "name": "Harambebe",
-          "role": "?",
+          "role": "IV",
           "kills": 2,
           "deaths": 1,
           "assists": 67,
@@ -536,7 +536,7 @@
       "team1": [
         {
           "name": "Crimson Blader",
-          "role": "?",
+          "role": "BR",
           "kills": 10,
           "deaths": 3,
           "assists": 87,
@@ -545,7 +545,7 @@
         },
         {
           "name": "TheClover",
-          "role": "?",
+          "role": "HL",
           "kills": 0,
           "deaths": 0,
           "assists": 21,
@@ -554,7 +554,7 @@
         },
         {
           "name": "Sonnihhh",
-          "role": "?",
+          "role": "BR",
           "kills": 6,
           "deaths": 4,
           "assists": 75,
@@ -563,7 +563,7 @@
         },
         {
           "name": "Ictue",
-          "role": "?",
+          "role": "IV",
           "kills": 2,
           "deaths": 3,
           "assists": 89,
@@ -572,7 +572,7 @@
         },
         {
           "name": "Publiczek",
-          "role": "?",
+          "role": "RD",
           "kills": 6,
           "deaths": 2,
           "assists": 34,
@@ -583,7 +583,7 @@
       "team2": [
         {
           "name": "Rondo",
-          "role": "?",
+          "role": "BR",
           "kills": 1,
           "deaths": 6,
           "assists": 56,
@@ -592,7 +592,7 @@
         },
         {
           "name": "Sachse",
-          "role": "?",
+          "role": "MD",
           "kills": 0,
           "deaths": 5,
           "assists": 21,
@@ -601,7 +601,7 @@
         },
         {
           "name": "Krulaxx",
-          "role": "?",
+          "role": "BR",
           "kills": 4,
           "deaths": 1,
           "assists": 63,
@@ -610,7 +610,7 @@
         },
         {
           "name": "Palimpalim",
-          "role": "?",
+          "role": "RD",
           "kills": 5,
           "deaths": 2,
           "assists": 28,
@@ -619,7 +619,7 @@
         },
         {
           "name": "Lynnxxx",
-          "role": "?",
+          "role": "HL",
           "kills": 0,
           "deaths": 2,
           "assists": 31,
@@ -635,7 +635,7 @@
       "team1": [
         {
           "name": "Raiduru",
-          "role": "?",
+          "role": "MD",
           "kills": 8,
           "deaths": 4,
           "assists": 28,
@@ -644,7 +644,7 @@
         },
         {
           "name": "Hanrich",
-          "role": "?",
+          "role": "HL",
           "kills": 0,
           "deaths": 2,
           "assists": 16,
@@ -653,7 +653,7 @@
         },
         {
           "name": "Palizzii",
-          "role": "?",
+          "role": "VB",
           "kills": 2,
           "deaths": 4,
           "assists": 41,
@@ -662,7 +662,7 @@
         },
         {
           "name": "Ordeus",
-          "role": "?",
+          "role": "MD",
           "kills": 2,
           "deaths": 2,
           "assists": 52,
@@ -671,7 +671,7 @@
         },
         {
           "name": "Blo0ntee",
-          "role": "?",
+          "role": "RD",
           "kills": 12,
           "deaths": 0,
           "assists": 47,
@@ -682,7 +682,7 @@
       "team2": [
         {
           "name": "Chammm",
-          "role": "?",
+          "role": "HD",
           "kills": 3,
           "deaths": 4,
           "assists": 18,
@@ -691,7 +691,7 @@
         },
         {
           "name": "Big Sword Dude",
-          "role": "?",
+          "role": "MD",
           "kills": 4,
           "deaths": 2,
           "assists": 28,
@@ -700,7 +700,7 @@
         },
         {
           "name": "Hopz",
-          "role": "?",
+          "role": "MD",
           "kills": 5,
           "deaths": 4,
           "assists": 20,
@@ -709,7 +709,7 @@
         },
         {
           "name": "Bejonder",
-          "role": "?",
+          "role": "HL",
           "kills": 0,
           "deaths": 2,
           "assists": 6,
@@ -718,7 +718,7 @@
         },
         {
           "name": "Time's Conflux",
-          "role": "?",
+          "role": "VB",
           "kills": 3,
           "deaths": 6,
           "assists": 21,
@@ -734,7 +734,7 @@
       "team1": [
         {
           "name": "TzudemBag",
-          "role": "?",
+          "role": "RD",
           "kills": 3,
           "deaths": 6,
           "assists": 36,
@@ -743,7 +743,7 @@
         },
         {
           "name": "1.618",
-          "role": "?",
+          "role": "HL",
           "kills": 0,
           "deaths": 5,
           "assists": 13,
@@ -752,7 +752,7 @@
         },
         {
           "name": "Ayzvenx",
-          "role": "?",
+          "role": "MD",
           "kills": 6,
           "deaths": 3,
           "assists": 48,
@@ -761,7 +761,7 @@
         },
         {
           "name": "Nykhi",
-          "role": "?",
+          "role": "MD",
           "kills": 4,
           "deaths": 2,
           "assists": 38,
@@ -770,7 +770,7 @@
         },
         {
           "name": "I WhoHow I",
-          "role": "?",
+          "role": "HD",
           "kills": 8,
           "deaths": 1,
           "assists": 43,
@@ -781,7 +781,7 @@
       "team2": [
         {
           "name": "Melglinn",
-          "role": "?",
+          "role": "HL",
           "kills": 0,
           "deaths": 5,
           "assists": 8,
@@ -790,7 +790,7 @@
         },
         {
           "name": "Jxsn",
-          "role": "?",
+          "role": "HD",
           "kills": 3,
           "deaths": 4,
           "assists": 23,
@@ -799,7 +799,7 @@
         },
         {
           "name": "Tzicho",
-          "role": "?",
+          "role": "VB",
           "kills": 4,
           "deaths": 4,
           "assists": 35,
@@ -808,7 +808,7 @@
         },
         {
           "name": "Godias",
-          "role": "?",
+          "role": "MD",
           "kills": 3,
           "deaths": 4,
           "assists": 29,
@@ -817,7 +817,7 @@
         },
         {
           "name": "Darth Jarker",
-          "role": "?",
+          "role": "MD",
           "kills": 4,
           "deaths": 2,
           "assists": 31,
@@ -833,7 +833,7 @@
       "team1": [
         {
           "name": "Queen Screup",
-          "role": "?",
+          "role": "MD",
           "kills": 4,
           "deaths": 3,
           "assists": 35,
@@ -842,7 +842,7 @@
         },
         {
           "name": "BTWEE",
-          "role": "?",
+          "role": "HL",
           "kills": 0,
           "deaths": 2,
           "assists": 15,
@@ -851,7 +851,7 @@
         },
         {
           "name": "Gandalf03",
-          "role": "?",
+          "role": "MD",
           "kills": 6,
           "deaths": 3,
           "assists": 41,
@@ -860,7 +860,7 @@
         },
         {
           "name": "Maseyee",
-          "role": "?",
+          "role": "RD",
           "kills": 5,
           "deaths": 3,
           "assists": 38,
@@ -869,7 +869,7 @@
         },
         {
           "name": "BUKAKU",
-          "role": "?",
+          "role": "HD",
           "kills": 1,
           "deaths": 2,
           "assists": 40,
@@ -880,7 +880,7 @@
       "team2": [
         {
           "name": "Brown-Noise",
-          "role": "?",
+          "role": "HL",
           "kills": 0,
           "deaths": 4,
           "assists": 11,
@@ -889,7 +889,7 @@
         },
         {
           "name": "Farbfleck",
-          "role": "?",
+          "role": "HD",
           "kills": 4,
           "deaths": 4,
           "assists": 26,
@@ -898,7 +898,7 @@
         },
         {
           "name": "Billy Talent II",
-          "role": "?",
+          "role": "MD",
           "kills": 3,
           "deaths": 4,
           "assists": 30,
@@ -907,7 +907,7 @@
         },
         {
           "name": "NevSquared",
-          "role": "?",
+          "role": "RD",
           "kills": 6,
           "deaths": 3,
           "assists": 40,
@@ -916,7 +916,7 @@
         },
         {
           "name": "Senborg",
-          "role": "?",
+          "role": "MD",
           "kills": 7,
           "deaths": 1,
           "assists": 30,

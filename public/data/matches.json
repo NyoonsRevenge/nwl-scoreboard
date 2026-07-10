@@ -1,5 +1,18 @@
 [
   {
+    "slug": "nwl-68",
+    "nwlNumber": 68,
+    "mapName": "Cutless Keys",
+    "date": "09.07.2026",
+    "duration": "30:00",
+    "winner": "team1",
+    "attacker": "team2",
+    "team1Kills": 187,
+    "team2Kills": 142,
+    "team1Name": "Beaverknights",
+    "team2Name": "Capyknights"
+  },
+  {
     "slug": "nwl-67",
     "nwlNumber": 67,
     "mapName": "Ebonscale Reach",
