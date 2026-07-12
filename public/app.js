@@ -672,6 +672,7 @@ const NAME_MAPPING_JSON = {
   "Absolute Drama": "Braczyn/Abso",
   "Kel(CherieFa": "kel(cherieFan",
   "Kel(CherieFai": "kel(cherieFan",
+  "RaninoSPOT": "Ranino",
 
   // === BEGIN: Auto-synced from Character-Names-DB ===
   "Shocking Myself": "MARKEL1to",
@@ -787,6 +788,12 @@ const NAME_MAPPING_JSON = {
   "Nykhi": "Niki",
   "Ta2": "Tattooo",
   "Tattooo": "Ta2",
+
+  // Auto-synced from name_mapping.json
+  "DonBraczyno": "Braczyn/Abso",
+
+  // Auto-synced from name_mapping.json
+  "Tari": "Melglinn",
 };
 
 // Role-specific overrides for ambiguous names. Some players share an in-game
@@ -984,6 +991,8 @@ const ATTACKER_OVERRIDES = {
   'nwl-65': 'team2', // Syndicate (Capyknights) attacked
   'nwl-66': 'team1', // Marauders (Beaverknights) attacked
   'nwl-67': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-68': 'team2', // Syndicate (Capyknights) attacked
+  'nwl-69': 'team2', // Syndicate (Capyknights) attacked
 };
 
 // Matches where the attacker is team2 (Capyknights at top of sheet) but the
@@ -2829,6 +2838,7 @@ function renderChangelogPage() {
         'Merged NWL62 name variants: Goatfryed→goatfryed, BLAACKB3AST→BLACK3AST, Rupp3rt→Ruppert, Jeszo→jormamas slave2, LilNatalie V2→LilNatalie, Billy Talent II→BillyTalent, ShdwTrckr→ShadowTrickier, Lynnxxx→Lynnx, Shiro34→Shiroyasha34, shua→sadshua, Zeraphinea→Zeraphine, NotFjayy→Fjayy, Guni→Proguni, Hanrich→Ganrich, Absolute Drama→Braczyn/Abso',
         'Merged Kel(CherieFa and Kel(CherieFai aliases into kel(cherieFan player profile',
         'Players with missing or unmapped roles now appear on the scoreboard with a "?" badge instead of being hidden',
+        'Merged RaninoSPOT alias into Ranino player profile',
       ]
     },
     {
