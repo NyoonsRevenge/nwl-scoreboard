@@ -13,15 +13,6 @@
       "team2Label": "G1: Point",
       "team1": [
         {
-          "name": "Bjorn(Grumpy",
-          "role": "AoE",
-          "kills": 0,
-          "deaths": 0,
-          "assists": 0,
-          "healing": 0,
-          "damage": 0
-        },
-        {
           "name": "Suzana",
           "role": "HL",
           "kills": 0,
