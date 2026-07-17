@@ -1,0 +1,791 @@
+{
+  "slug": "nwl-70",
+  "nwlNumber": 70,
+  "mapName": "Edengrove",
+  "date": "17.07.2026",
+  "duration": "30:00",
+  "winner": "team2",
+  "attacker": "team1",
+  "groups": [
+    {
+      "label": "G1: Point",
+      "team1Label": "G1: Point",
+      "team2Label": "G1: Point",
+      "team1": [
+        {
+          "name": "Hucky",
+          "role": "AoE",
+          "kills": 0,
+          "deaths": 11,
+          "assists": 26,
+          "healing": 3813849,
+          "damage": 127621
+        },
+        {
+          "name": "KitKat(OnMe",
+          "role": "HL",
+          "kills": 0,
+          "deaths": 3,
+          "assists": 33,
+          "healing": 2136596,
+          "damage": 35233
+        },
+        {
+          "name": "Seiler",
+          "role": "IV",
+          "kills": 2,
+          "deaths": 6,
+          "assists": 69,
+          "healing": 20754,
+          "damage": 1403981
+        },
+        {
+          "name": "Krulaxx",
+          "role": "BR",
+          "kills": 9,
+          "deaths": 5,
+          "assists": 76,
+          "healing": 0,
+          "damage": 2531857
+        },
+        {
+          "name": "Gaehr",
+          "role": "PT",
+          "kills": 1,
+          "deaths": 9,
+          "assists": 65,
+          "healing": 90113,
+          "damage": 341835
+        }
+      ],
+      "team2": [
+        {
+          "name": "Shiroyasha3",
+          "role": "AoE",
+          "kills": 0,
+          "deaths": 0,
+          "assists": 63,
+          "healing": 4321576,
+          "damage": 112067
+        },
+        {
+          "name": "Parship",
+          "role": "IV",
+          "kills": 10,
+          "deaths": 2,
+          "assists": 153,
+          "healing": 21240,
+          "damage": 1152297
+        },
+        {
+          "name": "aespa",
+          "role": "BR",
+          "kills": 13,
+          "deaths": 3,
+          "assists": 135,
+          "healing": 0,
+          "damage": 2360198
+        },
+        {
+          "name": "Irvine",
+          "role": "PT",
+          "kills": 0,
+          "deaths": 4,
+          "assists": 101,
+          "healing": 33703,
+          "damage": 81909
+        }
+      ]
+    },
+    {
+      "label": "G2: Point",
+      "team1Label": "G2: Point",
+      "team2Label": "G2: Point",
+      "team1": [
+        {
+          "name": "Fjayy",
+          "role": "HL",
+          "kills": 0,
+          "deaths": 6,
+          "assists": 30,
+          "healing": 4258225,
+          "damage": 67013
+        },
+        {
+          "name": "Apfel",
+          "role": "BR",
+          "kills": 12,
+          "deaths": 7,
+          "assists": 71,
+          "healing": 0,
+          "damage": 2849401
+        },
+        {
+          "name": "Rondo",
+          "role": "BR",
+          "kills": 2,
+          "deaths": 6,
+          "assists": 70,
+          "healing": 0,
+          "damage": 2216352
+        },
+        {
+          "name": "myopic",
+          "role": "PT",
+          "kills": 0,
+          "deaths": 8,
+          "assists": 65,
+          "healing": 0,
+          "damage": 131053
+        }
+      ],
+      "team2": [
+        {
+          "name": "Cloudninee",
+          "role": "HL",
+          "kills": 0,
+          "deaths": 1,
+          "assists": 75,
+          "healing": 4346932,
+          "damage": 60800
+        },
+        {
+          "name": "Ta2",
+          "role": "BR",
+          "kills": 10,
+          "deaths": 5,
+          "assists": 143,
+          "healing": 0,
+          "damage": 2744152
+        },
+        {
+          "name": "JukerVG",
+          "role": "BR",
+          "kills": 13,
+          "deaths": 2,
+          "assists": 152,
+          "healing": 0,
+          "damage": 2444071
+        },
+        {
+          "name": "Nieksas",
+          "role": "PT",
+          "kills": 1,
+          "deaths": 1,
+          "assists": 160,
+          "healing": 0,
+          "damage": 378838
+        }
+      ]
+    },
+    {
+      "label": "G3: Top weak",
+      "team1Label": "G3: Top weak",
+      "team2Label": "G3: Bottom strong",
+      "team1": [
+        {
+          "name": "BLACKSHP",
+          "role": "HL",
+          "kills": 0,
+          "deaths": 6,
+          "assists": 24,
+          "healing": 3653059,
+          "damage": 23318
+        },
+        {
+          "name": "Zarki",
+          "role": "IV",
+          "kills": 1,
+          "deaths": 5,
+          "assists": 78,
+          "healing": 34361,
+          "damage": 1041606
+        },
+        {
+          "name": "Koku",
+          "role": "BR",
+          "kills": 4,
+          "deaths": 8,
+          "assists": 70,
+          "healing": 0,
+          "damage": 2399333
+        },
+        {
+          "name": "hkN.oO",
+          "role": "BR",
+          "kills": 4,
+          "deaths": 11,
+          "assists": 60,
+          "healing": 0,
+          "damage": 1930382
+        }
+      ],
+      "team2": [
+        {
+          "name": "Tzicho",
+          "role": "HL",
+          "kills": 1,
+          "deaths": 2,
+          "assists": 56,
+          "healing": 3821317,
+          "damage": 79393
+        },
+        {
+          "name": "xBEAT",
+          "role": "IV",
+          "kills": 2,
+          "deaths": 3,
+          "assists": 176,
+          "healing": 11009,
+          "damage": 940614
+        },
+        {
+          "name": "Shiyrow",
+          "role": "BR",
+          "kills": 13,
+          "deaths": 3,
+          "assists": 144,
+          "healing": 0,
+          "damage": 2750446
+        },
+        {
+          "name": "Migi",
+          "role": "BR",
+          "kills": 5,
+          "deaths": 10,
+          "assists": 123,
+          "healing": 0,
+          "damage": 2382519
+        }
+      ]
+    },
+    {
+      "label": "G4: Top Strong",
+      "team1Label": "G4: Top Strong",
+      "team2Label": "G4: Bottom weak",
+      "team1": [
+        {
+          "name": "PinkClover",
+          "role": "HL",
+          "kills": 0,
+          "deaths": 5,
+          "assists": 18,
+          "healing": 2274424,
+          "damage": 33632
+        },
+        {
+          "name": "Ictue",
+          "role": "IV",
+          "kills": 0,
+          "deaths": 7,
+          "assists": 69,
+          "healing": 32099,
+          "damage": 1275555
+        },
+        {
+          "name": "Sonnihh",
+          "role": "BR",
+          "kills": 3,
+          "deaths": 15,
+          "assists": 23,
+          "healing": 0,
+          "damage": 1138988
+        },
+        {
+          "name": "Pappychat",
+          "role": "BR",
+          "kills": 6,
+          "deaths": 12,
+          "assists": 50,
+          "healing": 0,
+          "damage": 1500644
+        }
+      ],
+      "team2": [
+        {
+          "name": "Belle",
+          "role": "HL",
+          "kills": 0,
+          "deaths": 3,
+          "assists": 59,
+          "healing": 2886509,
+          "damage": 51971
+        },
+        {
+          "name": "Kru",
+          "role": "IV",
+          "kills": 6,
+          "deaths": 2,
+          "assists": 162,
+          "healing": 25412,
+          "damage": 1714299
+        },
+        {
+          "name": "Jeszo",
+          "role": "BR",
+          "kills": 10,
+          "deaths": 3,
+          "assists": 132,
+          "healing": 0,
+          "damage": 2308446
+        },
+        {
+          "name": "Shirohigo",
+          "role": "BR",
+          "kills": 6,
+          "deaths": 3,
+          "assists": 148,
+          "healing": 0,
+          "damage": 1728441
+        }
+      ]
+    },
+    {
+      "label": "G5: Bot weak",
+      "team1Label": "G5: Bot weak",
+      "team2Label": "G5: Top strong",
+      "team1": [
+        {
+          "name": "Hawk.-",
+          "role": "HL",
+          "kills": 0,
+          "deaths": 6,
+          "assists": 26,
+          "healing": 2491168,
+          "damage": 61517
+        },
+        {
+          "name": "Nyxie",
+          "role": "IV",
+          "kills": 4,
+          "deaths": 3,
+          "assists": 81,
+          "healing": 26916,
+          "damage": 1299134
+        },
+        {
+          "name": "Hiko",
+          "role": "BR",
+          "kills": 6,
+          "deaths": 6,
+          "assists": 76,
+          "healing": 0,
+          "damage": 2270372
+        },
+        {
+          "name": "Proguni",
+          "role": "BR",
+          "kills": 3,
+          "deaths": 10,
+          "assists": 65,
+          "healing": 0,
+          "damage": 1591598
+        }
+      ],
+      "team2": [
+        {
+          "name": "Djemba",
+          "role": "HL",
+          "kills": 0,
+          "deaths": 2,
+          "assists": 45,
+          "healing": 3441891,
+          "damage": 29806
+        },
+        {
+          "name": "Harambibi",
+          "role": "IV",
+          "kills": 7,
+          "deaths": 3,
+          "assists": 135,
+          "healing": 20537,
+          "damage": 1904127
+        },
+        {
+          "name": "Mablỏỏzẽ",
+          "role": "BR",
+          "kills": 9,
+          "deaths": 4,
+          "assists": 129,
+          "healing": 0,
+          "damage": 1866373
+        },
+        {
+          "name": "sadshua",
+          "role": "BR",
+          "kills": 7,
+          "deaths": 4,
+          "assists": 145,
+          "healing": 0,
+          "damage": 2010324
+        }
+      ]
+    },
+    {
+      "label": "G6: bot strong",
+      "team1Label": "G6: bot strong",
+      "team2Label": "G6: Top weak",
+      "team1": [
+        {
+          "name": "JerryPat",
+          "role": "HL",
+          "kills": 0,
+          "deaths": 1,
+          "assists": 23,
+          "healing": 3484132,
+          "damage": 10527
+        },
+        {
+          "name": "Hammer",
+          "role": "IV",
+          "kills": 0,
+          "deaths": 9,
+          "assists": 56,
+          "healing": 16119,
+          "damage": 1202750
+        },
+        {
+          "name": "ABOSLLOO",
+          "role": "BR",
+          "kills": 7,
+          "deaths": 11,
+          "assists": 53,
+          "healing": 0,
+          "damage": 2240172
+        },
+        {
+          "name": "BLACK3AST",
+          "role": "BR",
+          "kills": 5,
+          "deaths": 9,
+          "assists": 70,
+          "healing": 0,
+          "damage": 2895944
+        }
+      ],
+      "team2": [
+        {
+          "name": "Zeraphine",
+          "role": "HL",
+          "kills": 1,
+          "deaths": 2,
+          "assists": 95,
+          "healing": 3247704,
+          "damage": 148917
+        },
+        {
+          "name": "2xPalim",
+          "role": "RD",
+          "kills": 9,
+          "deaths": 2,
+          "assists": 72,
+          "healing": 0,
+          "damage": 1516424
+        },
+        {
+          "name": "Sachse",
+          "role": "MD",
+          "kills": 4,
+          "deaths": 3,
+          "assists": 101,
+          "healing": 0,
+          "damage": 602976
+        },
+        {
+          "name": "Braczyn/Abs",
+          "role": "BR",
+          "kills": 17,
+          "deaths": 5,
+          "assists": 131,
+          "healing": 0,
+          "damage": 2488227
+        },
+        {
+          "name": "konkfonk",
+          "role": "BR",
+          "kills": 21,
+          "deaths": 4,
+          "assists": 132,
+          "healing": 0,
+          "damage": 2877798
+        }
+      ]
+    },
+    {
+      "label": "G7: Pali/Flex",
+      "team1Label": "G7: Pali/Flex",
+      "team2Label": "G7: Pali/Flex",
+      "team1": [],
+      "team2": []
+    },
+    {
+      "label": "G8: Bonfire",
+      "team1Label": "G8: Bonfire",
+      "team2Label": "G8: Bonfire",
+      "team1": [
+        {
+          "name": "Lynnx",
+          "role": "HL",
+          "kills": 1,
+          "deaths": 5,
+          "assists": 19,
+          "healing": 2258610,
+          "damage": 43448
+        },
+        {
+          "name": "Yami",
+          "role": "VB",
+          "kills": 4,
+          "deaths": 10,
+          "assists": 42,
+          "healing": 32813,
+          "damage": 934991
+        },
+        {
+          "name": "BillyTalent",
+          "role": "MD",
+          "kills": 4,
+          "deaths": 4,
+          "assists": 54,
+          "healing": 19519,
+          "damage": 1291388
+        },
+        {
+          "name": "screup",
+          "role": "MD",
+          "kills": 10,
+          "deaths": 6,
+          "assists": 49,
+          "healing": 0,
+          "damage": 1847456
+        },
+        {
+          "name": "darkie",
+          "role": "HD",
+          "kills": 4,
+          "deaths": 1,
+          "assists": 54,
+          "healing": 0,
+          "damage": 1305801
+        }
+      ],
+      "team2": []
+    },
+    {
+      "label": "G9: Inner narnia",
+      "team1Label": "G9: Inner narnia",
+      "team2Label": "G9: Inner narnia",
+      "team1": [
+        {
+          "name": "Lewis",
+          "role": "HL",
+          "kills": 0,
+          "deaths": 4,
+          "assists": 30,
+          "healing": 2738966,
+          "damage": 90804
+        },
+        {
+          "name": "Yohno",
+          "role": "VB",
+          "kills": 5,
+          "deaths": 7,
+          "assists": 53,
+          "healing": 6554,
+          "damage": 1721438
+        },
+        {
+          "name": "Turio",
+          "role": "MD",
+          "kills": 9,
+          "deaths": 8,
+          "assists": 48,
+          "healing": 0,
+          "damage": 1540312
+        },
+        {
+          "name": "Theo",
+          "role": "MD",
+          "kills": 7,
+          "deaths": 6,
+          "assists": 44,
+          "healing": 0,
+          "damage": 1385146
+        },
+        {
+          "name": "Lumino",
+          "role": "HD",
+          "kills": 4,
+          "deaths": 5,
+          "assists": 35,
+          "healing": 0,
+          "damage": 1107034
+        }
+      ],
+      "team2": [
+        {
+          "name": "Ganrich",
+          "role": "HL",
+          "kills": 0,
+          "deaths": 5,
+          "assists": 46,
+          "healing": 1724623,
+          "damage": 95860
+        },
+        {
+          "name": "Palizzi",
+          "role": "VB",
+          "kills": 4,
+          "deaths": 4,
+          "assists": 128,
+          "healing": 27719,
+          "damage": 1414932
+        },
+        {
+          "name": "Raiderer",
+          "role": "MD",
+          "kills": 18,
+          "deaths": 4,
+          "assists": 100,
+          "healing": 0,
+          "damage": 1795918
+        },
+        {
+          "name": "RobbenKloppen",
+          "role": "MD",
+          "kills": 9,
+          "deaths": 7,
+          "assists": 71,
+          "healing": 17848,
+          "damage": 1218260
+        },
+        {
+          "name": "Farbfleck",
+          "role": "HD",
+          "kills": 5,
+          "deaths": 0,
+          "assists": 60,
+          "healing": 0,
+          "damage": 1319491
+        }
+      ]
+    },
+    {
+      "label": "G10: Outer narnia",
+      "team1Label": "G10: Outer narnia",
+      "team2Label": "G10: Outer narnia",
+      "team1": [
+        {
+          "name": "Revaa",
+          "role": "HL",
+          "kills": 0,
+          "deaths": 6,
+          "assists": 18,
+          "healing": 1593522,
+          "damage": 20926
+        },
+        {
+          "name": "publiczek",
+          "role": "RD",
+          "kills": 9,
+          "deaths": 7,
+          "assists": 34,
+          "healing": 0,
+          "damage": 1330277
+        },
+        {
+          "name": "ras",
+          "role": "MD",
+          "kills": 7,
+          "deaths": 6,
+          "assists": 31,
+          "healing": 0,
+          "damage": 989712
+        },
+        {
+          "name": "bsd",
+          "role": "MD",
+          "kills": 1,
+          "deaths": 8,
+          "assists": 22,
+          "healing": 0,
+          "damage": 817825
+        },
+        {
+          "name": "Bukaku",
+          "role": "HD",
+          "kills": 2,
+          "deaths": 7,
+          "assists": 30,
+          "healing": 0,
+          "damage": 856882
+        }
+      ],
+      "team2": [
+        {
+          "name": "Brown-Noise",
+          "role": "HL",
+          "kills": 0,
+          "deaths": 4,
+          "assists": 28,
+          "healing": 1454301,
+          "damage": 26471
+        },
+        {
+          "name": "Maseye",
+          "role": "RD",
+          "kills": 13,
+          "deaths": 7,
+          "assists": 75,
+          "healing": 0,
+          "damage": 1402035
+        },
+        {
+          "name": "Spyfromzoo",
+          "role": "MD",
+          "kills": 18,
+          "deaths": 5,
+          "assists": 95,
+          "healing": 20248,
+          "damage": 1293967
+        },
+        {
+          "name": "Nykhi",
+          "role": "MD",
+          "kills": 14,
+          "deaths": 5,
+          "assists": 68,
+          "healing": 0,
+          "damage": 1721704
+        },
+        {
+          "name": "Felidaee",
+          "role": "HD",
+          "kills": 4,
+          "deaths": 2,
+          "assists": 69,
+          "healing": 0,
+          "damage": 639537
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "team1": {
+      "kills": 136,
+      "deaths": 275,
+      "assists": 1910,
+      "healing": 28981799,
+      "damage": 45903258
+    },
+    "team2": {
+      "kills": 250,
+      "deaths": 119,
+      "assists": 3707,
+      "healing": 25422569,
+      "damage": 45663608
+    }
+  },
+  "team1Name": "Beaverknights",
+  "team2Name": "Capyknights"
+}
