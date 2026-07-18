@@ -569,7 +569,53 @@
           "damage": 1305801
         }
       ],
-      "team2": []
+      "team2": [
+        {
+          "name": "Tari",
+          "role": "HL",
+          "kills": 0,
+          "deaths": 0,
+          "assists": 13,
+          "healing": 2121583,
+          "damage": 13601
+        },
+        {
+          "name": "END3RR",
+          "role": "VB",
+          "kills": 6,
+          "deaths": 4,
+          "assists": 98,
+          "healing": 32288,
+          "damage": 1278303
+        },
+        {
+          "name": "Jarker",
+          "role": "MD",
+          "kills": 11,
+          "deaths": 6,
+          "assists": 79,
+          "healing": 0,
+          "damage": 1603733
+        },
+        {
+          "name": "Godias",
+          "role": "MD",
+          "kills": 7,
+          "deaths": 4,
+          "assists": 65,
+          "healing": 0,
+          "damage": 1396896
+        },
+        {
+          "name": "Jxsn",
+          "role": "HD",
+          "kills": 1,
+          "deaths": 3,
+          "assists": 75,
+          "healing": 0,
+          "damage": 1093768
+        }
+      ]
     },
     {
       "label": "G9: Inner narnia",
@@ -779,11 +825,11 @@
       "damage": 45903258
     },
     "team2": {
-      "kills": 250,
-      "deaths": 119,
-      "assists": 3707,
-      "healing": 25422569,
-      "damage": 45663608
+      "kills": 275,
+      "deaths": 136,
+      "assists": 4037,
+      "healing": 27576440,
+      "damage": 51049909
     }
   },
   "team1Name": "Beaverknights",
