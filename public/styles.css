@@ -976,6 +976,7 @@ body::after {
 .role-badge.r-VB  { background: var(--r-vb-bg);  color: var(--r-vb);  border: 1px solid var(--r-vb-b); }
 .role-badge.r-CW  { background: var(--r-cw-bg);  color: var(--r-cw);  border: 1px solid var(--r-cw-b); }
 .role-badge.r-unknown { background: rgba(150, 150, 150, 0.15); color: #999; border: 1px solid rgba(150, 150, 150, 0.35); }
+.role-badge.r-goat { background: rgba(212, 175, 55, 0.15); color: #d4af37; border: 1px solid rgba(212, 175, 55, 0.4); font-size: 12px; padding: 2px 5px; letter-spacing: 0; }
 
 /* ═══════════════════════════════════════════
    PLAYER PROFILE PAGE

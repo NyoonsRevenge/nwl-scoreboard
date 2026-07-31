@@ -673,6 +673,9 @@ const NAME_MAPPING_JSON = {
   "Kel(CherieFa": "kel(cherieFan",
   "Kel(CherieFai": "kel(cherieFan",
   "RaninoSPOT": "Ranino",
+  "Cloudninee/E": "Cloudninee/Blamy",
+  "Cloudninee/": "Cloudninee/Blamy",
+  "Cloudninee/l": "Cloudninee/Blamy",
 
   // === BEGIN: Auto-synced from Character-Names-DB ===
   "Shocking Myself": "MARKEL1to",
@@ -794,6 +797,14 @@ const NAME_MAPPING_JSON = {
 
   // Auto-synced from name_mapping.json
   "Tari": "Melglinn",
+
+  // Auto-synced from name_mapping.json
+  "HealsIfYouStep": "belle",
+  "King R0NDO": "Rondo",
+
+  // Auto-synced from name_mapping.json
+  "Swifty": "i'm clicking",
+  "i'm clicking": "Swifty",
 };
 
 // Role-specific overrides for ambiguous names. Some players share an in-game
@@ -852,7 +863,13 @@ function buildNameLookup() {
 }
 
 function roleBadgeClass(role) {
-  return (!role || role === '?') ? 'r-unknown' : `r-${role}`;
+  if (!role || role === '?') return 'r-unknown';
+  if (role === 'GOAT') return 'r-goat';
+  return `r-${role}`;
+}
+
+function roleBadgeText(role) {
+  return role === 'GOAT' ? '🐐' : role;
 }
 
 function getCanonicalName(name, role) {
@@ -993,6 +1010,9 @@ const ATTACKER_OVERRIDES = {
   'nwl-67': 'team1', // Marauders (Beaverknights) attacked
   'nwl-68': 'team2', // Syndicate (Capyknights) attacked
   'nwl-69': 'team2', // Syndicate (Capyknights) attacked
+  'nwl-70': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-71': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-72': 'team1', // Marauders (Beaverknights) attacked
 };
 
 // Matches where the attacker is team2 (Capyknights at top of sheet) but the
@@ -2189,7 +2209,7 @@ function roleMVPsHTML(data) {
     });
     cards += `<div class="mvp-card mvp-card-${badge}">
       <div class="mvp-card-head">
-        <span class="role-badge ${roleBadgeClass(badge)}">${badge}</span>
+        <span class="role-badge ${roleBadgeClass(badge)}">${roleBadgeText(badge)}</span>
         <span class="mvp-role-name">${MVP_ROLE_NAMES[bucket] || bucket}</span>
       </div>
       ${entries}
@@ -2377,7 +2397,7 @@ function makePlayerRow(p, team) {
   const canonical = getCanonicalName(p.name, p.role);
   const playerLink = `<a onclick="navigate('#/player/${encodePlayerForLink(canonical)}')">${p.name}</a>`;
   return `<tr class="${cls}">
-    <td class="pt-role"><span class="role-badge ${roleBadgeClass(p.role)}">${p.role}</span></td>
+    <td class="pt-role"><span class="role-badge ${roleBadgeClass(p.role)}">${roleBadgeText(p.role)}</span></td>
     <td class="pt-name">${playerLink}</td>
     ${getVodCell(p.name, p.role)}
     <td class="pt-num pt-kills">${p.kills}</td>
@@ -2394,7 +2414,7 @@ function makeExcelPlayerRow(p, team) {
   const canonical = getCanonicalName(p.name, p.role);
   const playerLink = `<a onclick="navigate('#/player/${encodePlayerForLink(canonical)}')">${p.name}</a>`;
   return `<tr class="${cls}" style="border-left:none;">
-    <td class="pt-role"><span class="role-badge ${roleBadgeClass(p.role)}">${p.role}</span></td>
+    <td class="pt-role"><span class="role-badge ${roleBadgeClass(p.role)}">${roleBadgeText(p.role)}</span></td>
     <td class="pt-name">${playerLink}</td>
     ${getVodCell(p.name, p.role)}
     <td class="pt-num pt-kills">${p.kills}</td>
@@ -2601,7 +2621,7 @@ function renderExcelViewGroup(g, team, placeholderLabel) {
             const canonical = getCanonicalName(p.name, p.role);
             const playerLink = `<a onclick="navigate('#/player/${encodePlayerForLink(canonical)}')">${p.name}</a>`;
             return `<tr class="${rowClass}" style="border-left:none;">
-              <td class="pt-role"><span class="role-badge ${roleBadgeClass(p.role)}">${p.role}</span></td>
+              <td class="pt-role"><span class="role-badge ${roleBadgeClass(p.role)}">${roleBadgeText(p.role)}</span></td>
               <td class="pt-name">${playerLink}</td>
               ${getVodCell(p.name, p.role)}
               <td class="pt-num pt-kills">${p.kills}</td>
@@ -3096,7 +3116,7 @@ function renderPlayerPage(playerName) {
       <div class="player-role-filter-buttons">
         <button class="role-filter-btn ${!_playerRoleFilter ? 'active' : ''}" onclick="setPlayerRoleFilter(null, '${canon.replace(/'/g, "\\x27")}')">All</button>
         ${sorted.map(r => `<button class="role-filter-btn ${_playerRoleFilter === r ? 'active' : ''}" onclick="setPlayerRoleFilter('${r}', '${canon.replace(/'/g, "\\x27")}')">
-          <span class="role-badge ${roleBadgeClass(r)}">${r}</span> <span class="role-filter-count">${roleCounts[r]}</span>
+          <span class="role-badge ${roleBadgeClass(r)}">${roleBadgeText(r)}</span> <span class="role-filter-count">${roleCounts[r]}</span>
         </button>`).join('')}
       </div>
     </div>`;
@@ -3139,7 +3159,7 @@ function renderPlayerPage(playerName) {
         <td class="pm-date">${a.date}</td>
         <td class="pm-date">${teamLabel}</td>
         <td class="pm-date">${a.group}</td>
-        <td><span class="role-badge ${roleBadgeClass(a.player.role)}">${a.player.role}</span></td>
+        <td><span class="role-badge ${roleBadgeClass(a.player.role)}">${roleBadgeText(a.player.role)}</span></td>
         <td class="pm-num">${a.player.kills}</td>
         <td class="pm-num">${a.player.deaths}</td>
         <td class="pm-num">${a.player.assists}</td>
@@ -3372,7 +3392,7 @@ function renderTierListPage() {
     const badge = tierBadgeOf(b);
     const active = _tierFilter.has(b) ? 'active' : '';
     filterBtns += `<button class="tier-filter-btn ${active}" onclick="toggleTierFilter('${b}')">
-      <span class="role-badge ${roleBadgeClass(badge)}">${badge}</span>
+      <span class="role-badge ${roleBadgeClass(badge)}">${roleBadgeText(badge)}</span>
       <span class="tier-filter-name">${TIER_BUCKET_NAMES[b] || b}</span>
     </button>`;
   }
@@ -3397,7 +3417,7 @@ function renderTierListPage() {
       const badge = tierBadgeOf(b);
       const rowExtra = (b === lastBucket) ? ' tier-row-last' : '';
       grid += `<div class="tier-grid-cell tier-grid-head tier-row-${badge}${rowExtra}">
-        <span class="role-badge ${roleBadgeClass(badge)}">${badge}</span>
+        <span class="role-badge ${roleBadgeClass(badge)}">${roleBadgeText(badge)}</span>
         <span class="tier-col-name">${TIER_BUCKET_NAMES[b] || b}</span>
         <span class="tier-col-count">${(buckets[b] || []).length} players</span>
       </div>`;
