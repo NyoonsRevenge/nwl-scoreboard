@@ -625,17 +625,7 @@
           "damage": 496781
         }
       ],
-      "team2": [
-        {
-          "name": "Tzicho",
-          "role": "?",
-          "kills": 2,
-          "deaths": 1,
-          "assists": 30,
-          "healing": 0,
-          "damage": 462890
-        }
-      ]
+      "team2": []
     },
     {
       "label": "G8: Bonfire",
@@ -944,11 +934,11 @@
       "damage": 50704172
     },
     "team2": {
-      "kills": 230,
-      "deaths": 152,
-      "assists": 3470,
+      "kills": 228,
+      "deaths": 151,
+      "assists": 3440,
       "healing": 32105457,
-      "damage": 55215831
+      "damage": 54752941
     }
   },
   "team1Name": "Beaverknights",
