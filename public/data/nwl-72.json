@@ -31,13 +31,13 @@
           "damage": 72527
         },
         {
-          "name": "Arvaysa",
-          "role": "BR",
-          "kills": 1,
-          "deaths": 13,
-          "assists": 29,
-          "healing": 0,
-          "damage": 531260
+          "name": "Brit-ish",
+          "role": "IV",
+          "kills": 0,
+          "deaths": 14,
+          "assists": 74,
+          "healing": 13404,
+          "damage": 1046934
         },
         {
           "name": "Rondo",
@@ -211,13 +211,13 @@
           "damage": 60345
         },
         {
-          "name": "MYSTERY 1",
+          "name": "Arvaysa",
           "role": "BR",
-          "kills": 0,
-          "deaths": 0,
-          "assists": 0,
+          "kills": 1,
+          "deaths": 13,
+          "assists": 29,
           "healing": 0,
-          "damage": 0
+          "damage": 531260
         },
         {
           "name": "Norse",
@@ -301,13 +301,13 @@
       "team2Label": "G4: Bottom weak",
       "team1": [
         {
-          "name": "Hawk.-",
+          "name": "Barri Level",
           "role": "HL",
           "kills": 0,
           "deaths": 0,
-          "assists": 0,
-          "healing": 0,
-          "damage": 0
+          "assists": 34,
+          "healing": 3189776,
+          "damage": 28541
         },
         {
           "name": "Senborg",
@@ -409,13 +409,13 @@
           "damage": 144326
         },
         {
-          "name": "Brit-ish",
-          "role": "RD",
-          "kills": 0,
-          "deaths": 0,
-          "assists": 0,
+          "name": "c0rpl",
+          "role": "PT",
+          "kills": 2,
+          "deaths": 1,
+          "assists": 48,
           "healing": 0,
-          "damage": 0
+          "damage": 496781
         },
         {
           "name": "Zarki",
@@ -596,35 +596,7 @@
       "label": "G7: Pali/Flex",
       "team1Label": "G7: Pali/Flex",
       "team2Label": "G7: Pali/Flex",
-      "team1": [
-        {
-          "name": "Barri Level",
-          "role": "HL",
-          "kills": 0,
-          "deaths": 0,
-          "assists": 34,
-          "healing": 3189776,
-          "damage": 28541
-        },
-        {
-          "name": "Green is Life",
-          "role": "PT",
-          "kills": 0,
-          "deaths": 14,
-          "assists": 74,
-          "healing": 13404,
-          "damage": 1046934
-        },
-        {
-          "name": "c0rpl",
-          "role": "PT",
-          "kills": 2,
-          "deaths": 1,
-          "assists": 48,
-          "healing": 0,
-          "damage": 496781
-        }
-      ],
+      "team1": [],
       "team2": []
     },
     {
