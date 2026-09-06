@@ -84,6 +84,13 @@ ATTACKER_OVERRIDES = {
     'nwl-65': 'team2',  # Syndicate (Capyknights) attacked
     'nwl-66': 'team1',  # Marauders (Beaverknights) attacked
     'nwl-67': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-68': 'team2',  # Syndicate (Capyknights) attacked
+    'nwl-69': 'team2',  # Syndicate (Capyknights) attacked
+    'nwl-70': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-71': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-72': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-100': 'team1',  # Marauders (Beaverknights) attacked
+    'nwl-73': 'team2',  # Syndicate (Capyknights) attacked
 }
 
 # Matches where ATTACKER_OVERRIDES corrects the label but players are already
@@ -854,7 +861,31 @@ def main():
             'team2Name': 'Capyknights',
         })
 
-    with open(os.path.join(OUT_DIR, 'matches.json'), 'w', encoding='utf-8') as f:
+    # Preserve matches that exist only as hand-written JSON (no spreadsheet tab).
+    # Some wars are recorded without player stats and are added directly to
+    # matches.json + nwl-<n>.json. Rebuilding purely from the sheet would drop
+    # them on every sync, so carry over any entry whose slug we didn't just
+    # produce and whose detail file is still on disk.
+    produced = {m['slug'] for m in matches}
+    manual_path = os.path.join(OUT_DIR, 'matches.json')
+    if os.path.exists(manual_path):
+        try:
+            with open(manual_path, 'r', encoding='utf-8') as f:
+                previous = json.load(f)
+        except Exception as e:
+            print(f'  Could not read existing matches.json ({e}) — not preserving manual entries')
+            previous = []
+        for prev in previous:
+            slug = prev.get('slug')
+            if not slug or slug in produced:
+                continue
+            if os.path.exists(os.path.join(OUT_DIR, f'{slug}.json')):
+                matches.append(prev)
+                print(f"  Preserved manual entry without sheet tab: {slug}")
+
+    matches.sort(key=lambda m: -(m.get('nwlNumber') or 0))
+
+    with open(manual_path, 'w', encoding='utf-8') as f:
         json.dump(matches, f, ensure_ascii=False, indent=2)
 
     print(f'\nExtracted {len(matches)} matches to {OUT_DIR}')

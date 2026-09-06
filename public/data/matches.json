@@ -1,5 +1,19 @@
 [
   {
+    "slug": "nwl-74",
+    "nwlNumber": 74,
+    "mapName": "Windsward",
+    "date": "31.08.2026",
+    "duration": null,
+    "winner": "team1",
+    "attacker": "team2",
+    "team1Kills": 0,
+    "team2Kills": 0,
+    "team1Name": "Beaverknights",
+    "team2Name": "Capyknights",
+    "noPlayerData": true
+  },
+  {
     "slug": "nwl-73",
     "nwlNumber": 73,
     "mapName": "Ebonscale Reach",

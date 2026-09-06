@@ -2528,3 +2528,146 @@ body::after {
   transition: width 80ms linear;
 }
 
+
+/* ═══════════════════════════════════════════
+   MAINTENANCE MODE + "no data" notice
+   ═══════════════════════════════════════════ */
+
+/* Homepage bleibt sichtbar, tritt aber hinter die Meldung zurueck. */
+#app.maint-blurred {
+  filter: blur(6px) saturate(.6) brightness(.5);
+  pointer-events: none;
+  user-select: none;
+}
+
+.maint-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow-y: auto;
+  background: radial-gradient(ellipse at center,
+              rgba(6,10,14,.70) 0%, rgba(6,10,14,.93) 100%);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+.maint-card {
+  width: 100%;
+  max-width: 620px;
+  text-align: center;
+  padding: 42px 34px 30px;
+  border: 1px solid var(--gold-dim);
+  border-radius: 10px;
+  background: linear-gradient(180deg, var(--surface2), var(--surface));
+  box-shadow: 0 26px 70px rgba(0,0,0,.66), inset 0 1px 0 rgba(201,168,76,.10);
+}
+
+.maint-eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: .34em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.maint-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(26px, 5vw, 40px);
+  font-weight: 900;
+  letter-spacing: .04em;
+  color: var(--gold-bright);
+  margin: 0 0 18px;
+  text-shadow: 0 0 26px rgba(232,197,90,.22);
+}
+
+.maint-text {
+  font-family: 'EB Garamond', serif;
+  font-size: 17px;
+  line-height: 1.68;
+  color: var(--text);
+  margin: 0 auto 26px;
+  max-width: 46ch;
+}
+
+.maint-countdown {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.maint-cd-cell {
+  min-width: 74px;
+  padding: 12px 8px 10px;
+  border: 1px solid var(--gold-dim);
+  border-radius: 7px;
+  background: rgba(201,168,76,.06);
+}
+
+.maint-cd-val {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 27px;
+  line-height: 1;
+  color: var(--gold-bright);
+  font-variant-numeric: tabular-nums;
+}
+
+.maint-cd-lbl {
+  display: block;
+  margin-top: 7px;
+  font-size: 9.5px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.maint-soon {
+  font-family: 'Cinzel', serif;
+  font-size: 20px;
+  letter-spacing: .08em;
+  color: var(--gold-bright);
+}
+
+.maint-joke {
+  margin: 4px auto 0;
+  padding-top: 18px;
+  max-width: 54ch;
+  border-top: 1px solid var(--gold-dim);
+  font-size: 15px;
+  line-height: 1.7;
+  font-style: italic;
+  /* Bewusst heller als --text-dim (5.9:1): 9.0:1 gegen den Kartenhintergrund.
+     Bleibt durch Kursivschrift und kleinere Groesse dem Haupttext (17px)
+     untergeordnet, ist aber klar lesbar statt zu verschwinden. */
+  color: #adb6c8;
+}
+
+@media (max-width: 520px) {
+  .maint-card { padding: 30px 20px 24px; }
+  .maint-text { font-size: 15.5px; }
+  .maint-cd-cell { min-width: 62px; padding: 10px 6px 8px; }
+  .maint-cd-val { font-size: 22px; }
+}
+
+/* Match ohne erfasste Spielerdaten */
+.no-data-note {
+  margin: 0 0 22px;
+  padding: 14px 18px;
+  border: 1px solid var(--gold-dim);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 6px 6px 0;
+  background: rgba(201,168,76,.06);
+  font-family: 'EB Garamond', serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+.no-data-note strong { color: var(--gold-bright); font-weight: 600; }

@@ -11,6 +11,14 @@ let _loadingQuoteInterval = null;
 let vodData = null; // cached vods.json
 let currentMatchVods = {}; // canonical player name -> VOD url for current match
 
+/* ── Wartungsmodus ─────────────────────────────────────────────────────────
+   Legt eine Wartungsmeldung ueber die unscharf gestellte Seite.
+   Abschalten:  MAINTENANCE_MODE = false
+   Umgehen:     ?nomaint=1 an die URL haengen (zum Selbst-Nachschauen)      */
+const MAINTENANCE_MODE = true;
+// 12:00 deutsche Ortszeit am 07.09.2026 (CEST = UTC+2, Sommerzeit gilt noch).
+const MAINTENANCE_TARGET = new Date('2026-09-07T12:00:00+02:00');
+
 // ==========================================
 //  LOADING EASTER EGG QUOTES
 // ==========================================
@@ -805,6 +813,63 @@ const NAME_MAPPING_JSON = {
   // Auto-synced from name_mapping.json
   "Swifty": "i'm clicking",
   "i'm clicking": "Swifty",
+
+  // Auto-synced from name_mapping.json
+  "goatfryd": "goatfryed",
+
+  // Auto-synced from name_mapping.json
+  "Hop on Jesoz": "Jeszo",
+
+  // Auto-synced from name_mapping.json
+  "Rouse": "CptRouse",
+
+  // Auto-synced from name_mapping.json
+  "Turio13": "Turio",
+
+  // Auto-synced from name_mapping.json
+  "Iam Norse": "Norse",
+
+  // Auto-synced from name_mapping.json
+  "PinkOnPoint": "PinkClover",
+
+  // Auto-synced from name_mapping.json
+  "Behind me": "Sonnihh",
+
+  // Auto-synced from name_mapping.json
+  "Senborq": "Senborg",
+
+  // Auto-synced from name_mapping.json
+  "Killer Kitten": "Nalany",
+
+  // Auto-synced from name_mapping.json
+  "IfIspeak...": "DrCosta",
+  "NWLWINNER": "Yohno",
+  "Nalany": "Killer Kitten",
+  "PinkClover": "PinkOnPoint",
+  "RedbullAmba": "RedbullAmba",
+  "Sonnihh": "Behind me",
+  "Yohno": "NWLWINNER",
+
+  // Auto-synced from name_mapping.json
+  "Lachs Haudrauf": "BjörnHaudrauf",
+
+  // Auto-synced from name_mapping.json
+  "Tierlok": "Tier",
+
+  // Auto-synced from name_mapping.json
+  "HammerCD": "Hammer",
+
+  // Auto-synced from name_mapping.json
+  "Calçot": "Calcot",
+
+  // Auto-synced from name_mapping.json
+  "Bjorn Trond": "Trond",
+
+  // Auto-synced from name_mapping.json
+  "Opercent skill": "Revaa",
+
+  // Auto-synced from name_mapping.json
+  "Gaehr Rathma": "Gaehr",
 };
 
 // Role-specific overrides for ambiguous names. Some players share an in-game
@@ -1013,6 +1078,8 @@ const ATTACKER_OVERRIDES = {
   'nwl-70': 'team1', // Marauders (Beaverknights) attacked
   'nwl-71': 'team1', // Marauders (Beaverknights) attacked
   'nwl-72': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-100': 'team1', // Marauders (Beaverknights) attacked
+  'nwl-73': 'team2', // Syndicate (Capyknights) attacked
 };
 
 // Matches where the attacker is team2 (Capyknights at top of sheet) but the
@@ -1658,15 +1725,17 @@ async function buildMatchesFromSheets() {
     }
   }
 
-  // If sheets were entirely unavailable, pick up any static-only matches we haven't added yet.
-  if (!entries.length) {
-    for (const m of staticSummaries) {
-      if (matchDetails[m.slug]) continue;
-      const detail = await loadStaticMatchDetail(m.slug);
-      if (detail) {
-        matchDetails[m.slug] = detail;
-        matchList.push(m);
-      }
+  // Pick up any static-only matches we haven't added yet. This covers two cases:
+  //   1. Sheets was entirely unavailable (pure-static fallback).
+  //   2. A match exists only in matches.json because it was never entered into
+  //      the spreadsheet (e.g. a war where no stats were collected).
+  // Purely additive — slugs already built from the sheet are skipped.
+  for (const m of staticSummaries) {
+    if (matchDetails[m.slug]) continue;
+    const detail = await loadStaticMatchDetail(m.slug);
+    if (detail) {
+      matchDetails[m.slug] = detail;
+      matchList.push(m);
     }
   }
 
@@ -2238,6 +2307,10 @@ function toggleMvpPanel() {
 }
 
 function renderMatchPage(data) {
+  // Manche Wars wurden ohne Spielerstatistiken erfasst — dann waeren MVPs,
+  // Filter und Gruppen leer und das 0:0 im Scoreboard irrefuehrend.
+  const hasPlayerData = (data.groups || []).some(
+    g => (g.team1 || []).length || (g.team2 || []).length);
   const t1 = data.totals.team1;
   const t2 = data.totals.team2;
   const t1k = t1.kills || 0;
@@ -2304,9 +2377,15 @@ function renderMatchPage(data) {
       </div>
     </div>
 
-    ${isMvpEnabled() ? roleMVPsHTML(data) : ''}
+    ${hasPlayerData ? '' : `<div class="no-data-note">
+      <strong>No player data recorded for this match.</strong>
+      Only the result was logged — map, date and winner. Kill counts below show
+      as 0 because no scoreboard was captured.
+    </div>`}
 
-    <div class="filter-toolbar">
+    ${hasPlayerData && isMvpEnabled() ? roleMVPsHTML(data) : ''}
+
+    <div class="filter-toolbar"${hasPlayerData ? '' : ' style="display:none"'}>
       <div class="filter-panel" id="filter-panel">
         <div class="filter-header" onclick="toggleFilterPanel()">
           <span class="filter-header-text">Filters</span>
@@ -2851,6 +2930,15 @@ function renderSearchPage() {
 
 function renderChangelogPage() {
   const entries = [
+    {
+      date: '06.09.2026',
+      changes: [
+        'Added NWL#74 (Windsward, 31.08.2026) — Beaverknights won as defenders. No player stats were captured for this war, so the match page shows the result only, with a note explaining the empty scoreboard.',
+        'Matches that exist only as static JSON (no spreadsheet tab) are now always merged into the match list — previously they only appeared when Google Sheets was completely unreachable.',
+        'extract-data.py keeps hand-added matches that have no spreadsheet tab instead of dropping them on the next auto-sync.',
+        'Maintenance mode: the site now shows a maintenance notice with a live countdown over the dimmed homepage.',
+      ]
+    },
     {
       date: '19.06.2026',
       changes: [
@@ -3534,9 +3622,62 @@ window.addEventListener('resize', () => {
   }
 });
 
+// -- Wartungsmodus-Overlay --
+// Liegt als eigenes Element auf <body>, nicht in #app — so ueberlebt es jedes
+// Re-Render der Seite darunter.
+function initMaintenanceOverlay() {
+  if (!MAINTENANCE_MODE) return;
+  if (new URLSearchParams(location.search).has('nomaint')) return;
+
+  app.classList.add('maint-blurred');
+
+  const ov = document.createElement('div');
+  ov.className = 'maint-overlay';
+  ov.innerHTML = `
+    <div class="maint-card">
+      <div class="maint-eyebrow">New World League</div>
+      <h1 class="maint-title">Under Maintenance</h1>
+      <p class="maint-text">
+        The NWL Scoreboard is getting one last big update before it goes silent
+        for good. The update should be done tomorrow, 07.09.2026, at around
+        12:00 CEST.
+      </p>
+      <div class="maint-countdown" id="maint-countdown"></div>
+      <p class="maint-joke">
+        (Estimate given in Aeternum Standard Time, where a 30-minute maintenance
+        window has historically lasted until dinner. If the timer hits zero and
+        nothing has changed &mdash; that is not a bug, that is tradition.)
+      </p>
+    </div>`;
+  document.body.appendChild(ov);
+
+  const out = ov.querySelector('#maint-countdown');
+  const cell = (v, l) =>
+    `<div class="maint-cd-cell"><span class="maint-cd-val">${String(v).padStart(2, '0')}</span>` +
+    `<span class="maint-cd-lbl">${l}</span></div>`;
+
+  const tick = () => {
+    // Gegen die Systemzeit des Besuchers, nicht gegen eine Serverzeit.
+    const ms = MAINTENANCE_TARGET.getTime() - Date.now();
+    if (ms <= 0) {
+      out.innerHTML = '<div class="maint-soon">Any moment now&hellip;</div>';
+      return;
+    }
+    const d = Math.floor(ms / 86400000);
+    const h = Math.floor(ms / 3600000) % 24;
+    const m = Math.floor(ms / 60000) % 60;
+    const s = Math.floor(ms / 1000) % 60;
+    out.innerHTML = (d > 0 ? cell(d, d === 1 ? 'Day' : 'Days') : '')
+      + cell(h, 'Hours') + cell(m, 'Minutes') + cell(s, 'Seconds');
+  };
+  tick();
+  setInterval(tick, 1000);
+}
+
 // -- Initial render --
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => render());
+  document.addEventListener('DOMContentLoaded', () => { render(); initMaintenanceOverlay(); });
 } else {
   render();
+  initMaintenanceOverlay();
 }
