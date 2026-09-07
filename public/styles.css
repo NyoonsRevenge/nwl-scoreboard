@@ -1941,6 +1941,7 @@ body::after {
 .ev-table .pt-num { font-size: 11px; }
 .ev-table .pt-role { padding: 3px 2px; }
 .ev-table .role-badge { font-size: 8px; padding: 2px 4px; }
+.ev-table .pm-mvp { font-size: 10px; margin-left: 3px; }
 
 /* ═══════════════════════════════════════════
    RESPONSIVE
@@ -2416,6 +2417,33 @@ body::after {
   flex-shrink: 0;
   font-family: 'Share Tech Mono', monospace;
 }
+
+/* Match-MVP counter on a tier chip. Sits between name and game count and is
+   the only gold element in the grid, so MVPs pop out of the role rows. */
+.tier-chip-mvp {
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: 1px 5px;
+  border: 1px solid rgba(201,168,76,.45);
+  border-radius: 3px;
+  background: rgba(201,168,76,.12);
+  color: var(--gold-bright);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.tier-chip.has-mvp {
+  border-color: rgba(201,168,76,.30);
+}
+.tier-chip.has-mvp:hover .tier-chip-mvp {
+  background: rgba(201,168,76,.24);
+}
+/* Same badge reused inline in the header legend. */
+.tier-legend-star {
+  display: inline-block;
+  vertical-align: baseline;
+  margin: 0 2px;
+}
 .tier-empty {
   padding: 60px 20px;
   text-align: center;
@@ -2545,7 +2573,10 @@ body::after {
   inset: 0;
   z-index: 9999;
   display: flex;
-  align-items: center;
+  /* Zentriert wird ueber margin:auto der Karte, nicht ueber align-items:
+     bei align-items:center wird ein zu hoher Inhalt oben abgeschnitten und
+     laesst sich nicht mehr hochscrollen. */
+  align-items: flex-start;
   justify-content: center;
   padding: 24px;
   overflow-y: auto;
@@ -2558,6 +2589,7 @@ body::after {
 .maint-card {
   width: 100%;
   max-width: 620px;
+  margin: auto;
   text-align: center;
   padding: 42px 34px 30px;
   border: 1px solid var(--gold-dim);
@@ -2671,3 +2703,684 @@ body::after {
   color: var(--text-dim);
 }
 .no-data-note strong { color: var(--gold-bright); font-weight: 600; }
+
+/* ═══════════════════════════════════════════
+   LEAGUE STATS PAGES
+   Records · MVP Leaderboard · Map Stats · Compare
+   ═══════════════════════════════════════════ */
+
+.stats-section-title {
+  margin: 34px 0 14px;
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+
+.stats-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.stats-card-head {
+  padding: 10px 14px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.stats-card-note {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .05em;
+  text-transform: none;
+  color: var(--muted);
+  margin-left: 6px;
+}
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.stats-table th {
+  padding: 9px 12px;
+  text-align: left;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.stats-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(26,34,51,.6);
+  vertical-align: middle;
+}
+.stats-table tbody tr:last-child td { border-bottom: none; }
+.stats-table tbody tr:hover { background: rgba(255,255,255,.025); }
+
+.stats-rank {
+  width: 30px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: right;
+}
+.stats-who { min-width: 0; }
+.stats-num {
+  text-align: right;
+  font-family: 'Share Tech Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* Ohne diese Regel bleiben die Spaltenkoepfe der Zahlenspalten linksbuendig:
+   ".stats-table th" ist spezifischer als ".stats-num" und gewinnt sonst mit
+   seinem text-align:left. Die Ueberschrift stuende dann ueber der falschen
+   Kante ihrer Werte. */
+.stats-table th.stats-num { text-align: right; }
+.stats-table th.stats-rank { text-align: center; }
+.stats-dim { color: var(--text-dim); }
+.stats-empty {
+  padding: 30px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.stats-player {
+  color: var(--text);
+  text-decoration: none;
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+}
+.stats-player:hover { color: var(--gold); border-bottom-color: var(--gold); }
+
+.stats-match {
+  color: var(--text-dim);
+  text-decoration: none;
+  cursor: pointer;
+}
+.stats-match:hover { color: var(--gold); }
+
+.stats-sub {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.stats-tablewrap {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow-x: auto;
+  background: var(--surface);
+}
+.stats-table-wide { min-width: 620px; }
+
+/* Highlight box (attacker win rate) */
+.stats-highlight {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-bottom: 20px;
+  padding: 20px 24px;
+  border: 1px solid var(--gold-dim);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(201,168,76,.07), rgba(201,168,76,.02));
+}
+.stats-highlight-val {
+  font-family: 'Cinzel', serif;
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--gold-bright);
+  flex-shrink: 0;
+}
+.stats-highlight-lbl {
+  font-family: 'EB Garamond', serif;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+/* MVP leaderboard */
+.mvpl-total {
+  color: var(--gold-bright);
+  font-weight: 700;
+  font-size: 15px;
+}
+.mvpl-roles { display: flex; flex-wrap: wrap; gap: 6px; }
+.mvpl-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+/* Map stats */
+.map-t1 { color: var(--t1-text); }
+.map-t2 { color: var(--t2-text); }
+.map-barcell { min-width: 150px; }
+.map-bar {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--t2);
+  overflow: hidden;
+}
+.map-bar-t1 { height: 100%; background: var(--t1); }
+.map-bar-lbl {
+  display: block;
+  margin-top: 4px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+/* Compare */
+.compare-pickers {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+.compare-pickers-vs {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.compare-hint {
+  padding: 44px 20px;
+  text-align: center;
+  color: var(--muted);
+  font-family: 'EB Garamond', serif;
+  font-size: 16px;
+  border: 1px dashed var(--border2);
+  border-radius: 8px;
+}
+.compare-heads {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 12px;
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  background: var(--surface2);
+}
+.compare-head {
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 18px;
+  font-weight: 700;
+}
+.compare-vs {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--border);
+  border-radius: 0 0 6px 6px;
+  overflow: hidden;
+  background: var(--surface);
+}
+.compare-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(26,34,51,.6);
+}
+.compare-table tr:last-child td { border-bottom: none; }
+.cmp-label {
+  width: 40%;
+  text-align: center;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.cmp-val {
+  width: 30%;
+  text-align: center;
+  font-family: 'Share Tech Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 16px;
+  color: var(--text);
+}
+/* Setzt die Bloecke Kennzahlen / Durchschnitte / Summen voneinander ab.
+   Die erste Zeile eines Blocks bekommt eine feine Linie darueber. */
+.compare-table tr.cmp-gap td { border-top: 1px solid var(--border2); padding-top: 14px; }
+.compare-table tr.cmp-gap:first-child td { border-top: 0; }
+
+.cmp-win { color: var(--t1-text); font-weight: 700; }
+.cmp-lose { color: var(--text-dim); }
+/* Gleichstand: beide Seiten gleich hell, damit die Zeile bewusst
+   unentschieden aussieht und nicht so, als waere die Faerbung vergessen
+   worden. Faerbung deshalb explizit, nicht durch Weglassen der Klasse. */
+.cmp-tie { color: var(--text); }
+
+@media (max-width: 640px) {
+  .stats-grid { grid-template-columns: 1fr; }
+  .stats-highlight { flex-direction: column; text-align: center; gap: 12px; }
+  .stats-highlight-val { font-size: 36px; }
+  .compare-pickers-vs { display: none; }
+  .cmp-val { font-size: 14px; }
+  .compare-head { font-size: 15px; }
+}
+
+/* ═══════════════════════════════════════════
+   NAV: NEW tags, drawer grouping, quick shortcuts
+   ═══════════════════════════════════════════ */
+
+/* Pushes Support / VOD / Changelog to the bottom of the drawer. */
+.nav-spacer { flex: 1 1 auto; min-height: 18px; }
+
+.nav-new,
+.quick-new {
+  margin-left: 8px;
+  padding: 1px 5px;
+  border: 1px solid rgba(201,168,76,.5);
+  border-radius: 3px;
+  background: rgba(201,168,76,.16);
+  color: var(--gold-bright);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  vertical-align: middle;
+}
+
+.quick-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 0 18px;
+}
+.quick-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  background: rgba(13,18,24,.7);
+  color: var(--text-dim);
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.quick-btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  opacity: .85;
+}
+.quick-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold-bright);
+  background: rgba(201,168,76,.10);
+}
+.quick-btn .quick-new {
+  margin-left: 2px;
+  font-size: 8px;
+  padding: 1px 4px;
+}
+
+@media (max-width: 560px) {
+  .quick-btn { font-size: 11px; padding: 6px 10px; }
+  .quick-btn .quick-new { display: none; }
+}
+
+/* ═══════════════════════════════════════════
+   Medal ranks in the records tables
+   ═══════════════════════════════════════════ */
+
+.stats-rank.rank-1,
+.stats-rank.rank-2,
+.stats-rank.rank-3 {
+  position: relative;
+  width: 34px;
+  font-weight: 700;
+  font-size: 13px;
+  text-align: center;
+}
+.stats-rank.rank-1 {
+  color: #1a1206;
+  background: linear-gradient(150deg, #f6dd8a, #d4af37 55%, #9c7c1e);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+}
+.stats-rank.rank-2 {
+  color: #14181e;
+  background: linear-gradient(150deg, #eef1f5, #c2cad4 55%, #8b949f);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+}
+.stats-rank.rank-3 {
+  color: #1d1108;
+  background: linear-gradient(150deg, #e3ab77, #c1793c 55%, #8a5322);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.35);
+}
+
+/* ═══════════════════════════════════════════
+   MVP star in a player's match history
+   ═══════════════════════════════════════════ */
+
+.pm-mvp {
+  margin-left: 5px;
+  color: var(--gold-bright);
+  font-size: 13px;
+  text-shadow: 0 0 8px rgba(232,197,90,.5);
+  cursor: help;
+}
+
+/* ═══════════════════════════════════════════
+   Compare: combobox picker + role chips
+   ═══════════════════════════════════════════ */
+
+.compare-picker {
+  flex: 1 1 260px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cmp-combo { position: relative; }
+
+.cmp-input {
+  width: 100%;
+  padding: 11px 34px 11px 13px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 5px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+}
+.cmp-input::placeholder { color: var(--text-dim); }
+.cmp-input:focus { outline: none; border-color: var(--gold); }
+
+.cmp-caret,
+.cmp-clear {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  line-height: 1;
+  color: var(--text-dim);
+  pointer-events: none;
+}
+.cmp-clear {
+  pointer-events: auto;
+  padding: 2px 6px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  font-size: 18px;
+  cursor: pointer;
+}
+.cmp-clear:hover { color: var(--gold-bright); background: rgba(201,168,76,.12); }
+
+.cmp-list {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 288px;
+  overflow-y: auto;
+  background: var(--bg2);
+  border: 1px solid rgba(201,168,76,.35);
+  border-radius: 5px;
+  box-shadow: 0 12px 28px rgba(0,0,0,.55);
+}
+.cmp-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.cmp-item:last-child { border-bottom: 0; }
+.cmp-item-name { font-size: 14px; color: var(--text); }
+.cmp-item-n {
+  flex-shrink: 0;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+.cmp-item.is-hi { background: rgba(201,168,76,.14); }
+.cmp-item.is-hi .cmp-item-name { color: var(--gold-bright); }
+.cmp-item.is-sel .cmp-item-name { font-weight: 700; }
+.cmp-empty {
+  padding: 12px;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.cmp-roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.cmp-rolechip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px 4px 5px;
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  background: rgba(13,18,24,.7);
+  color: var(--text-dim);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .06em;
+  cursor: pointer;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.cmp-rolechip:hover { border-color: var(--gold); color: var(--gold-bright); }
+.cmp-rolechip.is-on {
+  border-color: var(--gold);
+  background: rgba(201,168,76,.16);
+  color: var(--gold-bright);
+  font-weight: 700;
+}
+.cmp-rolechip-n { opacity: .65; font-size: 10px; }
+.cmp-rolechip .role-badge { pointer-events: none; }
+.cmp-rolechip-all { padding: 0 4px; }
+
+.compare-rolenote {
+  display: block;
+  margin-top: 6px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: .05em;
+}
+.compare-rolenote .role-badge { margin-left: 4px; }
+
+.compare-pickers { align-items: flex-start; }
+.compare-pickers-vs { align-self: center; margin-top: 12px; }
+
+/* ═══════════════════════════════════════════
+   Sealed D-Tier column
+   ═══════════════════════════════════════════ */
+
+/* Header keeps the tier's blue-grey, just quieter, plus a small padlock. */
+.tier-grid-tier.tier-tier-sealed {
+  gap: 10px;
+  color: #55708c;
+}
+.tier-seal-lock {
+  width: 17px;
+  height: 17px;
+  opacity: .7;
+}
+
+/* Faint diagonal weave behind the bars — reads as "covered", not as "broken". */
+.tier-cell-sealed {
+  position: relative;
+  justify-content: flex-start;
+  background-image:
+    repeating-linear-gradient(135deg,
+      rgba(0,0,0,.30) 0 5px,
+      rgba(0,0,0,.16) 5px 10px);
+}
+.tier-cell-sealed::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,0) 45%);
+}
+
+/* One bar per hidden entry, sized like a blacked-out name. */
+.tier-redact {
+  height: 27px;
+  border-radius: 3px;
+  background:
+    linear-gradient(100deg, rgba(255,255,255,.05) 0%, rgba(255,255,255,0) 38%),
+    linear-gradient(#11161d, #05080b);
+  border: 1px solid rgba(106,140,175,.22);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+@media (max-width: 900px) {
+  .tier-redact { height: 24px; }
+  .tier-seal-lock { width: 15px; height: 15px; }
+}
+
+/* ═══════════════════════════════════════════
+   Tribute overlay — "Press F to pay respects"
+   ═══════════════════════════════════════════ */
+
+/* Above the maintenance layer, so the F key is never caught by something else. */
+.tribute-overlay { z-index: 10000; }
+.tribute-overlay.dismissed {
+  opacity: 0;
+  transition: opacity .4s ease;
+  pointer-events: none;
+}
+
+.tribute-card { max-width: 660px; }
+.tribute-card .maint-text + .maint-text { margin-top: -8px; }
+.tribute-title { text-transform: uppercase; }
+
+.tribute-btn {
+  display: inline-block;
+  margin: 4px 0 24px;
+  padding: 13px 30px;
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  background: rgba(201,168,76,.18);
+  color: var(--gold-bright);
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background .18s, color .18s, box-shadow .18s, transform .1s;
+  box-shadow: 0 0 0 rgba(232,197,90,0);
+}
+.tribute-btn:hover {
+  background: rgba(201,168,76,.32);
+  color: #fff;
+  box-shadow: 0 0 22px rgba(232,197,90,.28);
+}
+.tribute-btn:active { transform: translateY(1px); }
+.tribute-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+.tribute-count {
+  margin: 0 0 24px;
+  line-height: 1.25;
+}
+/* Unterhalb der Schwelle wird der Zaehler ausgeblendet - explizit, damit
+   keine spaetere display-Regel das hidden-Attribut aushebelt. */
+.tribute-count[hidden] { display: none; }
+.tribute-count-val {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--gold-bright);
+  font-variant-numeric: tabular-nums;
+}
+.tribute-count-val.bumped { animation: tribute-bump .32s ease-out; }
+.tribute-count-lbl {
+  display: block;
+  margin-top: 6px;
+  font-size: 9.5px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+@keyframes tribute-bump {
+  0%   { transform: scale(1);    text-shadow: none; }
+  40%  { transform: scale(1.16); text-shadow: 0 0 20px rgba(232,197,90,.55); }
+  100% { transform: scale(1);    text-shadow: none; }
+}
+
+/* Reads as a found journal page: larger and calmer than the maintenance
+   footnote it inherits from, with a signature line underneath. */
+.tribute-note {
+  margin-top: 4px;
+  max-width: 50ch;
+  font-size: 16.5px;
+  line-height: 1.75;
+  color: #c2cbdb;
+}
+.tribute-sig {
+  display: block;
+  margin-top: 14px;
+  font-size: 14px;
+  font-style: italic;
+  letter-spacing: .03em;
+  /* --muted (2.8:1) waere hier zu blass; #9aa4b6 liegt bei 7.6:1 und bleibt
+     dem Journaltext darueber trotzdem untergeordnet. */
+  color: #9aa4b6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tribute-count-val.bumped { animation: none; }
+}
+
+@media (max-width: 520px) {
+  .tribute-btn { font-size: 13px; padding: 12px 22px; letter-spacing: .09em; }
+  .tribute-count-val { font-size: 25px; }
+}

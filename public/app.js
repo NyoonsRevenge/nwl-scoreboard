@@ -14,10 +14,33 @@ let currentMatchVods = {}; // canonical player name -> VOD url for current match
 /* ── Wartungsmodus ─────────────────────────────────────────────────────────
    Legt eine Wartungsmeldung ueber die unscharf gestellte Seite.
    Abschalten:  MAINTENANCE_MODE = false
-   Umgehen:     ?nomaint=1 an die URL haengen (zum Selbst-Nachschauen)      */
+   Vorschau:    ?preview=lastlight an die URL haengen                       */
 const MAINTENANCE_MODE = true;
 // 12:00 deutsche Ortszeit am 07.09.2026 (CEST = UTC+2, Sommerzeit gilt noch).
 const MAINTENANCE_TARGET = new Date('2026-09-07T12:00:00+02:00');
+
+// Zugang zur fertigen Seite, solange der Wartungsmodus laeuft. Kein Schutz vor
+// jemandem, der den Quelltext liest — nur davor, dass die Adresse zufaellig
+// erraten wird.
+const PREVIEW_PARAM = 'preview';
+const PREVIEW_TOKEN = 'lastlight';
+const PREVIEW_KEY = 'nwl_preview_access';
+
+// Einmal mit dem Vorschau-Link gekommen, gilt der Zugang fuer die ganze
+// Browser-Sitzung. Sonst stuende ein Pruefer wieder vor der Wartungsseite,
+// sobald er die nackte Domain aufruft oder einen Link ohne den Parameter
+// bekommt.
+function hasPreviewAccess() {
+  try {
+    if (new URLSearchParams(location.search).get(PREVIEW_PARAM) === PREVIEW_TOKEN) {
+      try { sessionStorage.setItem(PREVIEW_KEY, '1'); } catch {}
+      return true;
+    }
+    return sessionStorage.getItem(PREVIEW_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
 
 // ==========================================
 //  LOADING EASTER EGG QUOTES
@@ -846,7 +869,8 @@ const NAME_MAPPING_JSON = {
   "NWLWINNER": "Yohno",
   "Nalany": "Killer Kitten",
   "PinkClover": "PinkOnPoint",
-  "RedbullAmba": "RedbullAmba",
+  "RedbullAmba": "Uninstall.exe",
+  "RedbullAmb": "Uninstall.exe",
   "Sonnihh": "Behind me",
   "Yohno": "NWLWINNER",
 
@@ -870,6 +894,50 @@ const NAME_MAPPING_JSON = {
 
   // Auto-synced from name_mapping.json
   "Gaehr Rathma": "Gaehr",
+
+  // Auto-synced from name_mapping.json
+  "semoiD": "Diomes",
+
+  // Auto-synced from name_mapping.json
+  "WOFL Trig": "WOFLTrig",
+
+  // Auto-synced from name_mapping.json
+  "HealingMika": "Healing Mika",
+
+  // Merges 07.09.2026: Truncations, Tippfehler und Schreibvarianten
+  "Russelnase": "Rüsselnase",
+  "SDthe(Witch": "SDthe(Witch)",
+  "Mablôôzë": "Mablỏỏzẽ",
+  "Bourinosss/": "Bourinosss/P",
+  "Bourinosss/Psssst": "Bourinosss/P",
+  "Alleria Gale": "AlleriaGale",
+  "Beetle Juice": "BeetleJuice",
+  "LastHitEnjoyé": "Jamel",
+  "LastHitEnjoy": "Jamel",
+  "Jamel/LastHi": "Jamel",
+  "Jamel/LastH": "Jamel",
+  "Jormamasslave2": "Jeszo",
+  "SmileyBill": "SmileyBill(Sh",
+  "SmileyBill(S": "SmileyBill(Sh",
+  "Time's Conflux": "Time'sConflu",
+  "Hoosierz(Vore": "Hoosierz(Vor",
+  "Hoosierz(Vo": "Hoosierz(Vor",
+  "Kel(CherieFar": "Kel(CherieFa",
+  "joner(doake": "joner(doakes",
+  "bufffchamp": "buffchamp",
+  "H45HK4Z3": "H4SHK4Z3D",
+  "Ambrozja/1": "Ambrozja/1.6",
+  "Cannab1s": "Cannabis",
+  "Palizzii": "Palizzi",
+  "Bejonder": "Beyonder",
+  "shokki": "shokkii",
+  "Caruso": "Carusoo",
+  "GailibixX/Co": "GailibixX/Cou",
+  "Darkarus|Wh": "Darkarus",
+  "Blamy 2.0": "Cloudninee/Bla",
+  "Dr. Costa": "Costa",
+  "Johnoz": "Yohnoz",
+  "dxrkie": "darkie",
 };
 
 // Role-specific overrides for ambiguous names. Some players share an in-game
@@ -1035,7 +1103,10 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 // (so in-progress edits show up immediately). Older matches load from static
 // JSON files in public/data/ for instant rendering. Set to 0 to disable live
 // sync entirely (pure static mode).
-const LIVE_SYNC_RECENT_COUNT = 5;
+// 0 = keine Live-Synchronisierung mehr: alle Matches kommen aus den
+// statischen JSON-Dateien. Auf >0 setzen, um die letzten N Matches wieder
+// direkt aus Google Sheets zu laden.
+const LIVE_SYNC_RECENT_COUNT = 0;
 
 // Manual attacker overrides: which team (team1/team2) was the attacker.
 // Used to set the attacker label. Does NOT by itself control player layout.
@@ -1080,6 +1151,8 @@ const ATTACKER_OVERRIDES = {
   'nwl-72': 'team1', // Marauders (Beaverknights) attacked
   'nwl-100': 'team1', // Marauders (Beaverknights) attacked
   'nwl-73': 'team2', // Syndicate (Capyknights) attacked
+  'nwl-75': 'team2', // Syndicate (Capyknights) attacked
+  'nwl-74': 'team2', // Syndicate (Capyknights) attacked
 };
 
 // Matches where the attacker is team2 (Capyknights at top of sheet) but the
@@ -1612,16 +1685,20 @@ async function buildMatchesFromSheets() {
   const staticSummaryBySlug = Object.fromEntries(staticSummaries.map(m => [m.slug, m]));
 
   // Try to fetch the Sheets tab list + XLSX metadata. If either fails we
-  // degrade gracefully to pure-static mode.
+  // degrade gracefully to pure-static mode. With LIVE_SYNC_RECENT_COUNT at 0
+  // nothing would be read from the sheet anyway, so we skip the two requests
+  // entirely — that also keeps the site working once the sheet is gone.
   let sheets = [];
   let xlsxMeta = { attackers: {}, winners: {} };
-  try {
-    [sheets, xlsxMeta] = await Promise.all([
-      fetchSheetList(),
-      parseXLSXMetadata().catch(() => ({ attackers: {}, winners: {} })),
-    ]);
-  } catch (e) {
-    console.warn('Google Sheets list unavailable, using pure static data:', e);
+  if (LIVE_SYNC_RECENT_COUNT > 0) {
+    try {
+      [sheets, xlsxMeta] = await Promise.all([
+        fetchSheetList(),
+        parseXLSXMetadata().catch(() => ({ attackers: {}, winners: {} })),
+      ]);
+    } catch (e) {
+      console.warn('Google Sheets list unavailable, using pure static data:', e);
+    }
   }
 
   // Build entries with NWL numbers (reuses existing date/name parsing logic).
@@ -1804,6 +1881,20 @@ function getRoute() {
   if (hash === '/tier-list') {
     return { page: 'tier-list' };
   }
+  if (hash === '/records') {
+    return { page: 'records' };
+  }
+  if (hash === '/mvps') {
+    return { page: 'mvps' };
+  }
+  if (hash === '/maps') {
+    return { page: 'maps' };
+  }
+  if (hash === '/compare' || hash.startsWith('/compare/')) {
+    const parts = hash.split('/').slice(2).filter(Boolean)
+      .map(s => (s === '-' ? '' : decodeURIComponent(s)));
+    return { page: 'compare', a: parts[0] || '', b: parts[1] || '' };
+  }
   return { page: 'home' };
 }
 
@@ -1823,7 +1914,43 @@ window.addEventListener('hashchange', () => render());
 //  HAMBURGER NAVIGATION MENU
 // ==========================================
 
+// Pages worth pointing at from the homepage and the top of the drawer.
+// `tag` renders the small gold NEW chip next to the entry.
+const FEATURE_LINKS = [
+  { hash: '#/records', label: 'League Records', short: 'Records',
+    icon: '<path d="M8 21h8M12 17v4M6 3h12v6a6 6 0 01-12 0V3zM6 5H4a2 2 0 000 4h2m12-4h2a2 2 0 010 4h-2"/>' },
+  { hash: '#/mvps', label: 'MVP Leaderboard', short: 'MVPs',
+    icon: '<path d="M12 2l2.9 6.2 6.6.9-4.8 4.7 1.2 6.7L12 17.3 6.1 20.5l1.2-6.7L2.5 9.1l6.6-.9L12 2z"/>' },
+  { hash: '#/maps', label: 'Map Statistics', short: 'Maps',
+    icon: '<path d="M9 4L3 7v13l6-3 6 3 6-3V4l-6 3-6-3zM9 4v13m6-10v13"/>' },
+  { hash: '#/compare', label: 'Compare Players', short: 'Compare',
+    icon: '<path d="M12 3v18M5 8l-3 4 3 4m14-8l3 4-3 4"/>' },
+  { hash: '#/tier-list', label: 'Tier-List', short: 'Tier-List', tierGated: true,
+    icon: '<path d="M4 6h16M4 12h10M4 18h6"/><circle cx="19" cy="12" r="2"/><circle cx="13" cy="18" r="2"/>' },
+];
+
+function visibleFeatureLinks() {
+  return FEATURE_LINKS.filter(f => !f.tierGated || isTierListMenuVisible());
+}
+
+// Compact row of shortcuts on the homepage so the new pages are reachable
+// without opening the drawer.
+function quickNavHTML() {
+  const items = visibleFeatureLinks().map(f => `
+    <a class="quick-btn" onclick="navigate('${f.hash}')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${f.icon}</svg>
+      ${f.short}<span class="quick-new">NEW</span>
+    </a>`).join('');
+  return `<div class="quick-nav">${items}</div>`;
+}
+
 function getHamburgerHTML() {
+  const features = visibleFeatureLinks().map(f => `
+      <a onclick="toggleNav(); navigate('${f.hash}');">
+        <svg viewBox="0 0 24 24">${f.icon}</svg>
+        ${f.label}<span class="nav-new">NEW</span>
+      </a>`).join('');
+
   return `
     <button class="hamburger-btn" onclick="toggleNav()" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -1839,6 +1966,8 @@ function getHamburgerHTML() {
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
         Player Search
       </a>
+      ${features}
+      <div class="nav-spacer"></div>
       <a href="https://docs.google.com/forms/d/e/1FAIpQLSeWlF7ZuHroaLtfhb2DNaavbiPo8X1GRBonDQg09-Uan1G7SA/viewform" target="_blank" rel="noopener noreferrer" onclick="toggleNav();">
         <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
         Support-Ticket
@@ -1851,10 +1980,6 @@ function getHamburgerHTML() {
         <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01m-.01 4h.01"/></svg>
         Changelog
       </a>
-      ${isTierListMenuVisible() ? `<a onclick="toggleNav(); navigate('#/tier-list');">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h10M4 18h6"/><circle cx="19" cy="12" r="2"/><circle cx="13" cy="18" r="2"/></svg>
-        Tier-List
-      </a>` : ''}
     </nav>`;
 }
 
@@ -1923,7 +2048,10 @@ async function render() {
   // Secret-link entry: visiting "/?secret=aeternum" (no hash) jumps straight
   // to the tier list on first render. After the initial redirect the user is
   // free to navigate elsewhere without being pulled back.
-  if (!_tierSecretRedirected && isTierListEnabled() && !window.location.hash) {
+  // Deliberately keyed on the secret param: isTierListEnabled() is true for
+  // everyone now, so using it here would drag every visitor from the
+  // homepage straight into the tier list.
+  if (!_tierSecretRedirected && hasTierSecret() && !window.location.hash) {
     _tierSecretRedirected = true;
     window.location.hash = '#/tier-list';
     return; // hashchange will re-trigger render()
@@ -1980,6 +2108,7 @@ async function render() {
       }
       currentMatch = data;
       currentRole = 'ALL';
+      buildMatchMvpLookup(data);
       await loadVodData();
       buildMatchVodLookup(route.slug);
       renderMatchPage(data);
@@ -2008,6 +2137,19 @@ async function render() {
         if (!sheetsData && !_tierStaticData) await loadStaticTierData();
       }
       renderTierListPage();
+    } else if (route.page === 'records' || route.page === 'mvps'
+               || route.page === 'maps' || route.page === 'compare') {
+      const titles = { records: 'League Records', mvps: 'MVP Leaderboard',
+                       maps: 'Map Statistics', compare: 'Compare Players' };
+      if (!sheetsData && !_tierStaticData) {
+        app.innerHTML = loadingScreenHTML(titles[route.page], 'Fetching match archive...');
+        startLoadingQuotes();
+        await ensureArchive();
+      }
+      if (route.page === 'records') renderRecordsPage();
+      else if (route.page === 'mvps') renderMvpLeaderboardPage();
+      else if (route.page === 'maps') renderMapStatsPage();
+      else renderComparePage(route.a, route.b);
     } else if (route.page === 'player') {
       // Player profile needs full Sheets data
       if (!sheetsData) {
@@ -2074,7 +2216,7 @@ function renderHomePage(matches) {
       <div class="landing-eyebrow">New World League · Scoreboard</div>
       <h1 class="landing-title">NWL<br>SCOREBOARD</h1>
       <div class="landing-sub">Beaverknights vs Capyknights · ${matches.length} Matches</div>
-      ${sheetsData ? `<div class="live-badge"><span class="live-dot"></span> LIVE · Last ${LIVE_SYNC_RECENT_COUNT} matches synced with Google Sheets</div>` : ''}
+      ${sheetsData && LIVE_SYNC_RECENT_COUNT > 0 ? `<div class="live-badge"><span class="live-dot"></span> LIVE · Last ${LIVE_SYNC_RECENT_COUNT} matches synced with Google Sheets</div>` : ''}
     </div>
 
     <div class="season-record">
@@ -2094,6 +2236,7 @@ function renderHomePage(matches) {
       </div>
     </div>
 
+    ${quickNavHTML()}
     <div class="matches-label">Match History</div>
     <div class="match-list">`;
 
@@ -2165,16 +2308,17 @@ function renderHomePage(matches) {
 // ===========================================
 
 // ── FEATURE FLAG ─────────────────────────────────────────────────────────
-// The Role MVP feature is on hold per league leadership. We keep the code in
-// the repo (so it ships in any build) but hide it on the live site. To force-
-// enable globally for production once approved, flip MVP_FORCE_ENABLED to true.
+// Role MVPs are live. The other visibility rules stay in place so the feature
+// can be switched back to a preview without touching any call site: set
+// MVP_FORCE_ENABLED to false and only localhost / ?mvp=1 / the localStorage
+// opt-in will see it again.
 //
 // Visibility rules (any one of these makes it visible):
 //   1. MVP_FORCE_ENABLED === true                  (master switch)
 //   2. running on localhost / 127.0.0.1            (local dev)
 //   3. URL contains ?mvp=1                         (share-link override)
 //   4. localStorage.nwl_mvp_preview === '1'        (per-browser opt-in)
-const MVP_FORCE_ENABLED = false;
+const MVP_FORCE_ENABLED = true;
 function isMvpEnabled() {
   if (MVP_FORCE_ENABLED) return true;
   const host = window.location.hostname;
@@ -2256,6 +2400,72 @@ function computeRoleMVPs(data) {
       return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
     })
     .map(bucket => ({ bucket, players: byBucket[bucket].sort((a, b) => b.score - a.score) }));
+}
+
+// A player only counts as match MVP if they actually beat someone: buckets
+// with fewer contenders than this are skipped, otherwise the single player
+// of a rare role would be crowned MVP in every match they show up in.
+const MVP_MIN_CONTENDERS = 3;
+
+// slug -> Set of canonical names that took an MVP title in that war. Used to
+// flag the war in a player profile match history.
+let _mvpBySlugCache = null;
+function mvpWinnersBySlug() {
+  if (_mvpBySlugCache) return _mvpBySlugCache;
+  const src = sheetsData || _tierStaticData;
+  const details = (src && src.matchDetails) || {};
+  const out = {};
+  for (const [slug, match] of Object.entries(details)) {
+    if (!match || !match.groups || !match.groups.length) continue;
+    const set = new Set();
+    for (const { players } of computeRoleMVPs(match)) {
+      if (players.length < MVP_MIN_CONTENDERS) continue;
+      const top = players[0];
+      if (top && top.name) set.add(getCanonicalName(top.name, top.role));
+    }
+    out[slug] = set;
+  }
+  _mvpBySlugCache = out;
+  return out;
+}
+
+// Canonical names that took a role MVP title in the match currently on
+// screen, so every group view can mark them. Same gate as the MVP panel:
+// a bucket needs real competition before anyone is crowned.
+let currentMatchMvps = new Set();
+function buildMatchMvpLookup(data) {
+  currentMatchMvps = new Set();
+  if (!isMvpEnabled() || !data || !data.groups || !data.groups.length) return;
+  for (const { players } of computeRoleMVPs(data)) {
+    if (players.length < MVP_MIN_CONTENDERS) continue;
+    const top = players[0];
+    if (top && top.name) currentMatchMvps.add(getCanonicalName(top.name, top.role));
+  }
+}
+
+function getMvpStar(playerName, role) {
+  if (!currentMatchMvps.size) return '';
+  return currentMatchMvps.has(getCanonicalName(playerName, role))
+    ? ' <span class="pm-mvp" title="Match MVP in this role">★</span>'
+    : '';
+}
+
+// How often each player finished #1 in their role bucket, across all matches.
+// Returns bucket -> canonical name -> count.
+function computeMvpCounts(matchDetails) {
+  const counts = {};
+  for (const match of Object.values(matchDetails || {})) {
+    if (!match || !match.groups || !match.groups.length) continue;
+    for (const { bucket, players } of computeRoleMVPs(match)) {
+      if (players.length < MVP_MIN_CONTENDERS) continue;
+      const top = players[0];
+      if (!top || !top.name) continue;
+      const canon = getCanonicalName(top.name, top.role);
+      if (!counts[bucket]) counts[bucket] = {};
+      counts[bucket][canon] = (counts[bucket][canon] || 0) + 1;
+    }
+  }
+  return counts;
 }
 
 function roleMVPsHTML(data) {
@@ -2477,7 +2687,7 @@ function makePlayerRow(p, team) {
   const playerLink = `<a onclick="navigate('#/player/${encodePlayerForLink(canonical)}')">${p.name}</a>`;
   return `<tr class="${cls}">
     <td class="pt-role"><span class="role-badge ${roleBadgeClass(p.role)}">${roleBadgeText(p.role)}</span></td>
-    <td class="pt-name">${playerLink}</td>
+    <td class="pt-name">${playerLink}${getMvpStar(p.name, p.role)}</td>
     ${getVodCell(p.name, p.role)}
     <td class="pt-num pt-kills">${p.kills}</td>
     <td class="pt-num pt-deaths">${p.deaths}</td>
@@ -2494,7 +2704,7 @@ function makeExcelPlayerRow(p, team) {
   const playerLink = `<a onclick="navigate('#/player/${encodePlayerForLink(canonical)}')">${p.name}</a>`;
   return `<tr class="${cls}" style="border-left:none;">
     <td class="pt-role"><span class="role-badge ${roleBadgeClass(p.role)}">${roleBadgeText(p.role)}</span></td>
-    <td class="pt-name">${playerLink}</td>
+    <td class="pt-name">${playerLink}${getMvpStar(p.name, p.role)}</td>
     ${getVodCell(p.name, p.role)}
     <td class="pt-num pt-kills">${p.kills}</td>
     <td class="pt-num pt-deaths">${p.deaths}</td>
@@ -2701,7 +2911,7 @@ function renderExcelViewGroup(g, team, placeholderLabel) {
             const playerLink = `<a onclick="navigate('#/player/${encodePlayerForLink(canonical)}')">${p.name}</a>`;
             return `<tr class="${rowClass}" style="border-left:none;">
               <td class="pt-role"><span class="role-badge ${roleBadgeClass(p.role)}">${roleBadgeText(p.role)}</span></td>
-              <td class="pt-name">${playerLink}</td>
+              <td class="pt-name">${playerLink}${getMvpStar(p.name, p.role)}</td>
               ${getVodCell(p.name, p.role)}
               <td class="pt-num pt-kills">${p.kills}</td>
               <td class="pt-num pt-deaths">${p.deaths}</td>
@@ -2931,6 +3141,24 @@ function renderSearchPage() {
 function renderChangelogPage() {
   const entries = [
     {
+      date: '07.09.2026',
+      changes: [
+        'Role MVPs are now visible for every match — the top three players per role, scored with the formula shown in the panel header. The winner of each role also gets a gold ★ next to their name in the group tables, in all three views.',
+        'The Tier-List is out of hiding and has its own entry in the burger menu. The secret link still works and jumps straight to it.',
+        'The D-Tier column is sealed: the column and its headcount stay visible, the names are redacted. It is a joke list, nobody needs to be named at the bottom of one.',
+        'A thank-you to Irvine greets you on arrival. The button is the only way past it, and it keeps a running tally.',
+        'Tier-List now shows how often a player was crowned match MVP in that role (gold ★ on the chip). Only counted when at least 3 players contested the role in that match, so the sole player of a rare role does not collect a free MVP every war.',
+        'New page — League Records: single-war bests (kills, damage, healing, assists, deaths), career totals, plus biggest blowouts and bloodiest wars. Every single-war list shows each player only once, with their best war, so one outlier cannot fill the whole top five.',
+        'New page — MVP Leaderboard: every player ranked by MVP titles, broken down by role, with the MVP rate per war played.',
+        'New page — Map Statistics: win rates and average scores per territory, plus how often the attacking side actually wins.',
+        'New page — Compare Players: two players head to head across their whole career. Type to search, pick from the list that drops down, and narrow the numbers to a single role with one click.',
+        'Merged 33 duplicate player profiles that were split by truncated or misspelled scoreboard names — among them RedbullAmb/RedbullAmba (Uninstall.exe), Beetle Juice, SmileyBill, Hoosierz, Bourinosss, LastHitEnjoy (Jamel), Ambrozja, Cannab1s, shokki, Caruso and Dr. Costa.',
+        'All matches now load from the static data files. The last few wars used to be read live from the spreadsheet on every visit; that step is gone, so pages open faster and the scoreboard keeps working even once the spreadsheet is no longer reachable.',
+        'Records and the MVP leaderboard use competition ranking: players on the same value share a rank and the positions they take up are skipped (1, 2, 2, 4). Two players tied for first both get the gold medal.',
+        'Map names are now normalised: historic spelling slips ("Ebonescale Reach", "Ebenonscale Reach") no longer split one territory into three.',
+      ]
+    },
+    {
       date: '06.09.2026',
       changes: [
         'Added NWL#74 (Windsward, 31.08.2026) — Beaverknights won as defenders. No player stats were captured for this war, so the match page shows the result only, with a note explaining the empty scoreboard.',
@@ -2993,7 +3221,7 @@ function renderChangelogPage() {
         'Fixed player merge bug: two different "Skill Issue" players (I vs l) were incorrectly combined into one profile with 60 matches',
         'Separated Liona/SkillIssue and MARKEL1to/US into distinct player profiles',
         'Added loading screen easter egg: rotating New World bug quotes with progress indicator',
-        `Hybrid data loading: the last ${LIVE_SYNC_RECENT_COUNT} matches now sync live with Google Sheets (in-progress edits show up immediately), while older matches load instantly from static JSON files`,
+        'Hybrid data loading: the last 5 matches now sync live with Google Sheets (in-progress edits show up immediately), while older matches load instantly from static JSON files',
         'Made loading screen quote text larger and more readable (18px instead of 12px)',
       ]
     },
@@ -3241,13 +3469,18 @@ function renderPlayerPage(playerName) {
       const teamLabel = a.team === 'team1' ? 'Beaver' : 'Capy';
       const resultBadge = a.won ? '<span class="pm-result win">WIN</span>' : '<span class="pm-result loss">LOSS</span>';
 
+      const wasMvp = (mvpWinnersBySlug()[a.slug] || new Set()).has(canon);
+      const mvpStar = wasMvp
+        ? ` <span class="pm-mvp" title="Match MVP in this role">★</span>`
+        : '';
+
       html += `<tr class="${rowClass}" onclick="navigate('#/match/${a.slug}')">
         <td class="pm-nwl">NWL#${a.nwlNumber}</td>
         <td class="pm-map">${a.mapName}</td>
         <td class="pm-date">${a.date}</td>
         <td class="pm-date">${teamLabel}</td>
         <td class="pm-date">${a.group}</td>
-        <td><span class="role-badge ${roleBadgeClass(a.player.role)}">${roleBadgeText(a.player.role)}</span></td>
+        <td><span class="role-badge ${roleBadgeClass(a.player.role)}">${roleBadgeText(a.player.role)}</span>${mvpStar}</td>
         <td class="pm-num">${a.player.kills}</td>
         <td class="pm-num">${a.player.deaths}</td>
         <td class="pm-num">${a.player.assists}</td>
@@ -3281,15 +3514,22 @@ function setPlayerRoleFilter(role, canon) {
 // ===========================================
 
 // ── ACCESS GATE ─────────────────────────────────────────────────────────
-// Tier-List is a hidden feature. The ONLY way in is the secret URL:
+// Reachable from the burger menu; the secret URL
 //     https://<host>/?secret=aeternum
-// No burger-menu link, no localhost shortcut, no localStorage persistence.
-// If the query param is missing, the route 404s back to the homepage.
-function isTierListEnabled() {
+// additionally jumps straight to the page on load.
+function hasTierSecret() {
   return /[?&]secret=aeternum\b/.test(window.location.search);
 }
+// The Tier-List is public now. Set TIER_LIST_PUBLIC to false to hide it
+// again: it then falls back to the secret URL only and disappears from
+// the burger menu.
+const TIER_LIST_PUBLIC = true;
+
+function isTierListEnabled() {
+  return TIER_LIST_PUBLIC || hasTierSecret();
+}
 function isTierListMenuVisible() {
-  return false; // never advertise the page anywhere in the UI
+  return TIER_LIST_PUBLIC;
 }
 
 // Minimum games on a role before that role-slot is shown in the tier list.
@@ -3408,6 +3648,7 @@ function computeTierList() {
   const src = sheetsData || _tierStaticData;
   if (!src || !src.matchDetails) return { buckets: {}, order: TIER_BUCKET_ORDER };
   const agg = {}; // bucket -> canonical -> { canon, names:Set, sum, count }
+  const mvpCounts = computeMvpCounts(src.matchDetails);
 
   for (const match of Object.values(src.matchDetails)) {
     for (const g of match.groups) {
@@ -3439,6 +3680,7 @@ function computeTierList() {
         displayName: findDisplayName(x.canon, x.names),
         games: x.count,
         avg: x.sum / x.count,
+        mvps: (mvpCounts[bucket] || {})[x.canon] || 0,
       }))
       .sort((a, b) => b.avg - a.avg);
 
@@ -3458,6 +3700,18 @@ function computeTierList() {
 }
 
 const TIER_ORDER = ['S','A','B','C','D'];
+// Nobody needs to be named and shamed at the bottom of a joke list.
+const TIER_SEALED = 'D';
+// Lock time on the tier-list disclaimer button, in seconds.
+const TIER_DISCLAIMER_SECONDS = 5;
+
+// Bar widths look hand-drawn rather than name-length-derived, and stay
+// stable across renders because they hash the canonical name.
+function redactBarWidth(canon) {
+  let h = 0;
+  for (let i = 0; i < canon.length; i++) h = (h * 31 + canon.charCodeAt(i)) >>> 0;
+  return 58 + (h % 38);
+}
 let _tierFilter = new Set(); // selected buckets; empty = show all
 
 function toggleTierFilter(bucket) {
@@ -3499,7 +3753,10 @@ function renderTierListPage() {
     grid = `<div class="tier-grid${isMultiRole ? ' multi-role' : ''}" style="grid-template-columns: 200px repeat(${TIER_ORDER.length}, minmax(180px, 1fr));">`;
     grid += `<div class="tier-grid-cell tier-grid-corner"></div>`;
     for (const tier of TIER_ORDER) {
-      grid += `<div class="tier-grid-cell tier-grid-tier tier-tier-${tier} tier-col-${tier}">${tier}-Tier</div>`;
+      const sealed = tier === TIER_SEALED;
+      grid += `<div class="tier-grid-cell tier-grid-tier tier-tier-${tier} tier-col-${tier}${sealed ? ' tier-tier-sealed' : ''}">
+        ${tier}-Tier${sealed ? `<svg class="tier-seal-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>` : ''}
+      </div>`;
     }
     for (const b of visibleBuckets) {
       const badge = tierBadgeOf(b);
@@ -3512,9 +3769,23 @@ function renderTierListPage() {
       for (const tier of TIER_ORDER) {
         const players = (buckets[b] || []).filter(p => p.tier === tier);
         let chips = '';
+        if (tier === TIER_SEALED) {
+          // The bottom tier stays sealed. The column and its headcount remain
+          // visible, the names never reach the markup in the first place.
+          chips = players.map(p => `<span class="tier-redact" style="width:${redactBarWidth(p.canon)}%"></span>`).join('');
+          grid += `<div class="tier-grid-cell tier-cell tier-cell-sealed tier-row-${badge} tier-col-${tier}${rowExtra}"
+            title="${players.length} ${players.length === 1 ? 'entry' : 'entries'} · sealed">${chips}</div>`;
+          continue;
+        }
         for (const p of players) {
-          chips += `<a class="tier-chip" onclick="navigate('#/player/${encodePlayerForLink(p.canon)}')" title="${p.games} games · avg score ${p.avg.toFixed(1)}">
-            <span class="tier-chip-name">${p.displayName}</span><span class="tier-chip-games">${p.games}</span>
+          const mvpTitle = p.mvps
+            ? ` · ${p.mvps}× match MVP in this role`
+            : '';
+          const mvpBadgeHtml = p.mvps
+            ? `<span class="tier-chip-mvp">★${p.mvps}</span>`
+            : '';
+          chips += `<a class="tier-chip${p.mvps ? ' has-mvp' : ''}" onclick="navigate('#/player/${encodePlayerForLink(p.canon)}')" title="${p.games} games · avg score ${p.avg.toFixed(1)}${mvpTitle}">
+            <span class="tier-chip-name">${p.displayName}</span>${mvpBadgeHtml}<span class="tier-chip-games">${p.games}</span>
           </a>`;
         }
         grid += `<div class="tier-grid-cell tier-cell tier-row-${badge} tier-col-${tier}${rowExtra}">${chips}</div>`;
@@ -3523,7 +3794,8 @@ function renderTierListPage() {
     grid += `</div>`;
   }
 
-  // Per-session disclaimer — shown once per browser session, button locked for 20s.
+  // Per-session disclaimer — shown once per browser session, button locked
+  // for TIER_DISCLAIMER_SECONDS.
   let disclaimerAck = false;
   try { disclaimerAck = sessionStorage.getItem('nwl_tier_disclaimer_ack') === '1'; } catch {}
   const disclaimerHTML = disclaimerAck ? '' : `
@@ -3534,7 +3806,7 @@ function renderTierListPage() {
           I understand this list is purely fictional and doesn't reflect actual skill or macro in the slightest, it's just tracking some silly numbers. On top of that, the formulas were written by someone who is awful at math, which adds a whole new layer of clowning to it.
         </div>
         <button class="tier-disclaimer-btn" id="tier-disclaimer-btn" disabled>
-          <span id="tier-disclaimer-btn-label">I understand (20s)</span>
+          <span id="tier-disclaimer-btn-label">I understand (${TIER_DISCLAIMER_SECONDS}s)</span>
         </button>
         <div class="tier-disclaimer-progress-track">
           <div class="tier-disclaimer-progress-bar" id="tier-disclaimer-bar"></div>
@@ -3548,9 +3820,9 @@ function renderTierListPage() {
       Back to Matches
     </a>
     <div class="player-header">
-      <div class="player-eyebrow">NWL Scoreboard · Preview</div>
+      <div class="player-eyebrow">NWL Scoreboard</div>
       <h1 class="player-name">Tier-List</h1>
-      <div class="player-aliases">Per-role rankings · ${TIER_MIN_GAMES}+ games required · MVP formula extended with healer group survival vs. mirror &amp; DPS damage-share vs. mirror</div>
+      <div class="player-aliases">Per-role rankings · ${TIER_MIN_GAMES}+ games required · <span class="tier-chip-mvp tier-legend-star">★</span> = times crowned match MVP in that role (only counted when at least ${MVP_MIN_CONTENDERS} players contested it) · MVP formula extended with healer group survival vs. mirror &amp; DPS damage-share vs. mirror</div>
     </div>
     <div class="tier-filter-bar">
       <div class="tier-filter-label">Filter Class</div>
@@ -3561,14 +3833,15 @@ function renderTierListPage() {
       * Tiers are percentile-assigned within each role column (S=top 15%, A=15–35%, B=35–65%, C=65–85%, D=bottom 15%).<br>
       * Healer score adds (mirrorGroupDeaths − ownGroupDeaths), excluding dex-side MD/RD/CW from both sides.<br>
       * IG/VG (Support): K − 3·D + A/8 + Heal/100k + Dmg/100k + ½·(mirrorGroupDeaths − ownGroupDeaths). Assists weighted high because CC/oblivion/slow are the real output; no damage-vs-mirror bonus.<br>
-      * DPS score adds (playerDamage − sameRoleAvg) / 100k across own + mirror group.
+      * DPS score adds (playerDamage − sameRoleAvg) / 100k across own + mirror group.<br>
+      * The D-Tier column is sealed. The entries are counted, the names stay redacted — no one gets pilloried over a joke list.
     </div>
   </div>${disclaimerHTML}`;
   window.scrollTo(0, 0);
   if (!disclaimerAck) activateTierDisclaimer();
 }
 
-// 20s countdown on the disclaimer "I understand" button + progress bar.
+// Countdown on the disclaimer "I understand" button + progress bar.
 // requestAnimationFrame for smooth bar; one tick/sec for the label text.
 function activateTierDisclaimer() {
   const overlay = document.getElementById('tier-disclaimer');
@@ -3576,7 +3849,7 @@ function activateTierDisclaimer() {
   const btn = document.getElementById('tier-disclaimer-btn');
   const label = document.getElementById('tier-disclaimer-btn-label');
   const bar = document.getElementById('tier-disclaimer-bar');
-  const TOTAL = 20000;
+  const TOTAL = TIER_DISCLAIMER_SECONDS * 1000;
   const start = performance.now();
 
   function tick(now) {
@@ -3611,6 +3884,14 @@ window.toggleMvpPanel = toggleMvpPanel;
 window.toggleTierFilter = toggleTierFilter;
 window.clearTierFilter = clearTierFilter;
 window.isTierListEnabled = isTierListEnabled;
+window.onCompareSearch = onCompareSearch;
+window.onCompareFocus = onCompareFocus;
+window.onCompareBlur = onCompareBlur;
+window.onCompareKey = onCompareKey;
+window.onCompareHover = onCompareHover;
+window.onComparePick = onComparePick;
+window.onCompareClear = onCompareClear;
+window.onCompareRolePick = onCompareRolePick;
 
 // -- Re-render groups on breakpoint change --
 let _lastMobile = window.innerWidth <= 900;
@@ -3622,12 +3903,805 @@ window.addEventListener('resize', () => {
   }
 });
 
+// ===========================================
+//  LEAGUE STATS PAGES
+//  Records · MVP Leaderboard · Map Stats · Compare
+//  All four read the same archive and fall back to the static JSON files when
+//  the Google Sheets sync is unavailable, exactly like the tier list does.
+// ===========================================
+
+async function ensureArchive() {
+  if (sheetsData || _tierStaticData) return;
+  await Promise.race([ensureSheetsSync(), loadStaticTierData()]);
+  if (!sheetsData && !_tierStaticData) await loadStaticTierData();
+}
+
+// Historic spelling slips in the sheet ("Ebonescale Reach", "Ebenonscale
+// Reach") would otherwise show up as separate territories on the map page.
+// Fold every variant into the most frequent spelling of the same map.
+let _mapCanonCache = null;
+let _archiveCacheSrc = null;
+
+function _levenshtein(a, b) {
+  const m = a.length, n = b.length;
+  if (!m) return n;
+  if (!n) return m;
+  let prev = new Array(n + 1);
+  for (let j = 0; j <= n; j++) prev[j] = j;
+  for (let i = 1; i <= m; i++) {
+    const cur = [i];
+    for (let j = 1; j <= n; j++) {
+      cur[j] = Math.min(
+        prev[j] + 1,
+        cur[j - 1] + 1,
+        prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)
+      );
+    }
+    prev = cur;
+  }
+  return prev[n];
+}
+
+function _mapKey(s) {
+  return (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function buildMapCanon() {
+  const src = sheetsData || _tierStaticData;
+  const details = (src && src.matchDetails) || {};
+  const counts = {};
+  for (const d of Object.values(details)) {
+    const n = (d.mapName || '').trim();
+    if (n) counts[n] = (counts[n] || 0) + 1;
+  }
+  // Most frequent spelling wins, rarer near-identical variants fold into it.
+  const names = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+  const canon = {};
+  const kept = [];
+  for (const n of names) {
+    const kn = _mapKey(n);
+    const hit = kept.find(k => {
+      const kk = _mapKey(k);
+      const maxLen = Math.max(kk.length, kn.length) || 1;
+      return 1 - _levenshtein(kk, kn) / maxLen > 0.85;
+    });
+    canon[n] = hit || n;
+    if (!hit) kept.push(n);
+  }
+  _mapCanonCache = canon;
+}
+
+function canonicalMapName(name) {
+  if (!_mapCanonCache) buildMapCanon();
+  return _mapCanonCache[name] || name || 'Unknown';
+}
+
+// Drop every derived cache when the underlying archive object changes (e.g.
+// a static-first render later gets replaced by the live Sheets data).
+function _checkArchiveCache() {
+  const src = sheetsData || _tierStaticData;
+  if (src !== _archiveCacheSrc) {
+    _archiveCacheSrc = src;
+    _archiveRowsCache = null;
+    _archiveCareersCache = null;
+    _mapCanonCache = null;
+  }
+}
+
+// Normalised match list. The detail JSON carries everything we need; the
+// Sheets summaries are only consulted to fill gaps.
+function archiveMatchList() {
+  _checkArchiveCache();
+  const src = sheetsData || _tierStaticData;
+  const details = (src && src.matchDetails) || {};
+  const summaries = {};
+  if (sheetsData && sheetsData.matchList) {
+    for (const s of sheetsData.matchList) summaries[s.slug] = s;
+  }
+  return Object.entries(details).map(([slug, d]) => {
+    const s = summaries[slug] || {};
+    return {
+      slug,
+      nwlNumber: d.nwlNumber != null ? d.nwlNumber : s.nwlNumber,
+      mapName: canonicalMapName(d.mapName || s.mapName),
+      date: d.date || s.date || '',
+      duration: d.duration || s.duration || null,
+      winner: d.winner || s.winner || null,
+      attacker: d.attacker || s.attacker || null,
+      totals: d.totals || { team1: {}, team2: {} },
+      groups: d.groups || [],
+    };
+  }).filter(m => m.nwlNumber != null).sort((a, b) => b.nwlNumber - a.nwlNumber);
+}
+
+// One row per player per match — the base for every leaderboard below.
+let _archiveRowsCache = null;
+function archivePlayerRows() {
+  if (_archiveRowsCache) return _archiveRowsCache;
+  const rows = [];
+  for (const m of archiveMatchList()) {
+    for (const g of m.groups) {
+      for (const teamKey of ['team1', 'team2']) {
+        for (const p of (g[teamKey] || [])) {
+          if (!p.name) continue;
+          rows.push({
+            canon: getCanonicalName(p.name, p.role),
+            name: p.name, role: p.role || '?', group: g.label,
+            team: teamKey, won: m.winner === teamKey,
+            slug: m.slug, nwl: m.nwlNumber, map: m.mapName, date: m.date,
+            kills: p.kills || 0, deaths: p.deaths || 0, assists: p.assists || 0,
+            healing: p.healing || 0, damage: p.damage || 0,
+          });
+        }
+      }
+    }
+  }
+  _archiveRowsCache = rows;
+  return rows;
+}
+
+// Career aggregates per canonical player.
+let _archiveCareersCache = null;
+function archiveCareers() {
+  if (_archiveCareersCache) return _archiveCareersCache;
+  const agg = {};
+  for (const r of archivePlayerRows()) {
+    let a = agg[r.canon];
+    if (!a) {
+      a = agg[r.canon] = { canon: r.canon, names: new Set(), matches: 0, wins: 0,
+                           kills: 0, deaths: 0, assists: 0, healing: 0, damage: 0 };
+    }
+    a.names.add(r.name);
+    a.matches++;
+    if (r.won) a.wins++;
+    a.kills += r.kills; a.deaths += r.deaths; a.assists += r.assists;
+    a.healing += r.healing; a.damage += r.damage;
+  }
+  _archiveCareersCache = Object.values(agg).map(a => ({
+    ...a,
+    displayName: findDisplayName(a.canon, a.names),
+    kd: a.deaths > 0 ? a.kills / a.deaths : a.kills,
+    winRate: a.matches ? a.wins / a.matches : 0,
+  }));
+  return _archiveCareersCache;
+}
+
+function statsPageHeader(title, subtitle) {
+  return `<a class="back-link" onclick="navigate('')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to Matches
+    </a>
+    <div class="player-header">
+      <div class="player-eyebrow">NWL Scoreboard</div>
+      <h1 class="player-name">${title}</h1>
+      <div class="player-aliases">${subtitle}</div>
+    </div>`;
+}
+
+// Wettkampf-Zaehlung: gleiche Werte teilen sich einen Rang, die dadurch
+// belegten Positionen werden uebersprungen (1, 2, 2, 4). Ohne das bekaemen
+// zwei Spieler mit identischem Wert zwei verschiedene Nummern, was eine
+// Rangfolge behauptet, die es nicht gibt.
+function rankLabels(list, valueOf) {
+  let rang = 0;
+  let vorher;
+  return list.map((item, i) => {
+    const v = valueOf(item);
+    if (i === 0 || v !== vorher) rang = i + 1;
+    vorher = v;
+    return rang;
+  });
+}
+
+function playerLinkHTML(canon, label) {
+  return `<a class="stats-player" onclick="navigate('#/player/${encodePlayerForLink(canon)}')">${label}</a>`;
+}
+function matchLinkHTML(slug, nwl, map) {
+  return `<a class="stats-match" onclick="navigate('#/match/${slug}')">NWL#${nwl} · ${map}</a>`;
+}
+
+// ── 1. LEAGUE RECORDS ─────────────────────────────────────────────────────
+
+const RECORD_STATS = [
+  { key: 'kills',   label: 'Most Kills in one War' },
+  { key: 'damage',  label: 'Most Damage in one War' },
+  { key: 'healing', label: 'Most Healing in one War' },
+  { key: 'assists', label: 'Most Assists in one War' },
+  { key: 'deaths',  label: 'Most Deaths in one War' },
+];
+
+const CAREER_STATS = [
+  { key: 'kills',   label: 'Total Kills' },
+  { key: 'damage',  label: 'Total Damage' },
+  { key: 'healing', label: 'Total Healing' },
+  { key: 'assists', label: 'Total Assists' },
+  { key: 'matches', label: 'Most Wars Played' },
+];
+
+function renderRecordsPage() {
+  const rows = archivePlayerRows();
+  const careers = archiveCareers();
+  const matches = archiveMatchList().filter(m => m.groups.length);
+  const isBig = k => k === 'damage' || k === 'healing';
+
+  // Spellings drift between wars ("pandatanga" / "Pandatanga"), so label every
+  // record with the player's canonical name.
+  const careerName = {};
+  for (const c of careers) careerName[c.canon] = c.displayName;
+
+  // One entry per player per category — otherwise a single outlier player can
+  // occupy the whole top 5 with five different wars.
+  const bestPerPlayer = key => {
+    const best = {};
+    for (const r of rows) {
+      const cur = best[r.canon];
+      if (!cur || r[key] > cur[key]) best[r.canon] = r;
+    }
+    return Object.values(best).sort((a, b) => b[key] - a[key]).slice(0, 5);
+  };
+
+  let singles = '';
+  for (const rec of RECORD_STATS) {
+    const top = bestPerPlayer(rec.key);
+    const raenge = rankLabels(top, r => r[rec.key]);
+    let items = '';
+    top.forEach((r, i) => {
+      items += `<tr>
+        <td class="stats-rank rank-${raenge[i]}">${raenge[i]}</td>
+        <td class="stats-who">${playerLinkHTML(r.canon, careerName[r.canon] || r.name)}<span class="stats-sub">${matchLinkHTML(r.slug, r.nwl, r.map)}</span></td>
+        <td class="stats-num">${isBig(rec.key) ? fmt(r[rec.key]) : r[rec.key]}</td>
+      </tr>`;
+    });
+    singles += `<div class="stats-card">
+      <div class="stats-card-head">${rec.label}</div>
+      <table class="stats-table"><tbody>${items}</tbody></table>
+    </div>`;
+  }
+
+  let careerCards = '';
+  for (const rec of CAREER_STATS) {
+    const top = careers.slice().sort((a, b) => b[rec.key] - a[rec.key]).slice(0, 5);
+    const raenge = rankLabels(top, c => c[rec.key]);
+    let items = '';
+    top.forEach((c, i) => {
+      items += `<tr>
+        <td class="stats-rank rank-${raenge[i]}">${raenge[i]}</td>
+        <td class="stats-who">${playerLinkHTML(c.canon, c.displayName)}<span class="stats-sub">${c.matches} wars</span></td>
+        <td class="stats-num">${isBig(rec.key) ? fmt(c[rec.key]) : c[rec.key]}</td>
+      </tr>`;
+    });
+    careerCards += `<div class="stats-card">
+      <div class="stats-card-head">${rec.label}</div>
+      <table class="stats-table"><tbody>${items}</tbody></table>
+    </div>`;
+  }
+
+  const withKills = matches.map(m => ({
+    m,
+    t1: (m.totals.team1 && m.totals.team1.kills) || 0,
+    t2: (m.totals.team2 && m.totals.team2.kills) || 0,
+  }));
+  const matchRow = (x, val) => `<tr>
+      <td class="stats-who">${matchLinkHTML(x.m.slug, x.m.nwlNumber, x.m.mapName)}<span class="stats-sub">${formatDate(x.m.date)}</span></td>
+      <td class="stats-num">${val}</td>
+    </tr>`;
+  const byMargin = withKills.slice().sort((a, b) => Math.abs(b.t1 - b.t2) - Math.abs(a.t1 - a.t2));
+  const byTotal = withKills.slice().sort((a, b) => (b.t1 + b.t2) - (a.t1 + a.t2));
+
+  const matchCards = `
+    <div class="stats-card">
+      <div class="stats-card-head">Biggest Blowouts</div>
+      <table class="stats-table"><tbody>
+        ${byMargin.slice(0, 5).map(x => matchRow(x, x.t1 + ' : ' + x.t2)).join('')}
+      </tbody></table>
+    </div>
+    <div class="stats-card">
+      <div class="stats-card-head">Bloodiest Wars <span class="stats-card-note">combined kills</span></div>
+      <table class="stats-table"><tbody>
+        ${byTotal.slice(0, 5).map(x => matchRow(x, x.t1 + x.t2)).join('')}
+      </tbody></table>
+    </div>`;
+
+  app.innerHTML = `<div class="wrap">
+    ${statsPageHeader('League Records', 'All-time bests across ' + matches.length + ' wars with recorded stats')}
+    <div class="stats-section-title">Single-War Records</div>
+    <div class="stats-grid">${singles}</div>
+    <div class="stats-section-title">Career Totals</div>
+    <div class="stats-grid">${careerCards}</div>
+    <div class="stats-section-title">Match Records</div>
+    <div class="stats-grid">${matchCards}</div>
+    <div class="page-footer">
+      * Single-war records list each player only once, with their best war.<br>
+      * Career totals count every recorded appearance, across all roles.<br>
+      * Wars without captured player stats are excluded.
+    </div>
+  </div>`;
+}
+
+// ── 2. MVP LEADERBOARD ────────────────────────────────────────────────────
+
+function renderMvpLeaderboardPage() {
+  const src = sheetsData || _tierStaticData;
+  const counts = computeMvpCounts((src && src.matchDetails) || {});
+  const careers = {};
+  for (const c of archiveCareers()) careers[c.canon] = c;
+
+  // canon -> { total, perBucket: {bucket: n} }
+  const byPlayer = {};
+  for (const [bucket, players] of Object.entries(counts)) {
+    for (const [canon, n] of Object.entries(players)) {
+      let e = byPlayer[canon];
+      if (!e) e = byPlayer[canon] = { canon, total: 0, perBucket: {} };
+      e.total += n;
+      e.perBucket[bucket] = (e.perBucket[bucket] || 0) + n;
+    }
+  }
+  const list = Object.values(byPlayer).sort((a, b) => b.total - a.total || a.canon.localeCompare(b.canon));
+  const totalMvps = list.reduce((a, e) => a + e.total, 0);
+
+  const raenge = rankLabels(list, e => e.total);
+  let rowsHTML = '';
+  list.forEach((e, i) => {
+    const career = careers[e.canon];
+    const name = career ? career.displayName : e.canon;
+    const wars = career ? career.matches : 0;
+    const rate = wars ? Math.round((e.total / wars) * 100) : 0;
+    const badges = Object.entries(e.perBucket)
+      .sort((a, b) => b[1] - a[1])
+      .map(([bucket, n]) => {
+        const badge = tierBadgeOf(bucket);
+        return `<span class="mvpl-role"><span class="role-badge ${roleBadgeClass(badge)}">${roleBadgeText(badge)}</span>${n}</span>`;
+      }).join('');
+    rowsHTML += `<tr>
+      <td class="stats-rank rank-${raenge[i]}">${raenge[i]}</td>
+      <td class="stats-who">${playerLinkHTML(e.canon, name)}</td>
+      <td class="stats-num mvpl-total">${e.total}</td>
+      <td class="mvpl-roles">${badges}</td>
+      <td class="stats-num stats-dim">${wars}</td>
+      <td class="stats-num stats-dim">${rate}%</td>
+    </tr>`;
+  });
+
+  app.innerHTML = `<div class="wrap">
+    ${statsPageHeader('MVP Leaderboard', 'How often each player topped their role in a war &middot; ' + totalMvps + ' MVP titles awarded')}
+    <div class="stats-tablewrap">
+      <table class="stats-table stats-table-wide">
+        <thead><tr>
+          <th class="stats-rank">#</th><th>Player</th><th class="stats-num">MVPs</th>
+          <th>By Role</th><th class="stats-num">Wars</th><th class="stats-num">Rate</th>
+        </tr></thead>
+        <tbody>${rowsHTML || '<tr><td colspan="6" class="stats-empty">No data</td></tr>'}</tbody>
+      </table>
+    </div>
+    <div class="page-footer">
+      * An MVP title is awarded per role per war, using the same formula as the Role MVP panel on a match page.<br>
+      * Only counted when at least ${MVP_MIN_CONTENDERS} players contested that role in the war, so the sole player of a rare role does not collect a free title.<br>
+      * Rate = MVP titles divided by wars played.
+    </div>
+  </div>`;
+}
+
+// ── 3. MAP STATISTICS ─────────────────────────────────────────────────────
+
+function renderMapStatsPage() {
+  const matches = archiveMatchList().filter(m => m.winner);
+  const byMap = {};
+  let atkWins = 0, atkTotal = 0;
+
+  for (const m of matches) {
+    let e = byMap[m.mapName];
+    if (!e) e = byMap[m.mapName] = { map: m.mapName, n: 0, t1: 0, t2: 0, k1: 0, k2: 0, atkWins: 0, atkKnown: 0 };
+    e.n++;
+    if (m.winner === 'team1') e.t1++; else if (m.winner === 'team2') e.t2++;
+    e.k1 += (m.totals.team1 && m.totals.team1.kills) || 0;
+    e.k2 += (m.totals.team2 && m.totals.team2.kills) || 0;
+    if (m.attacker) {
+      e.atkKnown++; atkTotal++;
+      if (m.attacker === m.winner) { e.atkWins++; atkWins++; }
+    }
+  }
+
+  const list = Object.values(byMap).sort((a, b) => b.n - a.n);
+  const pct = (a, b) => b ? Math.round((a / b) * 100) : 0;
+
+  let rowsHTML = '';
+  for (const e of list) {
+    const share1 = pct(e.t1, e.n);
+    rowsHTML += `<tr>
+      <td class="stats-who"><strong>${e.map}</strong></td>
+      <td class="stats-num">${e.n}</td>
+      <td class="stats-num map-t1">${e.t1}</td>
+      <td class="stats-num map-t2">${e.t2}</td>
+      <td class="map-barcell">
+        <div class="map-bar" title="Beaverknights ${share1}% · Capyknights ${100 - share1}%">
+          <div class="map-bar-t1" style="width:${share1}%"></div>
+        </div>
+        <span class="map-bar-lbl">${share1}% / ${100 - share1}%</span>
+      </td>
+      <td class="stats-num stats-dim">${Math.round(e.k1 / e.n)} : ${Math.round(e.k2 / e.n)}</td>
+      <td class="stats-num">${e.atkKnown ? pct(e.atkWins, e.atkKnown) + '%' : '—'}</td>
+    </tr>`;
+  }
+
+  const atkPct = pct(atkWins, atkTotal);
+
+  app.innerHTML = `<div class="wrap">
+    ${statsPageHeader('Map Statistics', 'Win rates and average scores per territory across ' + matches.length + ' wars')}
+    <div class="stats-highlight">
+      <div class="stats-highlight-val">${atkPct}%</div>
+      <div class="stats-highlight-lbl">of all wars were won by the <strong>attacking</strong> side<br>
+        <span class="stats-dim">${atkWins} of ${atkTotal} wars with a known attacker &middot; defenders took ${100 - atkPct}%</span></div>
+    </div>
+    <div class="stats-tablewrap">
+      <table class="stats-table stats-table-wide">
+        <thead><tr>
+          <th>Map</th><th class="stats-num">Wars</th>
+          <th class="stats-num map-t1">BK</th><th class="stats-num map-t2">CK</th>
+          <th>Win Share</th>
+          <th class="stats-num">Avg Kills</th>
+          <th class="stats-num">Attacker Wins</th>
+        </tr></thead>
+        <tbody>${rowsHTML || '<tr><td colspan="7" class="stats-empty">No data</td></tr>'}</tbody>
+      </table>
+    </div>
+    <div class="page-footer">
+      * BK = Beaverknights (green) &middot; CK = Capyknights (purple).<br>
+      * Avg Kills shows the average final score on that map, Beaverknights first.<br>
+      * Attacker Wins = share of wars on that map won by whichever side attacked.
+    </div>
+  </div>`;
+}
+
+// ── 4. PLAYER COMPARISON ──────────────────────────────────────────────────
+
+// Reihenfolge: erst was den Spieler beschreibt, dann die Durchschnitte pro
+// War, dann die Summen. `gap` setzt eine feine Trennlinie ueber die Zeile und
+// macht die drei Bloecke sichtbar, ohne eine zweite Tabelle zu brauchen.
+const COMPARE_ROWS = [
+  { key: 'matches', label: 'Wars played',  fmt: v => v,            higher: true },
+  { key: 'winRate', label: 'Win rate',     fmt: v => Math.round(v * 100) + '%', higher: true },
+  { key: 'kd',      label: 'K/D',          fmt: v => v.toFixed(2), higher: true },
+  { key: 'kda',     label: 'KDA',          fmt: v => v.toFixed(2), higher: true },
+
+  { key: 'avgKills',   label: 'Avg kills / war',   fmt: v => v.toFixed(1), higher: true, gap: true },
+  { key: 'avgDeaths',  label: 'Avg deaths / war',  fmt: v => v.toFixed(1), higher: false },
+  { key: 'avgAssists', label: 'Avg assists / war', fmt: v => v.toFixed(1), higher: true },
+  { key: 'avgDamage',  label: 'Avg damage / war',  fmt: v => fmt(Math.round(v)), higher: true },
+  { key: 'avgHealing', label: 'Avg healing / war', fmt: v => fmt(Math.round(v)), higher: true },
+
+  { key: 'kills',   label: 'Total kills',   fmt: v => v,      higher: true, gap: true },
+  { key: 'deaths',  label: 'Total deaths',  fmt: v => v,      higher: false },
+  { key: 'assists', label: 'Total assists', fmt: v => v,      higher: true },
+  { key: 'damage',  label: 'Total damage',  fmt: v => fmt(v), higher: true },
+  { key: 'healing', label: 'Total healing', fmt: v => fmt(v), higher: true },
+
+  { key: 'mvps',    label: 'MVP titles',   fmt: v => v,       higher: true, gap: true },
+];
+
+// Role filter per side. Kept in memory rather than in the URL so the two
+// sides stay independent of the shareable player pair.
+const _compareRole = { a: '', b: '' };
+// Live query per side while its combobox is open.
+const _compareSearch = { a: '', b: '' };
+
+// Every role a player actually appears with, most-played first.
+function compareRolesFor(canon) {
+  const counts = {};
+  for (const r of archivePlayerRows()) {
+    if (r.canon !== canon) continue;
+    counts[r.role] = (counts[r.role] || 0) + 1;
+  }
+  return Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([role, n]) => ({ role, n }));
+}
+
+// Which role a freshly picked player starts on: the one they played most.
+// Single-role players need no filter at all — their role is shown under the
+// name instead.
+function defaultCompareRole(canon) {
+  if (!canon) return '';
+  const roles = compareRolesFor(canon);
+  return roles.length > 1 ? roles[0].role : '';
+}
+
+// MVP titles for a player, optionally restricted to one role. HL is split into
+// two buckets internally, so an HL filter has to add both back together.
+function compareMvpCount(canon, role) {
+  const src = sheetsData || _tierStaticData;
+  const counts = computeMvpCounts((src && src.matchDetails) || {});
+  let total = 0;
+  for (const [bucket, players] of Object.entries(counts)) {
+    if (role) {
+      const matchesRole = role === 'HL'
+        ? (bucket === 'HL_zerg' || bucket === 'HL_ks')
+        : bucket === role;
+      if (!matchesRole) continue;
+    }
+    total += players[canon] || 0;
+  }
+  return total;
+}
+
+function compareStatsFor(canon, role) {
+  const rows = archivePlayerRows().filter(r => r.canon === canon && (!role || r.role === role));
+  if (!rows.length) return null;
+  const names = new Set();
+  let matches = 0, wins = 0, kills = 0, deaths = 0, assists = 0, healing = 0, damage = 0;
+  for (const r of rows) {
+    names.add(r.name);
+    matches++;
+    if (r.won) wins++;
+    kills += r.kills; deaths += r.deaths; assists += r.assists;
+    healing += r.healing; damage += r.damage;
+  }
+  const n = matches || 1;
+  return {
+    canon, matches, wins, kills, deaths, assists, healing, damage,
+    displayName: findDisplayName(canon, names),
+    kd: deaths > 0 ? kills / deaths : kills,
+    // KDA wie im Spreadsheet: (Kills + Assists) / Deaths.
+    kda: deaths > 0 ? (kills + assists) / deaths : (kills + assists),
+    winRate: matches ? wins / matches : 0,
+    avgKills: kills / n, avgDeaths: deaths / n, avgAssists: assists / n,
+    avgDamage: damage / n, avgHealing: healing / n,
+    mvps: compareMvpCount(canon, role),
+  };
+}
+
+// One combobox per side: the text field IS the picker. Typing filters the list
+// right underneath it, a click or Enter selects — there is no second dropdown
+// left to operate afterwards.
+const COMPARE_LIST_MAX = 60;
+
+// Which player currently sits on which side. The URL stays the source of truth;
+// this only lets us tell "same player" from "someone new" when resetting roles.
+let _cmpCanonA = '';
+let _cmpCanonB = '';
+
+// Highlighted row per side, for arrow-key navigation.
+const _compareHi = { a: 0, b: 0 };
+
+function _cmpAllPlayers() {
+  return archiveCareers()
+    .slice()
+    .sort((a, b) => b.matches - a.matches || a.displayName.localeCompare(b.displayName));
+}
+
+function _cmpAttr(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+}
+
+function _cmpSelected(side) {
+  return side === 'a' ? _cmpCanonA : _cmpCanonB;
+}
+
+function _cmpCareer(canon) {
+  return canon ? archiveCareers().find(c => c.canon === canon) : null;
+}
+
+function compareListHTML(side, selected) {
+  const q = (_compareSearch[side] || '').toLowerCase().trim();
+  const all = _cmpAllPlayers();
+  const hits = (q
+    ? all.filter(c => c.displayName.toLowerCase().includes(q) || c.canon.includes(q))
+    : all).slice(0, COMPARE_LIST_MAX);
+  if (!hits.length) return `<div class="cmp-empty">No player matches "${_cmpAttr(q)}"</div>`;
+  if (_compareHi[side] >= hits.length) _compareHi[side] = 0;
+  return hits.map((c, i) => `<div class="cmp-item${i === _compareHi[side] ? ' is-hi' : ''}${c.canon === selected ? ' is-sel' : ''}"
+        data-canon="${_cmpAttr(c.canon)}" onmousedown="event.preventDefault()"
+        onclick="onComparePick('${side}', this.dataset.canon)"
+        onmouseenter="onCompareHover('${side}', ${i})">
+      <span class="cmp-item-name">${c.displayName}</span><span class="cmp-item-n">${c.matches} wars</span>
+    </div>`).join('');
+}
+
+// Roles as one-click chips instead of a dropdown — visible at a glance and
+// only rendered for players who actually played more than one.
+function compareRoleChips(side, canon, selected) {
+  if (!canon) return '';
+  const roles = compareRolesFor(canon);
+  if (!roles.length) return '';
+  // Nothing to filter for a one-role player — their role is shown under the
+  // name instead, see roleNote() in renderComparePage.
+  if (roles.length < 2) return '';
+  const count = n => (n == null ? '' : `<span class="cmp-rolechip-n">${n}</span>`);
+  // Same badge markup as everywhere else, so the role colors match the rest.
+  const badge = role => `<span class="role-badge ${roleBadgeClass(role)}">${roleBadgeText(role)}</span>`;
+  const chip = (val, inner, n) => `<button class="cmp-rolechip${val === selected ? ' is-on' : ''}"
+      onclick="onCompareRolePick('${side}', '${val}')">${inner}${count(n)}</button>`;
+  return `<div class="cmp-roles">
+      ${chip('', '<span class="cmp-rolechip-all">All</span>', null)}${roles.map(r => chip(r.role, badge(r.role), r.n)).join('')}
+    </div>`;
+}
+
+function comparePickerHTML(side, selected) {
+  const cur = _cmpCareer(selected);
+  return `<div class="compare-picker">
+      <div class="cmp-combo">
+        <input class="cmp-input" id="cmp-input-${side}" type="text" role="combobox"
+               autocomplete="off" spellcheck="false" placeholder="Search a player..."
+               value="${_cmpAttr(cur ? cur.displayName : '')}"
+               oninput="onCompareSearch('${side}')" onfocus="onCompareFocus('${side}')"
+               onblur="onCompareBlur('${side}')" onkeydown="onCompareKey('${side}', event)">
+        ${cur
+          ? `<button class="cmp-clear" title="Clear" onmousedown="event.preventDefault()" onclick="onCompareClear('${side}')">&times;</button>`
+          : `<span class="cmp-caret">&#9662;</span>`}
+        <div class="cmp-list" id="cmp-list-${side}" hidden></div>
+      </div>
+      ${compareRoleChips(side, selected, _compareRole[side])}
+    </div>`;
+}
+
+function _cmpOpenList(side) {
+  const list = document.getElementById('cmp-list-' + side);
+  if (!list) return;
+  list.innerHTML = compareListHTML(side, _cmpSelected(side));
+  list.hidden = false;
+  const hi = list.querySelector('.is-hi');
+  if (hi) hi.scrollIntoView({ block: 'nearest' });
+}
+
+function onCompareFocus(side) {
+  _compareSearch[side] = '';
+  _compareHi[side] = 0;
+  const input = document.getElementById('cmp-input-' + side);
+  if (input) input.select();
+  _cmpOpenList(side);
+}
+
+function onCompareSearch(side) {
+  const input = document.getElementById('cmp-input-' + side);
+  _compareSearch[side] = input ? input.value : '';
+  _compareHi[side] = 0;
+  _cmpOpenList(side);
+}
+
+function onCompareBlur(side) {
+  const list = document.getElementById('cmp-list-' + side);
+  if (list) list.hidden = true;
+  // Drop a half-typed query so the field shows the actual selection again.
+  const input = document.getElementById('cmp-input-' + side);
+  const cur = _cmpCareer(_cmpSelected(side));
+  if (input) input.value = cur ? cur.displayName : '';
+  _compareSearch[side] = '';
+}
+
+function onCompareHover(side, i) {
+  if (_compareHi[side] === i) return;
+  _compareHi[side] = i;
+  const list = document.getElementById('cmp-list-' + side);
+  if (!list) return;
+  list.querySelectorAll('.cmp-item').forEach((el, idx) => el.classList.toggle('is-hi', idx === i));
+}
+
+function onCompareKey(side, ev) {
+  const list = document.getElementById('cmp-list-' + side);
+  const open = list && !list.hidden;
+  const items = open ? Array.from(list.querySelectorAll('.cmp-item')) : [];
+  if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp') {
+    ev.preventDefault();
+    if (!items.length) { _cmpOpenList(side); return; }
+    const n = items.length;
+    _compareHi[side] = (_compareHi[side] + (ev.key === 'ArrowDown' ? 1 : n - 1)) % n;
+    _cmpOpenList(side);
+  } else if (ev.key === 'Enter') {
+    ev.preventDefault();
+    const hit = items[_compareHi[side]];
+    if (hit) onComparePick(side, hit.dataset.canon);
+  } else if (ev.key === 'Escape') {
+    const input = document.getElementById('cmp-input-' + side);
+    if (input) input.blur();
+  }
+}
+
+function onComparePick(side, canon) { _cmpApply(side, canon); }
+function onCompareClear(side) { _cmpApply(side, ''); }
+
+function _cmpApply(side, canon) {
+  // A different player invalidates the role picked for the old one and
+  // starts on their own most-played role.
+  if (side === 'a') {
+    if (canon !== _cmpCanonA) _compareRole.a = defaultCompareRole(canon);
+    _cmpCanonA = canon;
+  } else {
+    if (canon !== _cmpCanonB) _compareRole.b = defaultCompareRole(canon);
+    _cmpCanonB = canon;
+  }
+  _compareSearch[side] = '';
+  _compareHi[side] = 0;
+  // "-" keeps a single pick in the URL while the other side is still empty.
+  const target = (!_cmpCanonA && !_cmpCanonB)
+    ? '#/compare'
+    : `#/compare/${_cmpCanonA ? encodePlayerForLink(_cmpCanonA) : '-'}/${_cmpCanonB ? encodePlayerForLink(_cmpCanonB) : '-'}`;
+  if (window.location.hash === target) render();
+  else navigate(target);
+}
+
+function onCompareRolePick(side, role) {
+  _compareRole[side] = _compareRole[side] === role ? '' : role;
+  render();
+}
+
+function renderComparePage(nameA, nameB) {
+  // Reached via URL rather than the picker (deep link, back button) — same
+  // starting role as a fresh pick.
+  if ((nameA || '') !== _cmpCanonA) _compareRole.a = defaultCompareRole(nameA || '');
+  if ((nameB || '') !== _cmpCanonB) _compareRole.b = defaultCompareRole(nameB || '');
+  _cmpCanonA = nameA || '';
+  _cmpCanonB = nameB || '';
+  const A = nameA ? compareStatsFor(nameA, _compareRole.a) : null;
+  const B = nameB ? compareStatsFor(nameB, _compareRole.b) : null;
+
+  // Shows the picked role, or — for players who only ever played one — that
+  // one role, so the heading always says what these numbers cover.
+  const roleNote = (stats, side) => {
+    let r = _compareRole[side];
+    if (!r) {
+      const roles = compareRolesFor(stats.canon);
+      if (roles.length === 1) r = roles[0].role;
+    }
+    return r
+      ? `<span class="compare-rolenote">as <span class="role-badge ${roleBadgeClass(r)}">${roleBadgeText(r)}</span></span>`
+      : '';
+  };
+
+  let body = '';
+  if (!A || !B) {
+    body = `<div class="compare-hint">Pick two players to compare their career numbers side by side.</div>`;
+  } else {
+    let rows = '';
+    for (const r of COMPARE_ROWS) {
+      const va = A[r.key], vb = B[r.key];
+      // Verglichen wird, was am Ende dasteht, nicht der Rohwert: 3.5769 und
+      // 3.5797 erscheinen beide als "3.6". Einen davon gruen zu faerben wuerde
+      // einen Unterschied behaupten, den auf dem Bildschirm niemand sieht.
+      const fa = r.fmt(va), fb = r.fmt(vb);
+      let clsA = 'cmp-tie', clsB = 'cmp-tie';
+      if (fa !== fb) {
+        const aWins = r.higher ? va > vb : va < vb;
+        clsA = aWins ? 'cmp-win' : 'cmp-lose';
+        clsB = aWins ? 'cmp-lose' : 'cmp-win';
+      }
+      rows += `<tr${r.gap ? ' class="cmp-gap"' : ''}>
+        <td class="cmp-val ${clsA}">${fa}</td>
+        <td class="cmp-label">${r.label}</td>
+        <td class="cmp-val ${clsB}">${fb}</td>
+      </tr>`;
+    }
+    body = `<div class="compare-heads">
+        <div class="compare-head">${playerLinkHTML(A.canon, A.displayName)}${roleNote(A, 'a')}</div>
+        <div class="compare-vs">vs</div>
+        <div class="compare-head">${playerLinkHTML(B.canon, B.displayName)}${roleNote(B, 'b')}</div>
+      </div>
+      <table class="compare-table"><tbody>${rows}</tbody></table>`;
+  }
+
+  app.innerHTML = `<div class="wrap">
+    ${statsPageHeader('Compare Players', 'Career numbers head to head')}
+    <div class="compare-pickers">
+      ${comparePickerHTML('a', nameA || '')}
+      <span class="compare-pickers-vs">vs</span>
+      ${comparePickerHTML('b', nameB || '')}
+    </div>
+    ${body}
+    <div class="page-footer">
+      * Players who filled more than one role start on their most-played one.
+        Tap another chip to switch, or All to add every role together.<br>
+      * The small number is how many wars that player (or that role) appears in.<br>
+      * Green marks the better value; for deaths, lower is better.
+        Rows where both sides show the same number are left unmarked.
+    </div>
+  </div>`;
+}
+
 // -- Wartungsmodus-Overlay --
 // Liegt als eigenes Element auf <body>, nicht in #app — so ueberlebt es jedes
 // Re-Render der Seite darunter.
 function initMaintenanceOverlay() {
   if (!MAINTENANCE_MODE) return;
-  if (new URLSearchParams(location.search).has('nomaint')) return;
+  if (hasPreviewAccess()) return;
 
   app.classList.add('maint-blurred');
 
@@ -3674,10 +4748,165 @@ function initMaintenanceOverlay() {
   setInterval(tick, 1000);
 }
 
+// -- Tribute-Overlay --
+// Faehrt beim Betreten der Seite hoch und laesst sich nur ueber den
+// Dankes-Button schliessen — kein Wegklicken daneben, kein Escape.
+const TRIBUTE_MODE = true;
+// Zaehler ueberlebt den Tab, das "schon gesehen" nicht — so nervt das Fenster
+// beim Herumklicken nicht, begruesst aber jeden neuen Besuch.
+const TRIBUTE_COUNT_KEY = 'nwl_respects_paid';
+const TRIBUTE_SEEN_KEY = 'nwl_tribute_seen';
+// Der Zaehler bleibt verborgen, solange er klein ist: eine einstellige Zahl
+// unter einem Dankeschoen sieht nach Desinteresse aus, obwohl sie nur heisst,
+// dass noch kaum jemand da war. Ab hier wird er eingeblendet.
+const TRIBUTE_COUNT_MIN = 100;
+
+function readRespects() {
+  try {
+    const n = parseInt(localStorage.getItem(TRIBUTE_COUNT_KEY) || '0', 10);
+    return Number.isFinite(n) && n > 0 ? n : 0;
+  } catch { return 0; }
+}
+
+function writeRespects(n) {
+  try { localStorage.setItem(TRIBUTE_COUNT_KEY, String(n)); } catch {}
+}
+
+// Der geteilte Zaehler liegt hinter /api/thanks. Antwortet er nicht (kein
+// Store eingerichtet, Dienst weg, offline), liefern beide Funktionen null und
+// das Fenster bleibt beim lokalen Zaehler — sichtbar aendert sich dann nichts.
+async function fetchThanksTotal() {
+  try {
+    const r = await fetch('api/thanks', { cache: 'no-store' });
+    if (!r.ok) return null;
+    const d = await r.json();
+    return d && d.ok && typeof d.count === 'number' ? d.count : null;
+  } catch { return null; }
+}
+
+async function sendThanks() {
+  try {
+    const r = await fetch('api/thanks', { method: 'POST', cache: 'no-store' });
+    if (!r.ok) return null;
+    const d = await r.json();
+    return d && d.ok && typeof d.count === 'number' ? d : null;
+  } catch { return null; }
+}
+
+function initTributeOverlay() {
+  if (!TRIBUTE_MODE) return;
+  const params = new URLSearchParams(location.search);
+  if (params.has('nof')) return;
+  // Nur ein blockierendes Fenster gleichzeitig — der Wartungsmodus gewinnt.
+  if (MAINTENANCE_MODE && !hasPreviewAccess()) return;
+  try { if (sessionStorage.getItem(TRIBUTE_SEEN_KEY) === '1') return; } catch {}
+
+  app.classList.add('maint-blurred');
+
+  let count = readRespects();
+  const ov = document.createElement('div');
+  ov.className = 'maint-overlay tribute-overlay';
+  ov.innerHTML = `
+    <div class="maint-card tribute-card">
+      <div class="maint-eyebrow">Beaverknights New World League</div>
+      <h1 class="maint-title tribute-title">Thank You Irvine!!!</h1>
+      <p class="maint-text">
+        Thank you, Irvine, for taking on the enormous amount of time and work it
+        took to organise the Beaverknights New World League for us. We all know
+        how the New World community can get: toxic players, egos,
+        ragequitters, drama, ragebait and everything in between.
+      </p>
+      <p class="maint-text">
+        Next to every other project out there, the Beavers NWL stood out like no
+        other, and for all the right reasons. What made it unique was how the
+        community treated each other. Sure, there was rivalry, and there was
+        trash talk after a war. But next to what other leagues and
+        companies put each other through, it never came close. People kept
+        showing up for one another, week after week.
+        Everyone who wanted to play got a fair shot. So many wars stayed close
+        and tense down to the final seconds. And that is exactly why we love
+        this game (and hate it).
+      </p>
+      <button class="tribute-btn" id="tribute-btn" type="button">Thank you, Irvine</button>
+      <div class="tribute-count" id="tribute-countbox"${count > TRIBUTE_COUNT_MIN ? '' : ' hidden'}>
+        <span class="tribute-count-val" id="tribute-count">${fmtFull(count)}</span>
+        <span class="tribute-count-lbl">Thank yous sent</span>
+      </div>
+      <p class="maint-joke tribute-note">
+        The Corruption needs no force, only a grasping hand. It found one in
+        the halls of Amazon: a hunger with no bottom, that sold the isle
+        stone by stone and called the ruin profit. The game is dead. I watched
+        it die.<br><br>
+        But a record does not die so easily. Let this be set down: when the
+        servers go dark in February of 2027, these pages remain. Every war
+        fought here stays written, long after the last of us has stopped
+        rising.
+        <span class="tribute-sig">final page of a Beaverknight&rsquo;s
+        journal, recovered at Windsward</span>
+      </p>
+    </div>`;
+  document.body.appendChild(ov);
+
+  const btn = ov.querySelector('#tribute-btn');
+  const out = ov.querySelector('#tribute-count');
+  const countBox = ov.querySelector('#tribute-countbox');
+
+  // Zahl und Sichtbarkeit haengen zusammen und werden nur hier gesetzt.
+  const zeigeStand = () => {
+    out.textContent = fmtFull(count);
+    countBox.hidden = count <= TRIBUTE_COUNT_MIN;
+  };
+  let dismissing = false;
+  // Solange der Server nicht geantwortet hat, steht der lokale Stand da.
+  let remote = false;
+
+  fetchThanksTotal().then(n => {
+    if (n === null) return;
+    remote = true;
+    count = n;
+    zeigeStand();
+  });
+
+  btn.addEventListener('click', () => {
+    // Sofort hochzaehlen, damit der Klick spuerbar ankommt; der Serverwert
+    // korrigiert die Zahl gleich darauf, falls er abweicht.
+    count++;
+    if (!remote) writeRespects(count);
+    zeigeStand();
+
+    sendThanks().then(d => {
+      if (!d) return;
+      remote = true;
+      count = d.count;
+      zeigeStand();
+    });
+    // Zahl kurz anstossen, damit der Klick sichtbar ankommt.
+    out.classList.remove('bumped');
+    void out.offsetWidth;
+    out.classList.add('bumped');
+
+    if (dismissing) return;
+    dismissing = true;
+    // Kurz offen lassen, damit man den Zaehler klettern sieht (und ruhig noch
+    // einmal draufklicken kann), bevor das Fenster geht.
+    setTimeout(() => {
+      try { sessionStorage.setItem(TRIBUTE_SEEN_KEY, '1'); } catch {}
+      ov.classList.add('dismissed');
+      app.classList.remove('maint-blurred');
+      setTimeout(() => ov.remove(), 420);
+    }, 1000);
+  });
+}
+
 // -- Initial render --
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => { render(); initMaintenanceOverlay(); });
+  document.addEventListener('DOMContentLoaded', () => {
+    render();
+    initMaintenanceOverlay();
+    initTributeOverlay();
+  });
 } else {
   render();
   initMaintenanceOverlay();
+  initTributeOverlay();
 }
