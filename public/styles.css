@@ -3384,3 +3384,44 @@ body::after {
   .tribute-btn { font-size: 13px; padding: 12px 22px; letter-spacing: .09em; }
   .tribute-count-val { font-size: 25px; }
 }
+
+/* Mehrere POVs desselben Spielers in einem War. Bewusst KEIN display:flex auf
+   der Zelle - das nimmt dem <td> seine Tabellen-Eigenschaft, die Spalte kann
+   dann nicht mehr mitwachsen und die Buttons brechen um. So bleibt die Zelle
+   eine Tabellenzelle und die Spalte wird bei Bedarf einfach breiter. */
+.pt-vod-multi { white-space: nowrap; }
+.pt-vod-multi .vod-btn + .vod-btn { margin-left: 4px; }
+
+/* Schalter unter der Tier-List. Absichtlich zurueckhaltend: Er gehoert nicht
+   zur Hauptaussage der Seite, soll aber auffindbar sein, wenn jemand ihn sucht. */
+.tier-showall {
+  margin: 14px 2px 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+}
+.tier-showall-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .06em;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+}
+.tier-showall-label:hover { color: var(--text-dim); }
+.tier-showall-label input { accent-color: var(--gold); cursor: pointer; }
+.tier-showall-note {
+  font-size: 11px;
+  font-style: italic;
+  color: var(--text-dim);
+}
+
+/* VOD-Spalte in der Match History. Der Klick darf nicht bis zur Zeile
+   durchschlagen, sonst navigiert die Seite zum Match statt das Video zu
+   oeffnen - das erledigt ein stopPropagation im Markup. */
+.pm-vod { white-space: nowrap; text-align: center; }
+.pm-vod .vod-btn + .vod-btn { margin-left: 4px; }

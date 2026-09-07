@@ -9,7 +9,7 @@ let currentRole = 'ALL';
 let currentMatch = null;
 let _loadingQuoteInterval = null;
 let vodData = null; // cached vods.json
-let currentMatchVods = {}; // canonical player name -> VOD url for current match
+let currentMatchVods = {}; // canonical player name -> Liste der VOD-URLs des Matches
 
 /* ── Wartungsmodus ─────────────────────────────────────────────────────────
    Legt eine Wartungsmeldung ueber die unscharf gestellte Seite.
@@ -1058,9 +1058,16 @@ async function loadVodData() {
 function stripParens(s) { return s.replace(/\s*\(.*?\)\s*/g, '').trim(); }
 
 function buildMatchVodLookup(slug) {
-  currentMatchVods = {};
-  if (!vodData || !vodData[slug] || !currentMatch) return;
-  const allPlayers = currentMatch.groups.flatMap(g => [...g.team1, ...g.team2]);
+  currentMatchVods = buildVodLookup(slug, currentMatch);
+}
+
+// slug + Matchdaten -> { kanonischer Name: [URLs] }. Bewusst dieselbe Funktion
+// fuer Match- und Spielerseite: sonst koennte ein VOD an der einen Stelle einem
+// Spieler zugeordnet werden und an der anderen einem zweiten.
+function buildVodLookup(slug, matchData) {
+  const out = {};
+  if (!vodData || !vodData[slug] || !matchData || !matchData.groups) return out;
+  const allPlayers = matchData.groups.flatMap(g => [...(g.team1 || []), ...(g.team2 || [])]);
   for (const entry of vodData[slug]) {
     const discordLower = entry.discord.toLowerCase().trim();
     const discordStripped = stripParens(discordLower);
@@ -1079,16 +1086,43 @@ function buildMatchVodLookup(slug) {
       if (pStripped.includes(discordStripped) || discordStripped.includes(pStripped)) { matched = pCanonical; break; }
     }
     if (matched) {
-      currentMatchVods[matched] = entry.url;
+      // Liste statt Einzelwert: manche Spieler posten mehrere POVs pro War,
+      // die sollen alle erreichbar sein statt sich gegenseitig zu ersetzen.
+      const liste = out[matched] || (out[matched] = []);
+      if (!liste.includes(entry.url)) liste.push(entry.url);
     }
   }
+  return out;
+}
+
+// Ergebnisse je Match merken - die Spielerseite fragt sonst fuer jede Zeile neu.
+const _vodLookupCache = {};
+function vodsForPlayerInMatch(slug, canon) {
+  if (!(slug in _vodLookupCache)) {
+    const md = sheetsData && sheetsData.matchDetails && sheetsData.matchDetails[slug];
+    _vodLookupCache[slug] = buildVodLookup(slug, md);
+  }
+  return _vodLookupCache[slug][canon] || [];
 }
 
 function getVodCell(playerName, role) {
   const canonical = getCanonicalName(playerName, role);
-  const url = currentMatchVods[canonical];
-  if (!url) return '<td class="pt-vod"></td>';
-  return `<td class="pt-vod"><a href="${url}" target="_blank" rel="noopener" class="vod-btn">&#9654; Watch VOD</a></td>`;
+  const urls = currentMatchVods[canonical] || [];
+  if (!urls.length) return '<td class="pt-vod"></td>';
+  // Bei einem Video bleibt die Beschriftung wie gehabt; erst ab zwei wird
+  // durchnummeriert, damit der Normalfall unveraendert aussieht.
+  const btn = (url, label, title) =>
+    `<a href="${url}" target="_blank" rel="noopener" class="vod-btn"`
+    + (title ? ` title="${title}"` : '') + `>&#9654; ${label}</a>`;
+  if (urls.length === 1) {
+    return `<td class="pt-vod">${btn(urls[0], 'Watch VOD', '')}</td>`;
+  }
+  // Nur die Nummer: zwei Buttons muessen in die schmale Spalte passen, ohne
+  // die Zeile auf doppelte Hoehe zu treiben. Der Tooltip sagt, was gemeint ist.
+  const buttons = urls
+    .map((u, i) => btn(u, String(i + 1), `Watch VOD ${i + 1} of ${urls.length}`))
+    .join('');
+  return `<td class="pt-vod pt-vod-multi">${buttons}</td>`;
 }
 
 // ==========================================
@@ -2157,6 +2191,7 @@ async function render() {
         startLoadingQuotes();
         await ensureSheetsSync();
       }
+      await loadVodData();
       _playerRoleFilter = null;
       renderPlayerPage(route.playerName);
     } else {
@@ -3155,6 +3190,9 @@ function renderChangelogPage() {
         'Merged 33 duplicate player profiles that were split by truncated or misspelled scoreboard names — among them RedbullAmb/RedbullAmba (Uninstall.exe), Beetle Juice, SmileyBill, Hoosierz, Bourinosss, LastHitEnjoy (Jamel), Ambrozja, Cannab1s, shokki, Caruso and Dr. Costa.',
         'All matches now load from the static data files. The last few wars used to be read live from the spreadsheet on every visit; that step is gone, so pages open faster and the scoreboard keeps working even once the spreadsheet is no longer reachable.',
         'Records and the MVP leaderboard use competition ranking: players on the same value share a rank and the positions they take up are skipped (1, 2, 2, 4). Two players tied for first both get the gold medal.',
+        'Tier-List scores are now adjusted for sample size: an average is weighted against the role average by how many wars it rests on. A strong run over ten wars no longer outranks a strong run over seventy, and thin samples sit closer to the middle in both directions.',
+        'Tier-List now needs 10 games in a role instead of 5. Two good wars used to be enough to land at the top and skew the percentile split for everyone else. A checkbox under the table brings the short-timers back in.',
+        'Added around 400 VODs from the Discord threads, covering 72 of 75 wars. Players who recorded more than one POV in a war now get one button per video, and the match history on a player page lists their own recordings war by war.',
         'Map names are now normalised: historic spelling slips ("Ebonescale Reach", "Ebenonscale Reach") no longer split one territory into three.',
       ]
     },
@@ -3286,6 +3324,19 @@ function renderChangelogPage() {
 // ===========================================
 
 let _playerRoleFilter = null; // null = all roles
+
+// Wie in den Gruppentabellen: ein Video behaelt die volle Beschriftung,
+// ab zwei wird nummeriert.
+function playerVodCell(a, canon) {
+  const urls = vodsForPlayerInMatch(a.slug, canon);
+  if (!urls.length) return '';
+  const btn = (url, label, title) =>
+    `<a href="${url}" target="_blank" rel="noopener" class="vod-btn"`
+    + (title ? ` title="${title}"` : '') + `>&#9654; ${label}</a>`;
+  if (urls.length === 1) return btn(urls[0], 'VOD', 'Watch this player\'s POV');
+  return urls.map((u, i) =>
+    btn(u, String(i + 1), `Watch VOD ${i + 1} of ${urls.length}`)).join('');
+}
 
 function renderPlayerPage(playerName) {
   const canon = playerName.toLowerCase().trim();
@@ -3460,6 +3511,7 @@ function renderPlayerPage(playerName) {
             <th class="num-col">Dmg</th>
             <th class="num-col">KD</th>
             <th>Result</th>
+            <th>VOD</th>
           </tr>
         </thead>
         <tbody>`;
@@ -3488,6 +3540,7 @@ function renderPlayerPage(playerName) {
         <td class="pm-num">${fmt(a.player.damage)}</td>
         <td class="pm-num" style="color:var(--gold)">${kd(a.player)}</td>
         <td>${resultBadge}</td>
+        <td class="pm-vod" onclick="event.stopPropagation()">${playerVodCell(a, canon)}</td>
       </tr>`;
     }
 
@@ -3533,7 +3586,20 @@ function isTierListMenuVisible() {
 }
 
 // Minimum games on a role before that role-slot is shown in the tier list.
-const TIER_MIN_GAMES = 5;
+// Ab wie vielen Spielen in einer Rolle jemand ueberhaupt gewertet wird.
+// Wer eine Rolle zweimal gespielt hat, landet sonst durch einen einzigen guten
+// Abend ganz oben und verzerrt die Perzentil-Einteilung fuer alle anderen.
+const TIER_MIN_GAMES = 10;
+
+// Der Schalter unter der Tabelle setzt die Schwelle voruebergehend auf 1.
+// Bewusst nur im Speicher: beim naechsten Aufruf gilt wieder die Vorgabe.
+let _tierShowAll = false;
+function tierMinGames() { return _tierShowAll ? 1 : TIER_MIN_GAMES; }
+
+function toggleTierShowAll() {
+  _tierShowAll = !_tierShowAll;
+  renderTierListPage();
+}
 
 // Role buckets: damage roles share a single dmg-vs-mirror bonus formula;
 // healers share the group-survival bonus.
@@ -3674,15 +3740,31 @@ function computeTierList() {
   const out = {};
   for (const [bucket, players] of Object.entries(agg)) {
     const list = Object.values(players)
-      .filter(x => x.count >= TIER_MIN_GAMES)
+      .filter(x => x.count >= tierMinGames())
       .map(x => ({
         canon: x.canon,
         displayName: findDisplayName(x.canon, x.names),
         games: x.count,
         avg: x.sum / x.count,
         mvps: (mvpCounts[bucket] || {})[x.canon] || 0,
-      }))
-      .sort((a, b) => b.avg - a.avg);
+      }));
+
+    // Stichprobenkorrektur. Ein Schnitt aus 11 Wars traegt weniger Gewissheit
+    // als einer aus 70; ohne Korrektur entscheidet in der Spitze das Glueck.
+    // Der gewertete Wert ist deshalb ein Mittel aus eigenem Schnitt und
+    // Rollendurchschnitt, gewichtet mit der Spielzahl gegen SHRINK_WEIGHT.
+    // Das zieht duenne Stichproben in BEIDE Richtungen zur Mitte, nicht nur
+    // nach unten. Als Gewicht dient die Mindestspielzahl: wer genau sie
+    // erreicht, zaehlt halb sich selbst, halb den Durchschnitt.
+    const SHRINK_WEIGHT = TIER_MIN_GAMES;
+    const rollenMittel = list.length
+      ? list.reduce((a, p) => a + p.avg, 0) / list.length
+      : 0;
+    for (const p of list) {
+      p.score = (p.games * p.avg + SHRINK_WEIGHT * rollenMittel)
+              / (p.games + SHRINK_WEIGHT);
+    }
+    list.sort((a, b) => b.score - a.score);
 
     const n = list.length;
     list.forEach((p, i) => {
@@ -3741,7 +3823,7 @@ function renderTierListPage() {
 
   let grid = '';
   if (visibleBuckets.length === 0) {
-    grid = `<div class="tier-empty">No qualifying players yet · need ${TIER_MIN_GAMES}+ games on a role</div>`;
+    grid = `<div class="tier-empty">No qualifying players yet · need ${tierMinGames()}+ games on a role</div>`;
   } else {
     // Tiers across the top as columns; one row per class bucket. Class color
     // tints the whole row so each role band is recognizable at a glance.
@@ -3784,7 +3866,7 @@ function renderTierListPage() {
           const mvpBadgeHtml = p.mvps
             ? `<span class="tier-chip-mvp">★${p.mvps}</span>`
             : '';
-          chips += `<a class="tier-chip${p.mvps ? ' has-mvp' : ''}" onclick="navigate('#/player/${encodePlayerForLink(p.canon)}')" title="${p.games} games · avg score ${p.avg.toFixed(1)}${mvpTitle}">
+          chips += `<a class="tier-chip${p.mvps ? ' has-mvp' : ''}" onclick="navigate('#/player/${encodePlayerForLink(p.canon)}')" title="${p.games} games · avg score ${p.avg.toFixed(1)} · rated ${p.score.toFixed(1)} after the sample-size adjustment${mvpTitle}">
             <span class="tier-chip-name">${p.displayName}</span>${mvpBadgeHtml}<span class="tier-chip-games">${p.games}</span>
           </a>`;
         }
@@ -3822,18 +3904,32 @@ function renderTierListPage() {
     <div class="player-header">
       <div class="player-eyebrow">NWL Scoreboard</div>
       <h1 class="player-name">Tier-List</h1>
-      <div class="player-aliases">Per-role rankings · ${TIER_MIN_GAMES}+ games required · <span class="tier-chip-mvp tier-legend-star">★</span> = times crowned match MVP in that role (only counted when at least ${MVP_MIN_CONTENDERS} players contested it) · MVP formula extended with healer group survival vs. mirror &amp; DPS damage-share vs. mirror</div>
+      <div class="player-aliases">Per-role rankings · ${tierMinGames()}+ games required · <span class="tier-chip-mvp tier-legend-star">★</span> = times crowned match MVP in that role (only counted when at least ${MVP_MIN_CONTENDERS} players contested it) · MVP formula extended with healer group survival vs. mirror &amp; DPS damage-share vs. mirror</div>
     </div>
     <div class="tier-filter-bar">
       <div class="tier-filter-label">Filter Class</div>
       <div class="tier-filter-buttons">${filterBtns}</div>
     </div>
     ${grid}
+    <div class="tier-showall">
+      <label class="tier-showall-label">
+        <input type="checkbox" id="tier-showall"${_tierShowAll ? ' checked' : ''}
+               onchange="toggleTierShowAll()">
+        Include players with fewer than ${TIER_MIN_GAMES} games in a role
+      </label>
+      <span class="tier-showall-note">${_tierShowAll
+        ? 'Showing everyone. A single strong war can put someone at the top, so the order means less down here.'
+        : ''}</span>
+    </div>
     <div class="page-footer">
       * Tiers are percentile-assigned within each role column (S=top 15%, A=15–35%, B=35–65%, C=65–85%, D=bottom 15%).<br>
       * Healer score adds (mirrorGroupDeaths − ownGroupDeaths), excluding dex-side MD/RD/CW from both sides.<br>
       * IG/VG (Support): K − 3·D + A/8 + Heal/100k + Dmg/100k + ½·(mirrorGroupDeaths − ownGroupDeaths). Assists weighted high because CC/oblivion/slow are the real output; no damage-vs-mirror bonus.<br>
       * DPS score adds (playerDamage − sameRoleAvg) / 100k across own + mirror group.<br>
+      * Scores are adjusted for sample size: an average is weighted against the role average
+        by how many wars it rests on (${TIER_MIN_GAMES} games = half and half, 70 games = almost
+        entirely your own). Thin samples sit closer to the middle in both directions, so a
+        handful of lucky &mdash; or unlucky &mdash; wars cannot decide the top.<br>
       * The D-Tier column is sealed. The entries are counted, the names stay redacted — no one gets pilloried over a joke list.
     </div>
   </div>${disclaimerHTML}`;
@@ -3882,6 +3978,7 @@ window.toggleFilterPanel = toggleFilterPanel;
 window.setPlayerRoleFilter = setPlayerRoleFilter;
 window.toggleMvpPanel = toggleMvpPanel;
 window.toggleTierFilter = toggleTierFilter;
+window.toggleTierShowAll = toggleTierShowAll;
 window.clearTierFilter = clearTierFilter;
 window.isTierListEnabled = isTierListEnabled;
 window.onCompareSearch = onCompareSearch;
