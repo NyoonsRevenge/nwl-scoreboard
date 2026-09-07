@@ -1924,6 +1924,9 @@ function getRoute() {
   if (hash === '/maps') {
     return { page: 'maps' };
   }
+  if (hash === '/farewell') {
+    return { page: 'farewell' };
+  }
   if (hash === '/compare' || hash.startsWith('/compare/')) {
     const parts = hash.split('/').slice(2).filter(Boolean)
       .map(s => (s === '-' ? '' : decodeURIComponent(s)));
@@ -1955,16 +1958,38 @@ const FEATURE_LINKS = [
     icon: '<path d="M8 21h8M12 17v4M6 3h12v6a6 6 0 01-12 0V3zM6 5H4a2 2 0 000 4h2m12-4h2a2 2 0 010 4h-2"/>' },
   { hash: '#/mvps', label: 'MVP Leaderboard', short: 'MVPs',
     icon: '<path d="M12 2l2.9 6.2 6.6.9-4.8 4.7 1.2 6.7L12 17.3 6.1 20.5l1.2-6.7L2.5 9.1l6.6-.9L12 2z"/>' },
-  { hash: '#/maps', label: 'Map Statistics', short: 'Maps',
-    icon: '<path d="M9 4L3 7v13l6-3 6 3 6-3V4l-6 3-6-3zM9 4v13m6-10v13"/>' },
-  { hash: '#/compare', label: 'Compare Players', short: 'Compare',
-    icon: '<path d="M12 3v18M5 8l-3 4 3 4m14-8l3 4-3 4"/>' },
   { hash: '#/tier-list', label: 'Tier-List', short: 'Tier-List', tierGated: true,
     icon: '<path d="M4 6h16M4 12h10M4 18h6"/><circle cx="19" cy="12" r="2"/><circle cx="13" cy="18" r="2"/>' },
+  { hash: '#/compare', label: 'Compare Players', short: 'Compare',
+    icon: '<path d="M12 3v18M5 8l-3 4 3 4m14-8l3 4-3 4"/>' },
+  { hash: '#/maps', label: 'Map Statistics', short: 'Maps',
+    icon: '<path d="M9 4L3 7v13l6-3 6 3 6-3V4l-6 3-6-3zM9 4v13m6-10v13"/>' },
+  { hash: '#/farewell', label: 'Farewell Video', short: 'Farewell',
+    icon: '<polygon points="6 4 20 12 6 20 6 4"/>' },
 ];
 
 function visibleFeatureLinks() {
   return FEATURE_LINKS.filter(f => !f.tierGated || isTierListMenuVisible());
+}
+
+// Kurze, stumme Schleife als Wegweiser zum Abschiedsvideo. Bewusst ein eigener
+// 364-KB-Ausschnitt und nicht das 13-MB-Video: Die Startseite ruft jeder auf,
+// der ganze Film nur, wer ihn sehen will.
+function farewellTeaserHTML() {
+  return `<a class="teaser" onclick="navigate('#/farewell')" title="Watch the farewell video">
+      <video class="teaser-video" src="media/farewell-preview.mp4"
+             poster="media/farewell-poster.jpg"
+             autoplay muted loop playsinline preload="none"></video>
+      <span class="teaser-overlay">
+        <span class="teaser-play">
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 20 12 7 20 7 4"/></svg>
+        </span>
+        <span class="teaser-text">
+          <span class="teaser-title">Farewell Video</span>
+          <span class="teaser-sub">Seven months in two minutes &middot; 1:58</span>
+        </span>
+      </span>
+    </a>`;
 }
 
 // Compact row of shortcuts on the homepage so the new pages are reachable
@@ -2171,6 +2196,9 @@ async function render() {
         if (!sheetsData && !_tierStaticData) await loadStaticTierData();
       }
       renderTierListPage();
+    } else if (route.page === 'farewell') {
+      // Braucht keine Match-Daten - sofort zeigen.
+      renderFarewellPage();
     } else if (route.page === 'records' || route.page === 'mvps'
                || route.page === 'maps' || route.page === 'compare') {
       const titles = { records: 'League Records', mvps: 'MVP Leaderboard',
@@ -2271,6 +2299,7 @@ function renderHomePage(matches) {
       </div>
     </div>
 
+    ${farewellTeaserHTML()}
     ${quickNavHTML()}
     <div class="matches-label">Match History</div>
     <div class="match-list">`;
@@ -3178,6 +3207,7 @@ function renderChangelogPage() {
     {
       date: '07.09.2026',
       changes: [
+        'New page — Farewell Video: a two-minute look back at seven months of the league, built entirely from the numbers on this site. A short silent preview of it sits on the homepage under the season record.',
         'Role MVPs are now visible for every match — the top three players per role, scored with the formula shown in the panel header. The winner of each role also gets a gold ★ next to their name in the group tables, in all three views.',
         'The Tier-List is out of hiding and has its own entry in the burger menu. The secret link still works and jumps straight to it.',
         'The D-Tier column is sealed: the column and its headcount stay visible, the names are redacted. It is a joke list, nobody needs to be named at the bottom of one.',
@@ -4791,6 +4821,29 @@ function renderComparePage(nameA, nameB) {
         Rows where both sides show the same number are left unmarked.
     </div>
   </div>`;
+}
+
+// -- Abschiedsfilm ---------------------------------------------------------
+// Das Video liegt als Datei im Projekt, nicht bei einem Videodienst. Sonst
+// haenge die Seite an einem fremden Anbieter, der sie ueberdauern muesste -
+// und genau das soll sie ja nicht.
+function renderFarewellPage() {
+  app.innerHTML = `<div class="wrap">
+    ${statsPageHeader('Farewell', 'Seven months of the Beaverknights New World League')}
+    <div class="film">
+      <video class="film-video" controls preload="metadata" playsinline
+             poster="media/farewell-poster.jpg">
+        <source src="media/farewell.mp4" type="video/mp4">
+        Your browser cannot play this video.
+        <a href="media/farewell.mp4">Download it instead.</a>
+      </video>
+    </div>
+    <div class="page-footer">
+      * Every number in the film is taken from the data on this site.<br>
+      * Best watched full screen with the sound on.
+    </div>
+  </div>`;
+  window.scrollTo(0, 0);
 }
 
 // -- Wartungsmodus-Overlay --
