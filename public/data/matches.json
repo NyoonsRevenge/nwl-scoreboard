@@ -1,17 +1,29 @@
 [
   {
+    "slug": "nwl-75",
+    "nwlNumber": 75,
+    "mapName": "Windsward",
+    "date": "06.09.2026",
+    "duration": "30:00",
+    "winner": "team1",
+    "attacker": "team2",
+    "team1Kills": 174,
+    "team2Kills": 92,
+    "team1Name": "Beaverknights",
+    "team2Name": "Capyknights"
+  },
+  {
     "slug": "nwl-74",
     "nwlNumber": 74,
     "mapName": "Windsward",
     "date": "31.08.2026",
-    "duration": null,
+    "duration": "30:00",
     "winner": "team1",
     "attacker": "team2",
-    "team1Kills": 0,
-    "team2Kills": 0,
+    "team1Kills": 125,
+    "team2Kills": 110,
     "team1Name": "Beaverknights",
-    "team2Name": "Capyknights",
-    "noPlayerData": true
+    "team2Name": "Capyknights"
   },
   {
     "slug": "nwl-73",
