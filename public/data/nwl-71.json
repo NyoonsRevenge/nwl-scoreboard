@@ -220,15 +220,6 @@
           "damage": 35756
         },
         {
-          "name": "Reserved",
-          "role": "IV",
-          "kills": 0,
-          "deaths": 0,
-          "assists": 0,
-          "healing": 0,
-          "damage": 0
-        },
-        {
           "name": "babulm",
           "role": "PT",
           "kills": 0,
