@@ -15,7 +15,7 @@ let currentMatchVods = {}; // canonical player name -> Liste der VOD-URLs des Ma
    Legt eine Wartungsmeldung ueber die unscharf gestellte Seite.
    Abschalten:  MAINTENANCE_MODE = false
    Vorschau:    ?preview=lastlight an die URL haengen                       */
-const MAINTENANCE_MODE = true;
+const MAINTENANCE_MODE = false;
 // 12:00 deutsche Ortszeit am 07.09.2026 (CEST = UTC+2, Sommerzeit gilt noch).
 const MAINTENANCE_TARGET = new Date('2026-09-07T12:00:00+02:00');
 
@@ -3204,6 +3204,12 @@ function renderSearchPage() {
 
 function renderChangelogPage() {
   const entries = [
+    {
+      date: '09.09.2026',
+      changes: [
+        'Maintenance mode is off — the site is open again, with everything from the 07.09. update in place.',
+      ]
+    },
     {
       date: '07.09.2026',
       changes: [
