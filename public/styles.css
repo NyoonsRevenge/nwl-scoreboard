@@ -3397,9 +3397,9 @@ body::after {
 .tier-showall {
   margin: 14px 2px 0;
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
 }
 .tier-showall-label {
   display: inline-flex;
@@ -3415,9 +3415,13 @@ body::after {
 .tier-showall-label:hover { color: var(--text-dim); }
 .tier-showall-label input { accent-color: var(--gold); cursor: pointer; }
 .tier-showall-note {
-  font-size: 11px;
+  display: block;
+  font-size: 13px;
   font-style: italic;
-  color: var(--text-dim);
+  line-height: 1.45;
+  /* Bewusst heller als der Schalter darueber: Der Hinweis erklaert, warum die
+     Reihenfolge in dieser Ansicht weniger aussagt - das soll man lesen. */
+  color: #eef1f6;
 }
 
 /* VOD-Spalte in der Match History. Der Klick darf nicht bis zur Zeile
