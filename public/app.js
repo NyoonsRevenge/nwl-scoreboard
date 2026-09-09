@@ -313,6 +313,8 @@ const NAME_MAPPING_JSON = {
   "Jeaysu/Naosu": "Jeaysu/Naosuk",
   "Jeaysu/Naosuke": "Jeaysu/Naosuk",
   "Jeaysu / Naosuk": "Jeaysu/Naosuk",
+  "Jeaysu/Naos": "Jeaysu/Naosuk",
+  "Jeaysu": "Jeaysu/Naosuk",
 
   // LastHitEnjoyer truncations
   "LastHitEnjoye": "LastHitEnjoyer",
