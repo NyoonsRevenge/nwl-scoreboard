@@ -3809,7 +3809,7 @@ function computeTierList() {
       if (pct <= 0.15) p.tier = 'S';
       else if (pct <= 0.35) p.tier = 'A';
       else if (pct <= 0.65) p.tier = 'B';
-      else if (pct <= 0.85) p.tier = 'C';
+      else if (pct <= 0.86) p.tier = 'C';
       else p.tier = 'D';
     });
     out[bucket] = list;
@@ -3958,7 +3958,7 @@ function renderTierListPage() {
         : ''}</span>
     </div>
     <div class="page-footer">
-      * Tiers are percentile-assigned within each role column (S=top 15%, A=15–35%, B=35–65%, C=65–85%, D=bottom 15%).<br>
+      * Tiers are percentile-assigned within each role column (S=top 15%, A=15–35%, B=35–65%, C=65–86%, D=bottom 14%).<br>
       * Healer score adds (mirrorGroupDeaths − ownGroupDeaths), excluding dex-side MD/RD/CW from both sides.<br>
       * IG/VG (Support): K − 3·D + A/8 + Heal/100k + Dmg/100k + ½·(mirrorGroupDeaths − ownGroupDeaths). Assists weighted high because CC/oblivion/slow are the real output; no damage-vs-mirror bonus.<br>
       * DPS score adds (playerDamage − sameRoleAvg) / 100k across own + mirror group.<br>
